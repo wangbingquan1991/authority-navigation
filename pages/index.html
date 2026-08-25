@@ -257,6 +257,80 @@
   --tk-modal-shadow: 0 24px 60px rgba(0, 0, 0, 0.50);
 }
 
+[data-theme="apple-light"] {
+  --background: #ffffff;
+  --foreground: #1d1d1f;
+  --card: #ffffff;
+  --card-foreground: #1d1d1f;
+  --muted: #f2f2f7;
+  --muted-foreground: #8e8e93;
+  --border: #e5e5ea;
+  --primary: #007aff;
+  --primary-foreground: #ffffff;
+  --secondary: #f2f2f7;
+  --secondary-foreground: #1d1d1f;
+  --accent: #f7f7fa;
+  --accent-foreground: #1d1d1f;
+  --destructive: #ff3b30;
+  --destructive-foreground: #ffffff;
+
+  --tk-bg: #ffffff;
+  --tk-text: #1d1d1f;
+  --tk-text-secondary: #6e6e73;
+  --tk-text-tertiary: #8e8e93;
+  --tk-surface: #ffffff;
+  --tk-surface-hover: #f7f7fa;
+  --tk-surface-elevated: #ffffff;
+  --tk-border: #e5e5ea;
+  --tk-primary: #007aff;
+  --tk-secondary: #34c759;
+  --tk-secondary-subtle: rgba(0, 122, 255, 0.10);
+  --tk-secondary-hover: rgba(0, 122, 255, 0.18);
+  --tk-glow-primary: rgba(0, 122, 255, 0.25);
+  --tk-glow-secondary: rgba(52, 199, 89, 0.20);
+  --tk-shadow: rgba(0, 0, 0, 0.08);
+  --tk-danger-bg: rgba(255, 59, 48, 0.12);
+  --tk-modal-overlay: rgba(0, 0, 0, 0.35);
+  --tk-modal-shadow: 0 24px 60px rgba(0, 0, 0, 0.15);
+}
+
+[data-theme="apple-dark"] {
+  --background: #000000;
+  --foreground: #f5f5f7;
+  --card: #1c1c1e;
+  --card-foreground: #f5f5f7;
+  --muted: #1c1c1e;
+  --muted-foreground: #8e8e93;
+  --border: #3a3a3c;
+  --primary: #2e8dff;
+  --primary-foreground: #000000;
+  --secondary: #1c1c1e;
+  --secondary-foreground: #f5f5f7;
+  --accent: #2c2c2e;
+  --accent-foreground: #f5f5f7;
+  --destructive: #ff453a;
+  --destructive-foreground: #000000;
+
+  --tk-bg: #000000;
+  --tk-text: #f5f5f7;
+  --tk-text-secondary: #aeaeb2;
+  --tk-text-tertiary: #8e8e93;
+  --tk-surface: #1c1c1e;
+  --tk-surface-hover: #2c2c2e;
+  --tk-surface-elevated: #2c2c2e;
+  --tk-border: #3a3a3c;
+  --tk-primary: #2e8dff;
+  --tk-secondary: #30d158;
+  --tk-secondary-subtle: rgba(46, 141, 255, 0.15);
+  --tk-secondary-hover: rgba(46, 141, 255, 0.25);
+  --tk-glow-primary: rgba(46, 141, 255, 0.35);
+  --tk-glow-secondary: rgba(48, 209, 88, 0.25);
+  --tk-shadow: rgba(0, 0, 0, 0.45);
+  --tk-danger-bg: rgba(255, 69, 58, 0.15);
+  --tk-modal-overlay: rgba(0, 0, 0, 0.75);
+  --tk-modal-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
+}
+
     </style>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script>
     <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
@@ -352,6 +426,8 @@
         <button type="button" data-theme="tiktok" aria-pressed="true" class="active">抖音暗色</button>
         <button type="button" data-theme="claude-light" aria-pressed="false" class="">Claude 浅色</button>
         <button type="button" data-theme="claude-dark" aria-pressed="false" class="">Claude 深色</button>
+        <button type="button" data-theme="apple-light" aria-pressed="false" class="">Apple 浅色</button>
+        <button type="button" data-theme="apple-dark" aria-pressed="false" class="">Apple 深色</button>
       </div></header>
 
     <div class="search-wrap">
@@ -1241,7 +1317,7 @@
       const themeSwitcher = document.querySelector(".theme-switcher");
 
       function applyTheme(theme) {
-        const validThemes = ["tiktok", "claude-light", "claude-dark"];
+        const validThemes = ["tiktok", "claude-light", "claude-dark", "apple-light", "apple-dark"];
         if (!validThemes.includes(theme)) theme = "tiktok";
         document.documentElement.setAttribute("data-theme", theme);
         try {
@@ -2157,6 +2233,8 @@
     <style>
     .theme-switcher {
       display: inline-flex;
+      flex-wrap: wrap;
+      justify-content: center;
       align-items: center;
       gap: 4px;
       margin-top: var(--tk-space-md);
@@ -2164,6 +2242,7 @@
       background: var(--tk-surface);
       border: 1px solid var(--tk-border);
       border-radius: var(--tk-radius-pill);
+      max-width: min(640px, calc(100% - var(--tk-space-lg) * 2));
     }
     .theme-switcher button {
       appearance: none;
@@ -2171,10 +2250,10 @@
       background: transparent;
       color: var(--tk-text-secondary);
       font-family: inherit;
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       font-weight: 500;
       line-height: 1;
-      padding: 8px 14px;
+      padding: 7px 12px;
       border-radius: var(--tk-radius-pill);
       cursor: pointer;
       transition: background var(--tk-transition), color var(--tk-transition), box-shadow var(--tk-transition);

@@ -6,7 +6,7 @@
 
 - **多源分类导航**：国家机关、权威官媒、985 / 211 高校、官方数据查询、法律标准核验、学术科研资源、政务实用工具。
 - **自定义增删**：可添加/删除分类与链接；自定义内容通过后端 API 持久化，纯静态打开时自动回退到浏览器 localStorage。
-- **主题切换**：支持「抖音暗色」「Claude 浅色」「Claude 深色」三种配色方案，主题偏好保存在浏览器端。
+- **主题切换**：支持「抖音暗色」「Claude 浅色」「Claude 深色」「Apple 浅色」「Apple 深色」五种配色方案，主题偏好保存在浏览器端。
 - **实时搜索**：顶部搜索栏可即时过滤所有分类下的网站。
 - **微服务化**：基于 Express 提供静态服务与数据 API，可通过 Docker / Docker Compose 一键部署。
 
@@ -73,8 +73,7 @@ authority-navigation/
 ├── package.json
 ├── Dockerfile
 ├── docker-compose.yml
-├── README.md
-└── LICENSE
+└── README.md
 ```
 
 ## 主题预览
@@ -82,7 +81,6 @@ authority-navigation/
 - 抖音暗色：黑色背景 + 品牌红/青强调色
 - Claude 浅色：奶油色背景 + 橄榄文字 + 赤陶强调色
 - Claude 深色：暖灰背景 + 浅色文字 + 柔和赤陶色
+- Apple 浅色：纯白背景 + 深灰文字 + 系统蓝强调色
+- Apple 深色：纯黑背景 + 浅灰文字 + 系统蓝强调色
 
-## 许可
-
-[MIT](LICENSE)
