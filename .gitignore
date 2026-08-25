@@ -10,3 +10,16 @@ Thumbs.db
 
 # Logs
 *.log
+
+# Node.js
+node_modules/
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Runtime data
+data/
+
+# Environment
+.env
+.env.*

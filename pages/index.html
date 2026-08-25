@@ -834,7 +834,7 @@
   </footer>
 
   <script>
-    (function () {
+    (async function () {
       const defaultData = {
         "国家机关": {
           icon: "M3 21h18 M5 21V7l8-4 8 4v14 M10 9a2 2 0 0 1 4 0 M10 14h4v7h-4z",
@@ -1047,6 +1047,91 @@
       const STORAGE_CATEGORIES = "nav_custom_categories_v1";
       const defaultCategoryIcon = "M12 2v20 M2 12h20";
 
+      let remoteDataCache = null;
+      let apiMode = null; // null = unknown, true/false after probe
+
+      async function detectApiMode() {
+        if (apiMode !== null) return apiMode;
+        try {
+          const controller = new AbortController();
+          const timer = setTimeout(() => controller.abort(), 800);
+          const res = await fetch("/api/data", { signal: controller.signal });
+          clearTimeout(timer);
+          if (res.ok) {
+            remoteDataCache = await res.json();
+            apiMode = true;
+          } else {
+            apiMode = false;
+          }
+        } catch (e) {
+          apiMode = false;
+        }
+        return apiMode;
+      }
+
+      async function loadAllData() {
+        if (await detectApiMode()) {
+          return remoteDataCache || { customLinks: {}, customCategories: [], removedDefaults: [] };
+        }
+        return {
+          customLinks: JSON.parse(localStorage.getItem(STORAGE_LINKS) || "{}"),
+          customCategories: JSON.parse(localStorage.getItem(STORAGE_CATEGORIES) || "[]"),
+          removedDefaults: JSON.parse(localStorage.getItem(STORAGE_REMOVED) || "[]")
+        };
+      }
+
+      async function saveAllData(data) {
+        if (await detectApiMode()) {
+          remoteDataCache = data;
+          try {
+            await fetch("/api/data", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(data)
+            });
+          } catch (e) {
+            console.error("Failed to save data to API", e);
+          }
+          return;
+        }
+        localStorage.setItem(STORAGE_LINKS, JSON.stringify(data.customLinks));
+        localStorage.setItem(STORAGE_CATEGORIES, JSON.stringify(data.customCategories));
+        localStorage.setItem(STORAGE_REMOVED, JSON.stringify(data.removedDefaults));
+      }
+
+      async function loadCustomLinks() {
+        const data = await loadAllData();
+        return data.customLinks || {};
+      }
+
+      async function saveCustomLinks(obj) {
+        const data = await loadAllData();
+        data.customLinks = obj;
+        await saveAllData(data);
+      }
+
+      async function loadCustomCategories() {
+        const data = await loadAllData();
+        return data.customCategories || [];
+      }
+
+      async function saveCustomCategories(arr) {
+        const data = await loadAllData();
+        data.customCategories = arr;
+        await saveAllData(data);
+      }
+
+      async function loadRemovedDefaults() {
+        const data = await loadAllData();
+        return data.removedDefaults || [];
+      }
+
+      async function saveRemovedDefaults(arr) {
+        const data = await loadAllData();
+        data.removedDefaults = arr;
+        await saveAllData(data);
+      }
+
       const grid = document.getElementById("grid");
       const searchInput = document.getElementById("search");
       const resultCount = document.getElementById("resultCount");
@@ -1086,41 +1171,17 @@
       }
       applyTheme(localStorage.getItem(STORAGE_THEME) || "tiktok");
 
-      function loadCustomLinks() {
-        try {
-          return JSON.parse(localStorage.getItem(STORAGE_LINKS)) || {};
-        } catch (e) {
-          return {};
-        }
-      }
-
-      function saveCustomLinks(obj) {
-        localStorage.setItem(STORAGE_LINKS, JSON.stringify(obj));
-      }
-
-      function loadCustomCategories() {
-        try {
-          return JSON.parse(localStorage.getItem(STORAGE_CATEGORIES)) || [];
-        } catch (e) {
-          return [];
-        }
-      }
-
-      function saveCustomCategories(arr) {
-        localStorage.setItem(STORAGE_CATEGORIES, JSON.stringify(arr));
-      }
-
       function isDefaultCategory(name) {
         return Object.prototype.hasOwnProperty.call(defaultData, name);
       }
 
-      function isCustomCategory(name) {
-        return loadCustomCategories().some(c => c.name === name);
+      async function isCustomCategory(name) {
+        return (await loadCustomCategories()).some(c => c.name === name);
       }
 
-      function mergeData() {
-        const customLinks = loadCustomLinks();
-        const customCategories = loadCustomCategories();
+      async function mergeData() {
+        const customLinks = await loadCustomLinks();
+        const customCategories = await loadCustomCategories();
         const merged = {};
         for (const [cat, meta] of Object.entries(defaultData)) {
           merged[cat] = {
@@ -1152,64 +1213,64 @@
         return url;
       }
 
-      function removeLink(category, url) {
+      async function removeLink(category, url) {
         if (isDefaultCategory(category)) {
-          const customLinks = loadCustomLinks();
+          const customLinks = await loadCustomLinks();
           if (customLinks[category]) {
             customLinks[category] = customLinks[category].filter(item => item.url !== url);
             if (customLinks[category].length === 0) delete customLinks[category];
-            saveCustomLinks(customLinks);
+            await saveCustomLinks(customLinks);
           }
-          let removed = JSON.parse(localStorage.getItem(STORAGE_REMOVED) || "[]");
+          let removed = await loadRemovedDefaults();
           if (!removed.includes(url)) removed.push(url);
-          localStorage.setItem(STORAGE_REMOVED, JSON.stringify(removed));
+          await saveRemovedDefaults(removed);
         } else {
-          const cats = loadCustomCategories();
+          const cats = await loadCustomCategories();
           const cat = cats.find(c => c.name === category);
           if (cat) {
             cat.links = cat.links.filter(l => l.url !== url);
-            saveCustomCategories(cats);
+            await saveCustomCategories(cats);
           }
         }
-        render();
+        await render();
       }
 
-      function addLink(category, name, url) {
+      async function addLink(category, name, url) {
         if (isDefaultCategory(category)) {
-          const customLinks = loadCustomLinks();
+          const customLinks = await loadCustomLinks();
           if (!customLinks[category]) customLinks[category] = [];
           if (!customLinks[category].some(item => item.url === url)) {
             customLinks[category].push({ name, url });
-            saveCustomLinks(customLinks);
+            await saveCustomLinks(customLinks);
           }
         } else {
-          const cats = loadCustomCategories();
+          const cats = await loadCustomCategories();
           const cat = cats.find(c => c.name === category);
           if (cat) {
             if (!cat.links.some(l => l.url === url)) {
               cat.links.push({ name, url });
-              saveCustomCategories(cats);
+              await saveCustomCategories(cats);
             }
           }
         }
-        render();
+        await render();
       }
 
-      function addCategory(name, firstName, firstUrl) {
-        const cats = loadCustomCategories();
+      async function addCategory(name, firstName, firstUrl) {
+        const cats = await loadCustomCategories();
         cats.push({
           name,
           icon: defaultCategoryIcon,
           links: [{ name: firstName, url: firstUrl }]
         });
-        saveCustomCategories(cats);
-        render();
+        await saveCustomCategories(cats);
+        await render();
       }
 
-      function deleteCategory(name) {
-        const cats = loadCustomCategories().filter(c => c.name !== name);
-        saveCustomCategories(cats);
-        render();
+      async function deleteCategory(name) {
+        const cats = (await loadCustomCategories()).filter(c => c.name !== name);
+        await saveCustomCategories(cats);
+        await render();
       }
 
       function normalize(text) {
@@ -1228,11 +1289,11 @@
         `).join("");
         modalBody.innerHTML = `<form id="modalForm">${inputsHtml}</form>`;
         const form = document.getElementById("modalForm");
-        form.addEventListener("submit", (e) => {
+        form.addEventListener("submit", async (e) => {
           e.preventDefault();
           const values = {};
           fields.forEach(f => { values[f.name] = (form.elements[f.name].value || "").trim(); });
-          if (onSubmit(values)) {
+          if (await onSubmit(values)) {
             closeModal();
           }
         });
@@ -1257,23 +1318,23 @@
           { name: "categoryName", label: "类别名称", placeholder: "例如：设计资源", required: true },
           { name: "linkName", label: "首个链接名称", placeholder: "名称", required: true },
           { name: "url", label: "首个链接网址", placeholder: "https://", required: true }
-        ], (vals) => {
+        ], async (vals) => {
           const cat = vals.categoryName.trim();
           if (!cat) return false;
-          if (isDefaultCategory(cat) || isCustomCategory(cat)) {
+          if (isDefaultCategory(cat) || (await isCustomCategory(cat))) {
             alert("该类别名称已存在，请使用其他名称。");
             return false;
           }
           const url = normalizeUrl(vals.url);
           if (!url) return false;
-          addCategory(cat, vals.linkName, url);
+          await addCategory(cat, vals.linkName, url);
           return true;
         });
       }
 
-      function render() {
-        const data = mergeData();
-        const removed = JSON.parse(localStorage.getItem(STORAGE_REMOVED) || "[]");
+      async function render() {
+        const data = await mergeData();
+        const removed = await loadRemovedDefaults();
         grid.innerHTML = "";
 
         for (const [category, meta] of Object.entries(data)) {
@@ -1408,7 +1469,7 @@
       }
 
       searchInput.addEventListener("input", filter);
-      render();
+      await render();
     })();
   </script>
 

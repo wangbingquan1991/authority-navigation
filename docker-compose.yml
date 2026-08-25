@@ -1,0 +1,9 @@
+services:
+  authority-navigation:
+    build: .
+    container_name: authority-navigation
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./data:/app/data
+    restart: unless-stopped
