@@ -1,0 +1,78 @@
+{
+  "data": [
+    {
+      "id": "page-index",
+      "title": "权威导航首页（支持自定义类别、链接与主题切换）",
+      "type": "page",
+      "version": 4,
+      "createdAt": 1787624323000,
+      "updatedAt": 1787628452338,
+      "devMetadata": {
+        "htmlSrc": "pages/index.html",
+        "interactions": []
+      },
+      "canvasData": {
+        "x": 0,
+        "y": 0,
+        "group": 0
+      }
+    },
+    {
+      "id": "image-001",
+      "title": "抖音暗色主题预览",
+      "type": "image",
+      "version": 1,
+      "createdAt": 1787628500000,
+      "updatedAt": 1787628500000,
+      "devMetadata": {
+        "imageSrc": "assets/theme-tiktok.png"
+      },
+      "canvasData": {
+        "x": 0,
+        "y": 1200
+      }
+    },
+    {
+      "id": "image-002",
+      "title": "Claude 浅色主题预览",
+      "type": "image",
+      "version": 1,
+      "createdAt": 1787628500000,
+      "updatedAt": 1787628500000,
+      "devMetadata": {
+        "imageSrc": "assets/theme-claude-light.png"
+      },
+      "canvasData": {
+        "x": 400,
+        "y": 1200
+      }
+    },
+    {
+      "id": "image-003",
+      "title": "Claude 深色主题预览",
+      "type": "image",
+      "version": 1,
+      "createdAt": 1787628500000,
+      "updatedAt": 1787628500000,
+      "devMetadata": {
+        "imageSrc": "assets/theme-claude-dark.png"
+      },
+      "canvasData": {
+        "x": 800,
+        "y": 1200
+      }
+    }
+  ],
+  "config": {
+    "autoLayout": true,
+    "deviceType": "desktop",
+    "designLibrary": {
+      "name": "Claude",
+      "id": "dl_builtin_claude",
+      "version": 0,
+      "scope": "builtin",
+      "path": "/Users/acheron/.trae-cn/design_libraries/Claude",
+      "versionSource": "builtin"
+    }
+  }
+}

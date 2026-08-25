@@ -1,0 +1,19 @@
+{
+  "resolvedLane": "library_bound",
+  "designSource": {
+    "operatingMode": "library-bound",
+    "libraryIdentity": {
+      "name": "Claude",
+      "id": "dl_builtin_claude",
+      "version": 0,
+      "scope": "builtin",
+      "path": "/Users/acheron/.trae-cn/design_libraries/Claude",
+      "versionSource": "builtin"
+    }
+  },
+  "skillProvenance": {
+    "name": "solo-design",
+    "version": "2026.08.06.19.15.08",
+    "version_source": "skill-release-manifest.json"
+  }
+}
