@@ -89,11 +89,11 @@
     ]
   },
   "projectFileHashes": {
-    "project.design": "ba1284630b7a5a80dd0b2d62b23738c662d596fa18e4150789f45ce9009d5b81",
+    "project.design": "4d7668d68354ee247e31f89f623e7a3958609f2694661e93548f036a6b04935c",
     "colors_and_type.css": "b1679701ee5194ccb5effd716cee9c904b0385508683e90e23acc9305e1ea194",
     "runtime-orchestration-summary.json": "d5945736d91c8041fe29cb66b5b1044fb90ae6005bf9a092d6d668f81071a6d8",
     "pages/index.html": "6d7db748f06729ef18665807be1a59cfb16d6e215e63e1719992ca2f2d89cc4f",
-    "assets/logo.jpg": "bd86669231ba5c31514a3ee38dc458c11be478223a2002c59463e2d8c28dafd0",
+    "assets/logo.jpg": "8d77b6e566435eb546aeeab7ef98de0b5b118e78a29b0054016d8ed61fedfd3a",
     "assets/theme-claude-dark.png": "c47cfefd194bc73d14b235294390200a28d4501e709479a148ff0f09540593b9",
     "assets/theme-claude-light.png": "c26f509d3a486649f28f6997d7f5a7d3d745a30677a011fb3d91b55be1fe0d6e",
     "assets/theme-tiktok.png": "74223c13f630dcceae45248649e0dde335fc528bded332b3557106f0585793b2"
@@ -101,5 +101,5 @@
   "designDir": "/Users/acheron/TraeWork/6a8cfb13f8e3118324bd1cdc/authority-navigation",
   "expectedPages": null,
   "requireInteractions": null,
-  "checkedAt": "2026-08-25T08:54:44.244Z"
+  "checkedAt": "2026-08-25T09:09:18.843Z"
 }
