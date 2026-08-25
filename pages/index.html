@@ -1,18 +1,9 @@
 <!DOCTYPE html>
 <html lang="zh-CN" class="dark" data-theme="tiktok"><head>
-    <script>
-      (function () {
-        const stored = localStorage.getItem('nav-theme');
-        if (stored === 'tiktok' || stored === 'claude-light' || stored === 'claude-dark') {
-          document.documentElement.setAttribute('data-theme', stored);
-        }
-      })();
-    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>权威导航 · TikTok Dark</title>
     <style id="theme-vars">
-@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=Newsreader:ital,opsz,wght@0,18..72,300;0,18..72,400;0,18..72,500;1,18..72,400&family=Geist+Mono:wght@400;500&display=swap');
 /* @dark-only */
 /* TikTok color and type tokens */
 /* Source: structured-spec */
@@ -58,7 +49,7 @@
   --tk-black: #161823;
   --tk-white: #FFFFFF; */
 
-  /* tk-red scale */
+  /* tk-red scale · 默认 --tk-red-500 = #FE2C55 */
   --tk-red-100: #FFE9EE;
   --tk-red-200: #FFC9D5;
   --tk-red-300: #FFA0B5;
@@ -70,7 +61,7 @@
   --tk-red-900: #6B061D;
   --tk-red-1000: #3D0210;
 
-  /* tk-cyan scale */
+  /* tk-cyan scale · 默认 --tk-cyan-400 = #25F4EE */
   --tk-cyan-100: #E3FEFD;
   --tk-cyan-200: #BAFCFA;
   --tk-cyan-300: #7CF8F4;
@@ -82,7 +73,7 @@
   --tk-cyan-900: #054745;
   --tk-cyan-1000: #022322;
 
-  /* tk-black scale */
+  /* tk-black scale · 默认 --tk-black-1000 = #161823 */
   --tk-black-100: #EBEBED;
   --tk-black-200: #D2D3D7;
   --tk-black-300: #ABACB4;
@@ -94,7 +85,7 @@
   --tk-black-900: #1B1D29;
   --tk-black-1000: #161823;
 
-  /* tk-white scale */
+  /* tk-white scale · 默认 --tk-white-100 = #FFFFFF */
   --tk-white-100: #FFFFFF;
   --tk-white-200: #FAFAFB;
   --tk-white-300: #F2F2F4;
@@ -106,27 +97,28 @@
   --tk-white-900: #5E5E66;
   --tk-white-1000: #36363B;
 
-  /* Brand */
+  /* Brand · 品牌强调色（红主青辅，小面积高识别） */
   --primary: #FE2C55;
   --secondary: #25F4EE;
 
-  /* Surface */
+  /* Surface · 表面层级 */
   --background: #0B0B10;
   --card: #161823;
   --card-elevated: #1C1E2A;
   --video-bg: #16161C;
   --muted: #1C1E2A;
 
-  /* Content */
+  /* Content · 前景内容（on-media/on-accent 为深底或强调底上的固定前景） */
   --foreground: #F5F5F7;
   --muted-foreground: #AEB2C0;
   --on-media: #FFFFFF;
   --on-accent: #161823;
 
-  /* Border */
+  /* Border · 分隔线 */
   --border: #3A3D52;
 
-  /* Radius */
+  /* Radius · 克制、偏利落的圆角语言 */
+  /* shell 仅用于 UI Kit 展示外壳；大多数真实产品容器以 sm / md / lg 为主 */
   --radius-xs: 2px;
   --radius-sm: 6px;
   --radius-md: 8px;
@@ -135,12 +127,12 @@
   --radius-shell: 32px;
   --radius-pill: 999px;
 
-  /* Success */
+  /* Success · 成功状态 */
   --success: #10B981;
   --success-bg: #0E2A22;
   --success-fg: #34D399;
 
-  /* Error */
+  /* Error · 错误状态 */
   --destructive: #E5484D;
   --error-bg: #2E1416;
   --error-fg: #FF6485;
@@ -171,309 +163,8 @@
   --kicker-text-transform: uppercase;
 }
 
-:root,
-[data-theme="tiktok"] {
-  --tk-bg: #0B0B10;
-  --tk-surface: #161823;
-  --tk-surface-hover: #1F2330;
-  --tk-elevated: #23263A;
-  --tk-text: #F5F5F7;
-  --tk-text-secondary: #8A8B99;
-  --tk-text-tertiary: #5A5B6A;
-  --tk-primary: #FE2C55;
-  --tk-primary-hover: #FF4D6D;
-  --tk-secondary: #25F4EE;
-  --tk-secondary-subtle: rgba(37, 244, 238, 0.12);
-  --tk-border: rgba(245, 245, 247, 0.08);
-  --tk-glow-primary: rgba(254, 44, 85, 0.35);
-  --tk-glow-secondary: rgba(37, 244, 238, 0.25);
-  --tk-shadow: rgba(0, 0, 0, 0.35);
-  --tk-danger-bg: rgba(229, 72, 77, 0.15);
-  --tk-secondary-hover: rgba(37, 244, 238, 0.22);
-  --tk-font-sans: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --tk-modal-overlay: rgba(0, 0, 0, 0.6);
-  --tk-modal-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-
-  --background: #0B0B10;
-  --foreground: #F5F5F7;
-  --card: #161823;
-  --muted: #1C1E2A;
-  --muted-foreground: #AEB2C0;
-  --border: #3A3D52;
-  --primary: #FE2C55;
-  --secondary: #25F4EE;
-  --destructive: #E5484D;
-}
-
-[data-theme="claude-light"] {
-  --tk-bg: #faf9f5;
-  --tk-surface: #f5f4ef;
-  --tk-surface-hover: #ede9de;
-  --tk-elevated: #e3e0d4;
-  --tk-text: #3d3929;
-  --tk-text-secondary: #6e6d68;
-  --tk-text-tertiary: #9b988c;
-  --tk-primary: #c96442;
-  --tk-primary-hover: #b0562f;
-  --tk-secondary: #e9e6dc;
-  --tk-secondary-subtle: rgba(201, 100, 66, 0.10);
-  --tk-border: rgba(61, 57, 41, 0.12);
-  --tk-glow-primary: rgba(201, 100, 66, 0.20);
-  --tk-glow-secondary: rgba(233, 230, 220, 0.80);
-  --tk-shadow: rgba(61, 57, 41, 0.10);
-  --tk-danger-bg: rgba(214, 69, 69, 0.12);
-  --tk-secondary-hover: rgba(201, 100, 66, 0.18);
-  --tk-font-sans: Poppins, ui-sans-serif, system-ui, sans-serif;
-  --tk-modal-overlay: rgba(61, 57, 41, 0.45);
-  --tk-modal-shadow: 0 20px 60px rgba(61, 57, 41, 0.18);
-
-  --background: #faf9f5;
-  --foreground: #3d3929;
-  --card: #f5f4ef;
-  --muted: #ede9de;
-  --muted-foreground: #6e6d68;
-  --border: rgba(61, 57, 41, 0.12);
-  --primary: #c96442;
-  --secondary: #e9e6dc;
-  --destructive: #d64545;
-}
-
-[data-theme="claude-dark"] {
-  --tk-bg: #262624;
-  --tk-surface: #2c2c2b;
-  --tk-surface-hover: #30302e;
-  --tk-elevated: #3e3e38;
-  --tk-text: #f1f1ef;
-  --tk-text-secondary: #b7b5a9;
-  --tk-text-tertiary: #6e6d68;
-  --tk-primary: #d97757;
-  --tk-primary-hover: #e08d6f;
-  --tk-secondary: #3e3e38;
-  --tk-secondary-subtle: rgba(217, 119, 87, 0.12);
-  --tk-border: rgba(241, 241, 239, 0.10);
-  --tk-glow-primary: rgba(217, 119, 87, 0.25);
-  --tk-glow-secondary: rgba(74, 74, 67, 0.50);
-  --tk-shadow: rgba(0, 0, 0, 0.45);
-  --tk-danger-bg: rgba(239, 68, 68, 0.15);
-  --tk-secondary-hover: rgba(217, 119, 87, 0.20);
-  --tk-font-sans: Poppins, ui-sans-serif, system-ui, sans-serif;
-  --tk-modal-overlay: rgba(0, 0, 0, 0.65);
-  --tk-modal-shadow: 0 20px 60px rgba(0, 0, 0, 0.55);
-
-  --background: #262624;
-  --foreground: #f1f1ef;
-  --card: #2c2c2b;
-  --muted: #1b1b19;
-  --muted-foreground: #b7b5a9;
-  --border: rgba(241, 241, 239, 0.10);
-  --primary: #d97757;
-  --secondary: #3e3e38;
-  --destructive: #ef4444;
-}
-
     </style>
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script><style>/*! tailwindcss v4.3.1 | MIT License | https://tailwindcss.com */
-@layer theme, base, components, utilities;
-@layer theme {
-  :root, :host {
-    --font-sans: ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
-    'Noto Color Emoji';
-    --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New',
-    monospace;
-    --radius-sm: var(--radius-sm);
-    --radius-md: var(--radius-md);
-    --radius-lg: var(--radius-lg);
-    --radius-xl: var(--radius-xl);
-    --default-font-family: var(--font-sans);
-    --default-mono-font-family: var(--font-mono);
-  }
-}
-@layer base {
-  *, ::after, ::before, ::backdrop, ::file-selector-button {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    border: 0 solid;
-  }
-  html, :host {
-    line-height: 1.5;
-    -webkit-text-size-adjust: 100%;
-    tab-size: 4;
-    font-family: var(--default-font-family, ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji');
-    font-feature-settings: var(--default-font-feature-settings, normal);
-    font-variation-settings: var(--default-font-variation-settings, normal);
-    -webkit-tap-highlight-color: transparent;
-  }
-  hr {
-    height: 0;
-    color: inherit;
-    border-top-width: 1px;
-  }
-  abbr:where([title]) {
-    -webkit-text-decoration: underline dotted;
-    text-decoration: underline dotted;
-  }
-  h1, h2, h3, h4, h5, h6 {
-    font-size: inherit;
-    font-weight: inherit;
-  }
-  a {
-    color: inherit;
-    -webkit-text-decoration: inherit;
-    text-decoration: inherit;
-  }
-  b, strong {
-    font-weight: bolder;
-  }
-  code, kbd, samp, pre {
-    font-family: var(--default-mono-font-family, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace);
-    font-feature-settings: var(--default-mono-font-feature-settings, normal);
-    font-variation-settings: var(--default-mono-font-variation-settings, normal);
-    font-size: 1em;
-  }
-  small {
-    font-size: 80%;
-  }
-  sub, sup {
-    font-size: 75%;
-    line-height: 0;
-    position: relative;
-    vertical-align: baseline;
-  }
-  sub {
-    bottom: -0.25em;
-  }
-  sup {
-    top: -0.5em;
-  }
-  table {
-    text-indent: 0;
-    border-color: inherit;
-    border-collapse: collapse;
-  }
-  :-moz-focusring {
-    outline: auto;
-  }
-  progress {
-    vertical-align: baseline;
-  }
-  summary {
-    display: list-item;
-  }
-  ol, ul, menu {
-    list-style: none;
-  }
-  img, svg, video, canvas, audio, iframe, embed, object {
-    display: block;
-    vertical-align: middle;
-  }
-  img, video {
-    max-width: 100%;
-    height: auto;
-  }
-  button, input, select, optgroup, textarea, ::file-selector-button {
-    font: inherit;
-    font-feature-settings: inherit;
-    font-variation-settings: inherit;
-    letter-spacing: inherit;
-    color: inherit;
-    border-radius: 0;
-    background-color: transparent;
-    opacity: 1;
-  }
-  :where(select:is([multiple], [size])) optgroup {
-    font-weight: bolder;
-  }
-  :where(select:is([multiple], [size])) optgroup option {
-    padding-inline-start: 20px;
-  }
-  ::file-selector-button {
-    margin-inline-end: 4px;
-  }
-  ::placeholder {
-    opacity: 1;
-  }
-  @supports (not (-webkit-appearance: -apple-pay-button))  or (contain-intrinsic-size: 1px) {
-    ::placeholder {
-      color: currentcolor;
-      @supports (color: color-mix(in lab, red, red)) {
-        color: color-mix(in oklab, currentcolor 50%, transparent);
-      }
-    }
-  }
-  textarea {
-    resize: vertical;
-  }
-  ::-webkit-search-decoration {
-    -webkit-appearance: none;
-  }
-  ::-webkit-date-and-time-value {
-    min-height: 1lh;
-    text-align: inherit;
-  }
-  ::-webkit-datetime-edit {
-    display: inline-flex;
-  }
-  ::-webkit-datetime-edit-fields-wrapper {
-    padding: 0;
-  }
-  ::-webkit-datetime-edit, ::-webkit-datetime-edit-year-field, ::-webkit-datetime-edit-month-field, ::-webkit-datetime-edit-day-field, ::-webkit-datetime-edit-hour-field, ::-webkit-datetime-edit-minute-field, ::-webkit-datetime-edit-second-field, ::-webkit-datetime-edit-millisecond-field, ::-webkit-datetime-edit-meridiem-field {
-    padding-block: 0;
-  }
-  ::-webkit-calendar-picker-indicator {
-    line-height: 1;
-  }
-  :-moz-ui-invalid {
-    box-shadow: none;
-  }
-  button, input:where([type='button'], [type='reset'], [type='submit']), ::file-selector-button {
-    appearance: button;
-  }
-  ::-webkit-inner-spin-button, ::-webkit-outer-spin-button {
-    height: auto;
-  }
-  [hidden]:where(:not([hidden='until-found'])) {
-    display: none !important;
-  }
-}
-@layer utilities {
-  .container {
-    width: 100%;
-    @media (width >= 40rem) {
-      max-width: 40rem;
-    }
-    @media (width >= 48rem) {
-      max-width: 48rem;
-    }
-    @media (width >= 64rem) {
-      max-width: 64rem;
-    }
-    @media (width >= 80rem) {
-      max-width: 80rem;
-    }
-    @media (width >= 96rem) {
-      max-width: 96rem;
-    }
-  }
-  .grid {
-    display: grid;
-  }
-}
-@layer base {
-  body {
-    background: var(--background);
-    color: var(--foreground);
-  }
-  td, th {
-    overflow-wrap: break-word;
-    word-break: break-all;
-    word-break: auto-phrase;
-  }
-  th {
-    white-space: nowrap;
-  }
-}
-</style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script>
     <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
     <style type="text/tailwindcss">
   @theme inline {
@@ -2350,4 +2041,207 @@
     </style>
 
 
+
+    <style>/*! tailwindcss v4.3.1 | MIT License | https://tailwindcss.com */
+@layer theme, base, components, utilities;
+@layer theme {
+  :root, :host {
+    --font-sans: ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
+    'Noto Color Emoji';
+    --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New',
+    monospace;
+    --radius-sm: var(--radius-sm);
+    --radius-md: var(--radius-md);
+    --radius-lg: var(--radius-lg);
+    --radius-xl: var(--radius-xl);
+    --default-font-family: var(--font-sans);
+    --default-mono-font-family: var(--font-mono);
+  }
+}
+@layer base {
+  *, ::after, ::before, ::backdrop, ::file-selector-button {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    border: 0 solid;
+  }
+  html, :host {
+    line-height: 1.5;
+    -webkit-text-size-adjust: 100%;
+    tab-size: 4;
+    font-family: var(--default-font-family, ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji');
+    font-feature-settings: var(--default-font-feature-settings, normal);
+    font-variation-settings: var(--default-font-variation-settings, normal);
+    -webkit-tap-highlight-color: transparent;
+  }
+  hr {
+    height: 0;
+    color: inherit;
+    border-top-width: 1px;
+  }
+  abbr:where([title]) {
+    -webkit-text-decoration: underline dotted;
+    text-decoration: underline dotted;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-size: inherit;
+    font-weight: inherit;
+  }
+  a {
+    color: inherit;
+    -webkit-text-decoration: inherit;
+    text-decoration: inherit;
+  }
+  b, strong {
+    font-weight: bolder;
+  }
+  code, kbd, samp, pre {
+    font-family: var(--default-mono-font-family, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace);
+    font-feature-settings: var(--default-mono-font-feature-settings, normal);
+    font-variation-settings: var(--default-mono-font-variation-settings, normal);
+    font-size: 1em;
+  }
+  small {
+    font-size: 80%;
+  }
+  sub, sup {
+    font-size: 75%;
+    line-height: 0;
+    position: relative;
+    vertical-align: baseline;
+  }
+  sub {
+    bottom: -0.25em;
+  }
+  sup {
+    top: -0.5em;
+  }
+  table {
+    text-indent: 0;
+    border-color: inherit;
+    border-collapse: collapse;
+  }
+  :-moz-focusring {
+    outline: auto;
+  }
+  progress {
+    vertical-align: baseline;
+  }
+  summary {
+    display: list-item;
+  }
+  ol, ul, menu {
+    list-style: none;
+  }
+  img, svg, video, canvas, audio, iframe, embed, object {
+    display: block;
+    vertical-align: middle;
+  }
+  img, video {
+    max-width: 100%;
+    height: auto;
+  }
+  button, input, select, optgroup, textarea, ::file-selector-button {
+    font: inherit;
+    font-feature-settings: inherit;
+    font-variation-settings: inherit;
+    letter-spacing: inherit;
+    color: inherit;
+    border-radius: 0;
+    background-color: transparent;
+    opacity: 1;
+  }
+  :where(select:is([multiple], [size])) optgroup {
+    font-weight: bolder;
+  }
+  :where(select:is([multiple], [size])) optgroup option {
+    padding-inline-start: 20px;
+  }
+  ::file-selector-button {
+    margin-inline-end: 4px;
+  }
+  ::placeholder {
+    opacity: 1;
+  }
+  @supports (not (-webkit-appearance: -apple-pay-button))  or (contain-intrinsic-size: 1px) {
+    ::placeholder {
+      color: currentcolor;
+      @supports (color: color-mix(in lab, red, red)) {
+        color: color-mix(in oklab, currentcolor 50%, transparent);
+      }
+    }
+  }
+  textarea {
+    resize: vertical;
+  }
+  ::-webkit-search-decoration {
+    -webkit-appearance: none;
+  }
+  ::-webkit-date-and-time-value {
+    min-height: 1lh;
+    text-align: inherit;
+  }
+  ::-webkit-datetime-edit {
+    display: inline-flex;
+  }
+  ::-webkit-datetime-edit-fields-wrapper {
+    padding: 0;
+  }
+  ::-webkit-datetime-edit, ::-webkit-datetime-edit-year-field, ::-webkit-datetime-edit-month-field, ::-webkit-datetime-edit-day-field, ::-webkit-datetime-edit-hour-field, ::-webkit-datetime-edit-minute-field, ::-webkit-datetime-edit-second-field, ::-webkit-datetime-edit-millisecond-field, ::-webkit-datetime-edit-meridiem-field {
+    padding-block: 0;
+  }
+  ::-webkit-calendar-picker-indicator {
+    line-height: 1;
+  }
+  :-moz-ui-invalid {
+    box-shadow: none;
+  }
+  button, input:where([type='button'], [type='reset'], [type='submit']), ::file-selector-button {
+    appearance: button;
+  }
+  ::-webkit-inner-spin-button, ::-webkit-outer-spin-button {
+    height: auto;
+  }
+  [hidden]:where(:not([hidden='until-found'])) {
+    display: none !important;
+  }
+}
+@layer utilities {
+  .container {
+    width: 100%;
+    @media (width >= 40rem) {
+      max-width: 40rem;
+    }
+    @media (width >= 48rem) {
+      max-width: 48rem;
+    }
+    @media (width >= 64rem) {
+      max-width: 64rem;
+    }
+    @media (width >= 80rem) {
+      max-width: 80rem;
+    }
+    @media (width >= 96rem) {
+      max-width: 96rem;
+    }
+  }
+  .grid {
+    display: grid;
+  }
+}
+@layer base {
+  body {
+    background: var(--background);
+    color: var(--foreground);
+  }
+  td, th {
+    overflow-wrap: break-word;
+    word-break: break-all;
+    word-break: auto-phrase;
+  }
+  th {
+    white-space: nowrap;
+  }
+}
+</style>
 </body></html>

@@ -16,23 +16,25 @@
   },
   "operatingMode": "library-bound",
   "renderBlockingErrorCount": 0,
-  "softWarningCount": 3,
+  "softWarningCount": 4,
   "renderBlockingErrors": [],
   "errorSignatures": [],
   "softWarnings": [
     "[library-bound-css] index.html: Library-bound mode discourages custom CSS class definitions in <style> blocks (.container, .brand, .brand-mark, .subtitle, .search-wrap, .search-icon, .result-count, .grid). Prefer Tailwind utilities plus Library brand CSS variables/component JSON instead.",
     "[library-bound-css] index.html: Library-bound mode discourages custom CSS class definitions in <style> blocks (.add-link-btn, .delete-category-btn, .delete-btn, .add-category-card, .add-category-icon, .modal-overlay, .modal, .modal-header). Prefer Tailwind utilities plus Library brand CSS variables/component JSON instead.",
-    "[library-bound-css] index.html: Library-bound mode discourages custom CSS class definitions in <style> blocks (.theme-switcher, .active). Prefer Tailwind utilities plus Library brand CSS variables/component JSON instead."
+    "[library-bound-css] index.html: Library-bound mode discourages custom CSS class definitions in <style> blocks (.theme-switcher, .active). Prefer Tailwind utilities plus Library brand CSS variables/component JSON instead.",
+    "[library-bound-css] index.html: Library-bound mode discourages custom CSS class definitions in <style> blocks (.container, .grid). Prefer Tailwind utilities plus Library brand CSS variables/component JSON instead."
   ],
   "repairPlanHints": [],
   "repairActionTable": [],
   "errorCount": 0,
-  "warningCount": 3,
+  "warningCount": 4,
   "errors": [],
   "warnings": [
     "[library-bound-css] index.html: Library-bound mode discourages custom CSS class definitions in <style> blocks (.container, .brand, .brand-mark, .subtitle, .search-wrap, .search-icon, .result-count, .grid). Prefer Tailwind utilities plus Library brand CSS variables/component JSON instead.",
     "[library-bound-css] index.html: Library-bound mode discourages custom CSS class definitions in <style> blocks (.add-link-btn, .delete-category-btn, .delete-btn, .add-category-card, .add-category-icon, .modal-overlay, .modal, .modal-header). Prefer Tailwind utilities plus Library brand CSS variables/component JSON instead.",
-    "[library-bound-css] index.html: Library-bound mode discourages custom CSS class definitions in <style> blocks (.theme-switcher, .active). Prefer Tailwind utilities plus Library brand CSS variables/component JSON instead."
+    "[library-bound-css] index.html: Library-bound mode discourages custom CSS class definitions in <style> blocks (.theme-switcher, .active). Prefer Tailwind utilities plus Library brand CSS variables/component JSON instead.",
+    "[library-bound-css] index.html: Library-bound mode discourages custom CSS class definitions in <style> blocks (.container, .grid). Prefer Tailwind utilities plus Library brand CSS variables/component JSON instead."
   ],
   "validationRunDisciplineStatus": {
     "declared": false,
@@ -49,7 +51,7 @@
   "terminalState": null,
   "nextCheck": {
     "type": "finish-readiness",
-    "command": "node '/Users/acheron/.trae-cn/builtin/design/default/skills/solo-design/shared-runtime/deterministic-tooling/validate-finish-readiness.mjs' '/Users/acheron/TraeWork/6a8cfb13f8e3118324bd1cdc/tiktok-nav' --check=all",
+    "command": "node '/Users/acheron/.trae-cn/builtin/design/default/skills/solo-design/shared-runtime/deterministic-tooling/validate-finish-readiness.mjs' '/Users/acheron/TraeWork/6a8cfb13f8e3118324bd1cdc/authority-navigation' --check=all",
     "fullValidationAllowed": false,
     "reason": "workspace validation passed; run complete finish readiness before final delivery"
   },
@@ -70,12 +72,12 @@
       "read_status": "ok"
     },
     "renderBlockingErrorCount": 0,
-    "softWarningCount": 3,
+    "softWarningCount": 4,
     "renderBlockingErrors": [],
     "repairActionTable": [],
     "nextCheck": {
       "type": "finish-readiness",
-      "command": "node '/Users/acheron/.trae-cn/builtin/design/default/skills/solo-design/shared-runtime/deterministic-tooling/validate-finish-readiness.mjs' '/Users/acheron/TraeWork/6a8cfb13f8e3118324bd1cdc/tiktok-nav' --check=all",
+      "command": "node '/Users/acheron/.trae-cn/builtin/design/default/skills/solo-design/shared-runtime/deterministic-tooling/validate-finish-readiness.mjs' '/Users/acheron/TraeWork/6a8cfb13f8e3118324bd1cdc/authority-navigation' --check=all",
       "fullValidationAllowed": false,
       "reason": "workspace validation passed; run complete finish readiness before final delivery"
     },
@@ -90,13 +92,13 @@
     "project.design": "7cfb9cb7fbf2508f5ff9237e4cb179628a394450787fd489cf99bc810465bc43",
     "colors_and_type.css": "b1679701ee5194ccb5effd716cee9c904b0385508683e90e23acc9305e1ea194",
     "runtime-orchestration-summary.json": "d5945736d91c8041fe29cb66b5b1044fb90ae6005bf9a092d6d668f81071a6d8",
-    "pages/index.html": "47ad0f2975782f39059fb0d68b4c318540b34e8f9c9f5f33840436391be8b57b",
+    "pages/index.html": "0c146dd097235badce7f28300c6b37f95a0fdd1ea4a1562b8fb841ea43161570",
     "assets/theme-claude-dark.png": "c47cfefd194bc73d14b235294390200a28d4501e709479a148ff0f09540593b9",
     "assets/theme-claude-light.png": "c26f509d3a486649f28f6997d7f5a7d3d745a30677a011fb3d91b55be1fe0d6e",
     "assets/theme-tiktok.png": "74223c13f630dcceae45248649e0dde335fc528bded332b3557106f0585793b2"
   },
-  "designDir": "/Users/acheron/TraeWork/6a8cfb13f8e3118324bd1cdc/tiktok-nav",
+  "designDir": "/Users/acheron/TraeWork/6a8cfb13f8e3118324bd1cdc/authority-navigation",
   "expectedPages": null,
   "requireInteractions": null,
-  "checkedAt": "2026-08-25T03:52:09.550Z"
+  "checkedAt": "2026-08-25T04:08:40.200Z"
 }
