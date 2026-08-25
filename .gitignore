@@ -1,0 +1,50 @@
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+
+# Node.js
+node_modules/
+yarn.lock
+pnpm-lock.yaml
+
+# Runtime data
+data/
+certbot/
+
+# Generated nginx config (from template)
+nginx/authority-navigation.conf
+
+# Test artifacts
+coverage/
+tests/test-data/
+tests/*.jpg
+tests/*.png
+
+# Design tooling generated artifacts（内含本机绝对路径，不提交）
+validation-report.json
+runtime-orchestration-summary.json
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Cryptographic keys — never commit private material
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+chrome-extension.pem
+
+# Binary extension artifacts — repackable from source
+*.crx

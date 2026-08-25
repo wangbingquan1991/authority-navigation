@@ -1,0 +1,46 @@
+{
+  "manifest_version": 3,
+  "name": "Authority Navigation 一键收藏",
+  "version": "1.0.0",
+  "key": "MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDYx5Z73wd+YJWlWePxRX5hAMAnYg+ETLogWd6owbITcESKXGLezPnZFfDhISVsXAXEpFaj7bRCRVyncuyo/Lo2t2gUQIUVwS6LRff2MqAmiNXhGoFXyaAiDkHhj+l85us3CK5zfelBAWYlmLSnGLYpruNh6qFIXQuixSfxyP2jpI0J977db4Xo1DIA5LcK2HYbVV6opI45IqdLxha32vG0Lf3Ds1rsBH/+yNn3R/tYb7t0hO+Qv1wcpQRYYnc6WPCm18Wn4JGrp9gdU/ELK+VmP80eHp1WcR1AMQXVrFsvDHQwL2vEnOZIlsag6kxVqTA38bpxL7Rkp76hTw3CZV4NAgMBAAECggEAAi2bNvpqNlxdFJC/KBT1LJ9Xzu1+z2r/8cRFZvevRN+7aJJ+EdQIbKR6S6DMIfcYvb2S+0mvpnzQ7gPLGfWUH2mfW5i8XZgX0iFtWOVwU4LLd1wPUaT+fWkcQ1pxU6Z0VZS6QAHTXqpXbuhGZGlspyWRNlIntbTtoYCOorDMz6CaZdQ3PzbMYhcy7mfENoJ1fC2eQ2bA+RsqRGfPBrd1aZOqXdTXN4qMD6MH/++FsLQvMUBFCmgF4LbYV4N8RprQRy1xTvRpSoPZSu9OPFUabdrrBZh+MTzRWOPBf+xsRDEmohRZoHzVQiIJYRcfl1uCT7R5Lt65ZxmjubUKpUMENwKBgQD6/MzbLA5sk8BYy0Dx2pUp+o61sIDBTk9nDUAbG22uW3E8ZouzjR7EJCCi7n7xS8QfZ+6uLydhdNncdhOQ+/4Ba6w450PhYupxyXW4Lyfh1R01BETyeLD0CFYSRoOdwbIts/VqtVbandEUV7tAtMshdPSLZn8oeCPp7YsBbz969wKBgQDdG+V3QWXrsid480dkqwuDFaf4dqzjU1k6lGkL7eDepLXHldVpaLVLCqIi1OCCrByV2qVNwNDShU0szGkHQNjwZqAvGb9jJLmWOsExa1ZUchfzdG0XPcVgV3/UY3QWBTJNATCX9miMv9haLo1xr5n1aK95jPYHbJiAygQOihhKGwKBgQDvzgSJUHHDqfP4otK9giRNBJm/3RFYINNa2d0rSSylj7cEh9Hozufbbc1E/2yIbeTIQQxanrEYu4XAz4xoVWxevRrDD6vauCDacSspvNx1OKL8WcTqiwg/UYuzUG5Gl5//bNcKipKetHTk4+IEs/j1UYKpglfyOb/OrWjICRv1BwKBgCCGAfLQw9Uvl27LGi1Mm5zkipiZnESz9eQQAIOosfMN908sUv/2TvSC0+abuYp/FpVUXAxb2FufEAMO7kQK3d4+ukEzYFuNA199tP039LLnNW6yKXnJtEa/mCX9mw3CJev9yNARhr9tWL2rK1MVqWfXxjfy7B2bc7M+A+q/lWMRAoGBAM7pQ4+JGQFQNcrT8choz/wIF0C79Lm8SkuHuh8MyGZkMC3e50JSNLwfO4hkgRbUdxPA3ek2RnEBUdWkEoM3Ec5kPAfF3iJZpGICAkDk+HoOD+O++ozmBkxSZelkgg5LAm9l+qGjUY7e0l+1WJ2ywsDs8tAwQ+AsXISL1b4uglL4",
+  "description": "一键将当前浏览的网页添加到 Authority Navigation 导航页面",
+  "permissions": [
+    "storage",
+    "tabs",
+    "scripting"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "run_at": "document_idle",
+      "all_frames": false
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "添加到导航",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}

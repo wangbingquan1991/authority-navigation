@@ -1,0 +1,12 @@
+{
+  "scripts": [
+    {
+      "id": "tailwind",
+      "url": "https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"
+    },
+    {
+      "id": "lucide",
+      "url": "https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"
+    }
+  ]
+}

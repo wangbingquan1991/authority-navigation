@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>添加到导航</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header class="header">
+      <h1>添加到导航</h1>
+      <button id="settingsBtn" class="icon-btn" title="设置">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+        </svg>
+      </button>
+    </header>
+
+    <!-- Settings Panel (hidden by default) -->
+    <section id="settingsPanel" class="settings-panel hidden">
+      <div class="form-group">
+        <label for="serverUrl">导航页面地址</label>
+        <input type="url" id="serverUrl" placeholder="https://your-nav-site.com" />
+        <small class="hint">填写部署 Authority Navigation 的服务器根地址</small>
+      </div>
+      <div class="form-group">
+        <label for="adminToken">管理员口令</label>
+        <input type="password" id="adminToken" placeholder="ADMIN_TOKEN" />
+        <small class="hint">用于写入 API 的 x-admin-token 认证</small>
+      </div>
+      <div class="form-actions">
+        <button id="testConnectionBtn" class="btn btn-secondary">测试连接</button>
+        <button id="saveSettingsBtn" class="btn btn-primary">保存</button>
+      </div>
+      <div id="connectionStatus" class="connection-status"></div>
+    </section>
+
+    <!-- Main Form -->
+    <section id="mainForm" class="main-form">
+      <!-- Page Info -->
+      <div class="page-info">
+        <div class="form-group">
+          <label for="pageTitle">名称</label>
+          <input type="text" id="pageTitle" placeholder="页面标题" />
+        </div>
+        <div class="form-group">
+          <label for="pageUrl">网址</label>
+          <input type="text" id="pageUrl" placeholder="https://" readonly />
+        </div>
+      </div>
+
+      <!-- Category Selection -->
+      <div class="form-group">
+        <label for="categorySelect">目标分类</label>
+        <div class="category-row">
+          <select id="categorySelect">
+            <option value="">加载中...</option>
+          </select>
+          <button id="newCategoryBtn" class="btn btn-link" title="新建分类">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"/>
+              <line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- New Category Panel -->
+      <div id="newCategoryPanel" class="new-category-panel hidden">
+        <div class="form-group">
+          <label for="newCategoryName">新分类名称</label>
+          <input type="text" id="newCategoryName" placeholder="例如：技术博客" />
+        </div>
+      </div>
+
+      <!-- Submit -->
+      <button id="addBtn" class="btn btn-primary btn-large">
+        <span id="addBtnText">添加到导航</span>
+      </button>
+
+      <!-- Status -->
+      <div id="status" class="status hidden"></div>
+    </section>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
