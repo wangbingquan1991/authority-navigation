@@ -27,7 +27,7 @@ npm start
 
 访问 http://localhost:3000
 
-### Docker Compose 部署
+### Docker Compose 部署（推荐）
 
 ```bash
 docker-compose up -d
@@ -35,7 +35,16 @@ docker-compose up -d
 
 访问 http://localhost:3000
 
-自定义数据会持久化到 `./data/custom-data.json` 卷中。
+**数据持久化说明：**
+
+- 所有用户自定义内容（分类、链接、删除项、类别优先级顺序）都会保存在 `./data/custom-data.json`
+- `docker-compose.yml` 已将 `./data` 挂载到容器的 `/app/data`，因此以下操作不会丢失数据：
+  - 容器重启
+  - 镜像重新构建
+  - 升级到新版本
+- `data/` 目录已加入 `.gitignore` 与 `.dockerignore`，不会进入镜像或 Git 仓库
+
+> 注意：如果直接用 `docker run` 启动而不挂载卷，容器销毁后数据会丢失。请务必使用 Docker Compose 或手动挂载 `-v $(pwd)/data:/app/data`。
 
 ## API 接口
 

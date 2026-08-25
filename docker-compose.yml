@@ -5,5 +5,10 @@ services:
     ports:
       - "3000:3000"
     volumes:
+      # Mount a host directory so categories, links, priorities, and theme settings
+      # survive container restarts and image rebuilds.
       - ./data:/app/data
+    environment:
+      - NODE_ENV=production
+      - DATA_DIR=/app/data
     restart: unless-stopped
