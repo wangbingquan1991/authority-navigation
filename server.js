@@ -20,7 +20,7 @@ function ensureDataDir() {
 function readData() {
   ensureDataDir();
   if (!fs.existsSync(DATA_FILE)) {
-    return { customLinks: {}, customCategories: [], removedDefaults: [] };
+    return { customLinks: {}, customCategories: [], removedDefaults: [], categoryOrder: [] };
   }
   try {
     const raw = fs.readFileSync(DATA_FILE, "utf-8");
@@ -28,11 +28,12 @@ function readData() {
     return {
       customLinks: parsed.customLinks || {},
       customCategories: parsed.customCategories || [],
-      removedDefaults: parsed.removedDefaults || []
+      removedDefaults: parsed.removedDefaults || [],
+      categoryOrder: parsed.categoryOrder || []
     };
   } catch (err) {
     console.error("Failed to read custom data file:", err.message);
-    return { customLinks: {}, customCategories: [], removedDefaults: [] };
+    return { customLinks: {}, customCategories: [], removedDefaults: [], categoryOrder: [] };
   }
 }
 
@@ -54,7 +55,8 @@ app.post("/api/data", (req, res) => {
   const data = {
     customLinks: payload.customLinks || {},
     customCategories: payload.customCategories || [],
-    removedDefaults: payload.removedDefaults || []
+    removedDefaults: payload.removedDefaults || [],
+    categoryOrder: payload.categoryOrder || []
   };
   writeData(data);
   res.json(data);

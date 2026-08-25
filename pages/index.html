@@ -1215,6 +1215,7 @@
       const STORAGE_LINKS = "nav_custom_links_v1";
       const STORAGE_REMOVED = "nav_removed_defaults";
       const STORAGE_CATEGORIES = "nav_custom_categories_v1";
+      const STORAGE_ORDER = "nav_category_order_v1";
       const defaultCategoryIcon = "M12 2v20 M2 12h20";
 
       let remoteDataCache = null;
@@ -1241,12 +1242,13 @@
 
       async function loadAllData() {
         if (await detectApiMode()) {
-          return remoteDataCache || { customLinks: {}, customCategories: [], removedDefaults: [] };
+          return remoteDataCache || { customLinks: {}, customCategories: [], removedDefaults: [], categoryOrder: [] };
         }
         return {
           customLinks: JSON.parse(localStorage.getItem(STORAGE_LINKS) || "{}"),
           customCategories: JSON.parse(localStorage.getItem(STORAGE_CATEGORIES) || "[]"),
-          removedDefaults: JSON.parse(localStorage.getItem(STORAGE_REMOVED) || "[]")
+          removedDefaults: JSON.parse(localStorage.getItem(STORAGE_REMOVED) || "[]"),
+          categoryOrder: JSON.parse(localStorage.getItem(STORAGE_ORDER) || "[]")
         };
       }
 
@@ -1267,6 +1269,7 @@
         localStorage.setItem(STORAGE_LINKS, JSON.stringify(data.customLinks));
         localStorage.setItem(STORAGE_CATEGORIES, JSON.stringify(data.customCategories));
         localStorage.setItem(STORAGE_REMOVED, JSON.stringify(data.removedDefaults));
+        localStorage.setItem(STORAGE_ORDER, JSON.stringify(data.categoryOrder || []));
       }
 
       async function loadCustomLinks() {
@@ -1299,6 +1302,17 @@
       async function saveRemovedDefaults(arr) {
         const data = await loadAllData();
         data.removedDefaults = arr;
+        await saveAllData(data);
+      }
+
+      async function loadCategoryOrder() {
+        const data = await loadAllData();
+        return data.categoryOrder || [];
+      }
+
+      async function saveCategoryOrder(arr) {
+        const data = await loadAllData();
+        data.categoryOrder = arr;
         await saveAllData(data);
       }
 
@@ -1352,6 +1366,7 @@
       async function mergeData() {
         const customLinks = await loadCustomLinks();
         const customCategories = await loadCustomCategories();
+        const categoryOrder = await loadCategoryOrder();
         const merged = {};
         for (const [cat, meta] of Object.entries(defaultData)) {
           merged[cat] = {
@@ -1373,7 +1388,21 @@
             default: false
           };
         }
-        return merged;
+
+        const known = new Set(Object.keys(merged));
+        const ordered = [];
+        for (const cat of categoryOrder) {
+          if (known.has(cat)) ordered.push(cat);
+        }
+        for (const cat of Object.keys(merged)) {
+          if (!ordered.includes(cat)) ordered.push(cat);
+        }
+
+        const sorted = {};
+        for (const cat of ordered) {
+          sorted[cat] = merged[cat];
+        }
+        return sorted;
       }
 
       function normalizeUrl(url) {
@@ -1507,10 +1536,63 @@
         const removed = await loadRemovedDefaults();
         grid.innerHTML = "";
 
+        let dragSrc = null;
+
         for (const [category, meta] of Object.entries(data)) {
           const article = document.createElement("article");
           article.className = "card";
           article.dataset.category = category;
+          article.setAttribute("draggable", "true");
+          article.setAttribute("role", "listitem");
+          article.setAttribute("aria-grabbed", "false");
+
+          article.addEventListener("dragstart", (e) => {
+            dragSrc = article;
+            article.classList.add("dragging");
+            article.setAttribute("aria-grabbed", "true");
+            e.dataTransfer.effectAllowed = "move";
+            e.dataTransfer.setData("text/plain", category);
+          });
+
+          article.addEventListener("dragend", () => {
+            article.classList.remove("dragging");
+            article.setAttribute("aria-grabbed", "false");
+            document.querySelectorAll(".card").forEach(c => c.classList.remove("drag-over"));
+            dragSrc = null;
+          });
+
+          article.addEventListener("dragover", (e) => {
+            e.preventDefault();
+            if (article === dragSrc) return;
+            article.classList.add("drag-over");
+            e.dataTransfer.dropEffect = "move";
+          });
+
+          article.addEventListener("dragleave", () => {
+            article.classList.remove("drag-over");
+          });
+
+          article.addEventListener("drop", async (e) => {
+            e.preventDefault();
+            article.classList.remove("drag-over");
+            if (!dragSrc || article === dragSrc) return;
+
+            const srcCategory = dragSrc.dataset.category;
+            const targetCategory = article.dataset.category;
+            if (!srcCategory || !targetCategory) return;
+
+            const cards = [...grid.querySelectorAll(".card:not(.add-category-card)")];
+            const srcIndex = cards.indexOf(dragSrc);
+            const targetIndex = cards.indexOf(article);
+            if (srcIndex === -1 || targetIndex === -1) return;
+
+            const newOrder = cards.map(c => c.dataset.category);
+            newOrder.splice(srcIndex, 1);
+            newOrder.splice(targetIndex, 0, srcCategory);
+
+            await saveCategoryOrder(newOrder);
+            await render();
+          });
 
           const visibleCount = meta.default
             ? meta.links.filter(l => !removed.includes(l.url)).length
@@ -1803,16 +1885,29 @@
       border: 1px solid var(--tk-border);
       border-radius: var(--tk-radius-md);
       padding: var(--tk-space-lg);
-      transition: transform var(--tk-transition), border-color var(--tk-transition), box-shadow var(--tk-transition);
+      transition: transform var(--tk-transition), border-color var(--tk-transition), box-shadow var(--tk-transition), opacity var(--tk-transition);
       display: flex;
       flex-direction: column;
       gap: var(--tk-space-md);
+      cursor: grab;
     }
 
     .card:hover {
       transform: translateY(-4px);
       border-color: var(--tk-glow-primary);
       box-shadow: 0 12px 32px var(--tk-shadow), 0 0 0 1px var(--tk-glow-primary);
+    }
+
+    .card.dragging {
+      opacity: 0.5;
+      transform: scale(0.98);
+      box-shadow: 0 20px 40px var(--tk-shadow);
+      cursor: grabbing;
+    }
+
+    .card.drag-over {
+      border-color: var(--tk-primary);
+      box-shadow: 0 0 0 2px var(--tk-glow-primary), 0 12px 32px var(--tk-shadow);
     }
 
     .card-header {
