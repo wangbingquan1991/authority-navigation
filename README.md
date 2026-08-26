@@ -27,6 +27,21 @@ npm start
 
 访问 http://localhost:3000
 
+### 运行测试
+
+```bash
+npm install
+npm test
+```
+
+测试使用 Jest + Supertest 编写，覆盖：
+
+- `/health` 健康检查
+- `/api/data` GET/POST 读写与持久化
+- 输入校验（类型检查、URL 协议过滤、XSS 消毒、长度限制）
+- 首页 HTML 返回
+- Helmet 安全响应头
+
 ### Docker Compose 部署（推荐）
 
 ```bash

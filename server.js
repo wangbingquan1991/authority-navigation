@@ -211,21 +211,26 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: "Internal server error" });
 });
 
-const server = app.listen(PORT, () => {
-  console.log(`Authority navigation server running on port ${PORT}`);
-});
-
-// Graceful shutdown
-process.on("SIGTERM", () => {
-  console.log("SIGTERM received, shutting down gracefully");
-  server.close(() => {
-    process.exit(0);
+let server;
+if (require.main === module) {
+  server = app.listen(PORT, () => {
+    console.log(`Authority navigation server running on port ${PORT}`);
   });
-});
 
-process.on("SIGINT", () => {
-  console.log("SIGINT received, shutting down gracefully");
-  server.close(() => {
-    process.exit(0);
+  // Graceful shutdown
+  process.on("SIGTERM", () => {
+    console.log("SIGTERM received, shutting down gracefully");
+    server.close(() => {
+      process.exit(0);
+    });
   });
-});
+
+  process.on("SIGINT", () => {
+    console.log("SIGINT received, shutting down gracefully");
+    server.close(() => {
+      process.exit(0);
+    });
+  });
+}
+
+module.exports = app;

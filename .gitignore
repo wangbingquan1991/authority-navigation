@@ -20,6 +20,10 @@ pnpm-lock.yaml
 # Runtime data
 data/
 
+# Test artifacts
+coverage/
+tests/test-data/
+
 # Environment
 .env
 .env.*

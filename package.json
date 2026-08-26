@@ -4,11 +4,16 @@
   "description": "Authority navigation microservice with Express backend",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "test": "jest --coverage"
   },
   "dependencies": {
     "express": "^4.21.0",
     "helmet": "^8.0.0"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "supertest": "^7.0.0"
   },
   "engines": {
     "node": ">=18.0.0"
