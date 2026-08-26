@@ -89,7 +89,7 @@
     ]
   },
   "projectFileHashes": {
-    "project.design": "4d7668d68354ee247e31f89f623e7a3958609f2694661e93548f036a6b04935c",
+    "project.design": "5151aaabb196f06fccab8844d865f4b0ec6b42bd451e655ac4c4b3d76b775152",
     "colors_and_type.css": "b1679701ee5194ccb5effd716cee9c904b0385508683e90e23acc9305e1ea194",
     "runtime-orchestration-summary.json": "d5945736d91c8041fe29cb66b5b1044fb90ae6005bf9a092d6d668f81071a6d8",
     "pages/index.html": "e29b414e3857d435c895e4f9766bd5030c7eea303036b18a8b0119b218e0f722",
@@ -101,5 +101,5 @@
   "designDir": "/Users/acheron/TraeWork/6a8cfb13f8e3118324bd1cdc/authority-navigation",
   "expectedPages": null,
   "requireInteractions": null,
-  "checkedAt": "2026-08-25T10:32:15.027Z"
+  "checkedAt": "2026-08-26T02:39:20.183Z"
 }
