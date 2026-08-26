@@ -52,7 +52,8 @@ docker-compose up -d
 
 **数据持久化说明：**
 
-- 所有用户自定义内容（分类、链接、删除项、类别优先级顺序）都会保存在 `./data/custom-data.json`
+- 所有用户自定义内容（分类、链接、删除项、类别优先级顺序）都会保存在 SQLite 数据库 `./data/data.db`
+- 启动时会自动检测并迁移旧版 `custom-data.json`（迁移成功后重命名为 `custom-data.json.migrated`）
 - `docker-compose.yml` 已将 `./data` 挂载到容器的 `/app/data`，因此以下操作不会丢失数据：
   - 容器重启
   - 镜像重新构建
@@ -74,14 +75,19 @@ docker-compose up -d
 ```json
 {
   "customLinks": {
-    "分类ID": [
-      { "name": "示例网站", "url": "https://example.com" }
+    "国家机关": [
+      { "name": "示例网站", "url": "https://example.com", "custom": true }
     ]
   },
   "customCategories": [
-    { "id": "custom-1", "title": "我的分类" }
+    {
+      "name": "我的分类",
+      "icon": "star",
+      "links": [{ "name": "GitHub", "url": "https://github.com" }]
+    }
   ],
-  "removedDefaults": ["默认分类ID", "默认链接ID"]
+  "removedDefaults": ["https://example.com/removed"],
+  "categoryOrder": ["我的分类", "国家机关"]
 }
 ```
 
@@ -91,9 +97,12 @@ docker-compose up -d
 authority-navigation/
 ├── pages/
 │   └── index.html          # 前端页面
-├── assets/                 # 主题预览图
-├── data/                   # 用户自定义数据（运行生成，不提交）
+├── assets/                 # Logo 与主题预览图
+├── data/                   # SQLite 数据库（运行生成，不提交）
+├── tests/
+│   └── api.test.js         # API 测试套件
 ├── server.js               # Express 后端入口
+├── db.js                   # SQLite 数据访问层
 ├── package.json
 ├── Dockerfile
 ├── docker-compose.yml
