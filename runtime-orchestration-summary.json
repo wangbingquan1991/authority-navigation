@@ -1,5 +1,5 @@
 {
-  "resolvedLane": "library_bound",
+  "resolvedLane": "existing_edit_add_comparison",
   "designSource": {
     "operatingMode": "library-bound",
     "libraryIdentity": {
@@ -15,5 +15,33 @@
     "name": "solo-design",
     "version": "2026.08.06.19.15.08",
     "version_source": "skill-release-manifest.json"
+  },
+  "project": {
+    "resolvedLane": "existing_edit_add_comparison",
+    "selectedIntentWorkflowRead": true,
+    "contextRequirementsLoaded": [
+      {
+        "path": "/Users/acheron/.trae-cn/builtin/design/default/skills/solo-design/intent-workflows/intent-project-mutation/INTENT_WORKFLOW.md",
+        "readStatus": "loaded",
+        "bodyRead": true
+      }
+    ],
+    "contextReadScope": "project-mutation-existing-edit",
+    "validationRunDiscipline": "run-once-after-mutation",
+    "lowValueCallWatchdog": {
+      "noProgressNextAction": "proceed-to-dispatch"
+    },
+    "mutationMode": "in-place-componentization",
+    "sourcePageIds": ["page-001"],
+    "targetPageIds": ["page-001"],
+    "inPlaceEdit": true,
+    "changedFiles": ["pages/index.html"],
+    "expectedDispatches": [
+      {
+        "agentType": "general_purpose_task",
+        "task": "frontend-componentization-refactor",
+        "status": "pending"
+      }
+    ]
   }
 }

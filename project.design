@@ -7,14 +7,21 @@
       "version": 4,
       "createdAt": 1787624323000,
       "updatedAt": 1787628452338,
-      "devMetadata": {
-        "htmlSrc": "pages/index.html",
-        "interactions": []
-      },
       "canvasData": {
         "x": 0,
         "y": 0,
-        "group": 0
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 900,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-68729bb3",
+          "measuredAt": 1787710627436
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/index.html",
+        "interactions": []
       }
     },
     {
@@ -24,12 +31,16 @@
       "version": 1,
       "createdAt": 1787628500000,
       "updatedAt": 1787628500000,
-      "devMetadata": {
-        "imageSrc": "assets/theme-tiktok.png"
-      },
       "canvasData": {
         "x": 0,
-        "y": 1200
+        "y": 373,
+        "naturalSize": {
+          "width": 1280,
+          "height": 1991
+        }
+      },
+      "devMetadata": {
+        "imageSrc": "assets/theme-tiktok.png"
       }
     },
     {
@@ -39,12 +50,16 @@
       "version": 1,
       "createdAt": 1787628500000,
       "updatedAt": 1787628500000,
+      "canvasData": {
+        "x": 480,
+        "y": 373,
+        "naturalSize": {
+          "width": 1280,
+          "height": 1991
+        }
+      },
       "devMetadata": {
         "imageSrc": "assets/theme-claude-light.png"
-      },
-      "canvasData": {
-        "x": 400,
-        "y": 1200
       }
     },
     {
@@ -54,12 +69,35 @@
       "version": 1,
       "createdAt": 1787628500000,
       "updatedAt": 1787628500000,
+      "canvasData": {
+        "x": 960,
+        "y": 373,
+        "naturalSize": {
+          "width": 1280,
+          "height": 1991
+        }
+      },
       "devMetadata": {
         "imageSrc": "assets/theme-claude-dark.png"
-      },
+      }
+    },
+    {
+      "id": "image-004",
+      "title": "权威导航品牌标识",
+      "type": "image",
+      "version": 1,
+      "createdAt": 1787635200000,
+      "updatedAt": 1787635200000,
       "canvasData": {
-        "x": 800,
-        "y": 1200
+        "x": 1440,
+        "y": 373,
+        "naturalSize": {
+          "width": 2048,
+          "height": 2048
+        }
+      },
+      "devMetadata": {
+        "imageSrc": "assets/logo.jpg"
       }
     }
   ],
