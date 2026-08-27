@@ -19,6 +19,10 @@ pnpm-lock.yaml
 
 # Runtime data
 data/
+certbot/
+
+# Generated nginx config (from template)
+nginx/authority-navigation.conf
 
 # Test artifacts
 coverage/

@@ -126,6 +126,41 @@ docker-compose -f docker-compose.prod.yml up -d
 bash scripts/deploy.sh
 ```
 
+### Nginx 反向代理 + HTTPS
+
+准备一个有公网 IP 的服务器，并将域名（例如 `nav.example.com`）解析到该服务器。
+
+1. 在服务器上克隆或放置项目文件：
+
+```bash
+mkdir -p ~/authority-navigation
+cd ~/authority-navigation
+# 复制 docker-compose.nginx.yml、nginx/、scripts/ 到该目录
+```
+
+2. 生成 Nginx 配置并申请 Let's Encrypt 证书：
+
+```bash
+export DOMAIN=nav.example.com
+export EMAIL=your-email@example.com
+bash scripts/init-ssl.sh
+```
+
+3. 启动完整服务：
+
+```bash
+docker-compose -f docker-compose.nginx.yml up -d
+```
+
+4. 访问 `https://nav.example.com`
+
+**说明：**
+
+- `scripts/init-ssl.sh` 会先启动一个临时的 HTTP Nginx，用于 Let's Encrypt 的域名验证
+- 证书自动续期由 `certbot` 容器每 12 小时检查一次
+- 所有 HTTP 请求会自动 301 跳转到 HTTPS
+- 数据仍持久化在 `./data/data.db`
+
 ## 目录结构
 
 ```
@@ -139,7 +174,11 @@ authority-navigation/
 ├── tests/
 │   └── api.test.js         # API 测试套件
 ├── scripts/
-│   └── deploy.sh           # 服务器手动部署脚本
+│   ├── deploy.sh           # 服务器手动部署脚本
+│   └── init-ssl.sh         # SSL 证书初始化脚本
+├── nginx/
+│   ├── authority-navigation.conf.template  # Nginx 配置模板
+│   └── authority-navigation.conf           # 生成的 Nginx 配置
 ├── .github/workflows/
 │   └── ci-cd.yml           # GitHub Actions CI/CD
 ├── server.js               # Express 后端入口
@@ -148,6 +187,7 @@ authority-navigation/
 ├── Dockerfile
 ├── docker-compose.yml
 ├── docker-compose.prod.yml
+├── docker-compose.nginx.yml
 └── README.md
 ```
 
