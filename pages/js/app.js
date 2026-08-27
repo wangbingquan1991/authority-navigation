@@ -18,6 +18,7 @@ import { ThemeSwitcher } from "./components/ThemeSwitcher.js";
 import { SearchBar } from "./components/SearchBar.js";
 import { CategoryGrid } from "./components/CategoryGrid.js";
 import { Modal } from "./components/Modal.js";
+import { ImportExport } from "./components/ImportExport.js";
 
 function isDefaultCategory(name) {
   return Object.prototype.hasOwnProperty.call(DEFAULT_CATEGORIES, name);
@@ -164,6 +165,26 @@ async function init() {
 
   searchBar.onInput = (value) => grid.filter(value);
   searchBar.render();
+
+  const importExport = new ImportExport(document.querySelector(".import-export-wrap"), {
+    onExport: async () => {
+      return await loadAllData();
+    },
+    onImport: async (data) => {
+      await saveAllData(data);
+      await refresh();
+    },
+    onReset: async () => {
+      await saveAllData({
+        customLinks: {},
+        customCategories: [],
+        removedDefaults: [],
+        categoryOrder: []
+      });
+      await refresh();
+    }
+  });
+  importExport.render();
 
   async function refresh() {
     const categories = await mergeCategories();

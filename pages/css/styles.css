@@ -914,6 +914,44 @@ footer {
   transform: translateY(-1px);
 }
 
+.import-export-wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--tk-space-sm);
+  margin-bottom: var(--tk-space-xl);
+  flex-wrap: wrap;
+}
+
+.tool-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border: 1px solid var(--tk-border);
+  border-radius: var(--tk-radius-pill);
+  background: var(--tk-surface);
+  color: var(--tk-text-secondary);
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background var(--tk-transition), color var(--tk-transition), border-color var(--tk-transition), transform var(--tk-transition);
+}
+
+.tool-btn:hover {
+  background: var(--tk-surface-hover);
+  color: var(--tk-text);
+  border-color: var(--tk-glow-primary);
+  transform: translateY(-1px);
+}
+
+.tool-btn.reset-btn:hover {
+  border-color: var(--tk-primary);
+  color: var(--tk-primary);
+  background: var(--tk-danger-bg);
+}
+
 .theme-switcher {
   display: inline-flex;
   flex-wrap: wrap;
