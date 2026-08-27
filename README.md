@@ -91,21 +91,63 @@ docker-compose up -d
 }
 ```
 
+## CI/CD 自动部署
+
+本项目已配置 GitHub Actions 工作流（`.github/workflows/ci-cd.yml`）：
+
+1. **测试**：每次 Push / PR 自动运行 `npm test`
+2. **构建镜像**：测试通过后自动构建 Docker 镜像
+3. **推送镜像**：镜像推送到 GitHub Container Registry（`ghcr.io/wangbingquan1991/authority-navigation`），标签为 `latest` 和分支 `master-<short-sha>`
+4. **自动部署**（可选）：配置了 SSH 密钥后，推送 `master` 分支会自动登录服务器并拉取最新镜像重启服务
+
+### 启用自动部署
+
+在 GitHub 仓库 `Settings → Secrets and variables → Actions` 中添加以下 secrets：
+
+| Secret | 说明 |
+|--------|------|
+| `SSH_HOST` | 服务器 IP 或域名 |
+| `SSH_USER` | SSH 用户名 |
+| `SSH_KEY` | SSH 私钥（建议配置仅允许 docker 命令的受限密钥） |
+| `SSH_PORT` | SSH 端口，可选，默认 22 |
+
+服务器端需要提前准备：
+
+```bash
+mkdir -p ~/authority-navigation
+cd ~/authority-navigation
+# 放入 docker-compose.prod.yml 与 data/ 目录
+docker-compose -f docker-compose.prod.yml up -d
+```
+
+手动部署也可使用脚本：
+
+```bash
+bash scripts/deploy.sh
+```
+
 ## 目录结构
 
 ```
 authority-navigation/
 ├── pages/
-│   └── index.html          # 前端页面
+│   ├── index.html          # 前端页面
+│   ├── css/styles.css      # 主题与布局样式
+│   └── js/                 # 前端组件与服务
 ├── assets/                 # Logo 与主题预览图
 ├── data/                   # SQLite 数据库（运行生成，不提交）
 ├── tests/
 │   └── api.test.js         # API 测试套件
+├── scripts/
+│   └── deploy.sh           # 服务器手动部署脚本
+├── .github/workflows/
+│   └── ci-cd.yml           # GitHub Actions CI/CD
 ├── server.js               # Express 后端入口
 ├── db.js                   # SQLite 数据访问层
 ├── package.json
 ├── Dockerfile
 ├── docker-compose.yml
+├── docker-compose.prod.yml
 └── README.md
 ```
 
