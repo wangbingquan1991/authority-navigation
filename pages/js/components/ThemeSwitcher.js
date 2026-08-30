@@ -1,44 +1,50 @@
-import { STORAGE_KEYS, getJson, setJson } from "../utils/storage.js";
+const THEMES = [
+  { id: "tiktok-dark", label: "抖音暗色", icon: "flame" },
+  { id: "claude-light", label: "Claude 浅色", icon: "sun" },
+  { id: "claude-dark", label: "Claude 深色", icon: "moon" },
+  { id: "apple-light", label: "Apple 浅色", icon: "sun-dim" },
+  { id: "apple-dark", label: "Apple 深色", icon: "moon-star" },
+];
 
 export class ThemeSwitcher {
-  constructor(container) {
+  constructor(container, options = {}) {
     this.container = container;
-    this.themes = [
-      { key: "tiktok", label: "抖音暗色" },
-      { key: "claude-light", label: "Claude 浅色" },
-      { key: "claude-dark", label: "Claude 深色" },
-      { key: "apple-light", label: "Apple 浅色" },
-      { key: "apple-dark", label: "Apple 深色" }
-    ];
+    this.currentTheme = options.currentTheme || "tiktok-dark";
+    this.onChange = options.onChange || (() => {});
   }
 
   render() {
-    this.container.setAttribute("role", "group");
-    this.container.setAttribute("aria-label", "主题切换");
-    this.container.innerHTML = this.themes.map(t => `
-      <button type="button" data-theme="${t.key}" aria-pressed="false">${t.label}</button>
-    `).join("");
+    this.container.innerHTML = `
+      <div class="icon-btn-group theme-switcher-group" role="group" aria-label="主题切换">
+        ${THEMES.map(
+          (t) => `
+          <button
+            type="button"
+            class="icon-btn ${t.id === this.currentTheme ? "is-active" : ""}"
+            data-theme="${t.id}"
+            aria-label="${t.label}"
+            title="${t.label}"
+          >
+            <i data-lucide="${t.icon}" width="18" height="18"></i>
+          </button>
+        `
+        ).join("")}
+      </div>
+    `;
 
-    this.container.addEventListener("click", (e) => {
-      const btn = e.target.closest("button");
-      if (!btn) return;
-      this.applyTheme(btn.dataset.theme);
+    this.container.querySelectorAll("[data-theme]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const theme = btn.dataset.theme;
+        this.setTheme(theme);
+        this.onChange(theme);
+      });
     });
-
-    const saved = getJson(STORAGE_KEYS.THEME, "tiktok");
-    this.applyTheme(saved);
   }
 
-  applyTheme(theme) {
-    const validThemes = this.themes.map(t => t.key);
-    if (!validThemes.includes(theme)) theme = "tiktok";
-    document.documentElement.setAttribute("data-theme", theme);
-    setJson(STORAGE_KEYS.THEME, theme);
-
-    this.container.querySelectorAll("button").forEach(btn => {
-      const active = btn.dataset.theme === theme;
-      btn.setAttribute("aria-pressed", active ? "true" : "false");
-      btn.classList.toggle("active", active);
+  setTheme(theme) {
+    this.currentTheme = theme;
+    this.container.querySelectorAll("[data-theme]").forEach((btn) => {
+      btn.classList.toggle("is-active", btn.dataset.theme === theme);
     });
   }
 }
