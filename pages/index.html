@@ -467,21 +467,29 @@ h1 {
   min-height: 1.4em;
 }
 
+.container {
+  padding-bottom: 80px;
+}
+
 .import-export-wrap {
-  display: flex;
-  justify-content: center;
-  margin-bottom: var(--tk-space-xl);
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%);
+  z-index: 50;
 }
 
 .toolbar-group {
   display: inline-flex;
   align-items: center;
   gap: var(--tk-space-sm);
-  padding: 4px;
+  padding: 6px;
   background: var(--tk-surface);
   border: 1px solid var(--tk-border);
   border-radius: var(--tk-radius-pill);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
 .toolbar-label {
@@ -502,13 +510,13 @@ h1 {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  padding: 7px 12px;
+  padding: 10px 16px;
   border: none;
   border-radius: var(--tk-radius-pill);
   background: transparent;
   color: var(--tk-text-secondary);
   font-family: inherit;
-  font-size: 0.8rem;
+  font-size: 0.88rem;
   font-weight: 500;
   cursor: pointer;
   transition: background var(--tk-transition), color var(--tk-transition), transform var(--tk-transition);
@@ -527,6 +535,21 @@ h1 {
 .toolbar-item-danger:hover {
   color: var(--tk-primary);
   background: var(--tk-danger-bg);
+}
+
+@media (max-width: 640px) {
+  .import-export-wrap {
+    bottom: 16px;
+  }
+
+  .toolbar-label {
+    display: none;
+  }
+
+  .toolbar-item {
+    padding: 9px 12px;
+    font-size: 0.82rem;
+  }
 }
 
 .grid {
@@ -1189,13 +1212,13 @@ footer {
 
     <div class="search-wrap"></div>
 
-    <div class="import-export-wrap"></div>
-
     <main class="grid" id="grid"></main>
 
     <div class="empty-state" id="emptyState">
       未找到与“<strong id="emptyQuery"></strong>”匹配的机构或工具。
     </div>
+
+    <div class="import-export-wrap"></div>
   </div>
 
   <footer>
