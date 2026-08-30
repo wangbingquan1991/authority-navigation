@@ -13,12 +13,12 @@ import {
   saveCustomCategories
 } from "./services/api.js";
 import { normalizeUrl, normalize, isValidUrl, isValidName } from "./utils/validators.js";
-import { NavHeader } from "./components/NavHeader.js";
-import { ThemeSwitcher } from "./components/ThemeSwitcher.js";
-import { SearchBar } from "./components/SearchBar.js";
-import { CategoryGrid } from "./components/CategoryGrid.js";
-import { Modal } from "./components/Modal.js";
-import { ImportExport } from "./components/ImportExport.js";
+import { NavHeader } from "./components/NavHeader.js?v=2";
+import { ThemeSwitcher } from "./components/ThemeSwitcher.js?v=2";
+import { SearchBar } from "./components/SearchBar.js?v=2";
+import { CategoryGrid } from "./components/CategoryGrid.js?v=2";
+import { Modal } from "./components/Modal.js?v=2";
+import { ImportExport } from "./components/ImportExport.js?v=2";
 
 function isDefaultCategory(name) {
   return Object.prototype.hasOwnProperty.call(DEFAULT_CATEGORIES, name);

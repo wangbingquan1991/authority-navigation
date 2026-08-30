@@ -31,8 +31,19 @@ function createApp(store) {
   }));
 
   app.use(express.json({ limit: "1mb" }));
-  app.use(express.static(path.join(__dirname, "pages")));
-  app.use("/assets", express.static(path.join(__dirname, "assets")));
+
+  const noCacheStatic = (root) => express.static(root, {
+    setHeaders: (res, filePath) => {
+      if (filePath.endsWith(".html") || filePath.endsWith(".js") || filePath.endsWith(".css")) {
+        res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+        res.setHeader("Pragma", "no-cache");
+        res.setHeader("Expires", "0");
+      }
+    }
+  });
+
+  app.use(noCacheStatic(path.join(__dirname, "pages")));
+  app.use("/assets", noCacheStatic(path.join(__dirname, "assets")));
 
   function sanitizeString(input, maxLength = 200) {
     if (typeof input !== "string") return "";

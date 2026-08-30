@@ -27,6 +27,8 @@ nginx/authority-navigation.conf
 # Test artifacts
 coverage/
 tests/test-data/
+tests/*.jpg
+tests/*.png
 
 # Environment
 .env

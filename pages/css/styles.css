@@ -917,37 +917,61 @@ footer {
 .import-export-wrap {
   display: flex;
   justify-content: center;
-  align-items: center;
-  gap: var(--tk-space-sm);
   margin-bottom: var(--tk-space-xl);
-  flex-wrap: wrap;
 }
 
-.tool-btn {
+.toolbar-group {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 8px 14px;
+  gap: var(--tk-space-sm);
+  padding: 4px;
+  background: var(--tk-surface);
   border: 1px solid var(--tk-border);
   border-radius: var(--tk-radius-pill);
-  background: var(--tk-surface);
-  color: var(--tk-text-secondary);
-  font-family: inherit;
-  font-size: 0.85rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background var(--tk-transition), color var(--tk-transition), border-color var(--tk-transition), transform var(--tk-transition);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
 }
 
-.tool-btn:hover {
+.toolbar-label {
+  padding: 0 8px 0 12px;
+  color: var(--tk-text-secondary);
+  font-size: 0.8rem;
+  font-weight: 500;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.toolbar-pill {
+  display: inline-flex;
+  align-items: center;
+}
+
+.toolbar-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 12px;
+  border: none;
+  border-radius: var(--tk-radius-pill);
+  background: transparent;
+  color: var(--tk-text-secondary);
+  font-family: inherit;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background var(--tk-transition), color var(--tk-transition), transform var(--tk-transition);
+}
+
+.toolbar-item:hover {
   background: var(--tk-surface-hover);
   color: var(--tk-text);
-  border-color: var(--tk-glow-primary);
   transform: translateY(-1px);
 }
 
-.tool-btn.reset-btn:hover {
-  border-color: var(--tk-primary);
+.toolbar-item:active {
+  transform: translateY(0);
+}
+
+.toolbar-item-danger:hover {
   color: var(--tk-primary);
   background: var(--tk-danger-bg);
 }
