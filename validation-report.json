@@ -82,7 +82,7 @@
     "project.design": "5151aaabb196f06fccab8844d865f4b0ec6b42bd451e655ac4c4b3d76b775152",
     "colors_and_type.css": "b1679701ee5194ccb5effd716cee9c904b0385508683e90e23acc9305e1ea194",
     "runtime-orchestration-summary.json": "42392ec079fde74518b4408e3fb93ebd179f1f4d2ece89d31a7c01e4bceed312",
-    "pages/index.html": "45f6d06e6e77ad78222d76c10ed80121a8ce8862e96ede33ad139aa17e4f933b",
+    "pages/index.html": "d501d7228c023d4aa138cfe49cf4fb9d990b91b027dac831734d14e6b20cec9d",
     "assets/logo.jpg": "8d77b6e566435eb546aeeab7ef98de0b5b118e78a29b0054016d8ed61fedfd3a",
     "assets/theme-claude-dark.png": "c47cfefd194bc73d14b235294390200a28d4501e709479a148ff0f09540593b9",
     "assets/theme-claude-light.png": "c26f509d3a486649f28f6997d7f5a7d3d745a30677a011fb3d91b55be1fe0d6e",
@@ -91,5 +91,5 @@
   "designDir": "/Users/acheron/TraeWork/6a8cfb13f8e3118324bd1cdc/authority-navigation",
   "expectedPages": null,
   "requireInteractions": null,
-  "checkedAt": "2026-08-30T06:48:20.052Z"
+  "checkedAt": "2026-08-30T06:53:04.767Z"
 }
