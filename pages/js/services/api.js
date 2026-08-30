@@ -1,5 +1,4 @@
 import { STORAGE_KEYS, getJson, setJson } from "../utils/storage.js";
-import { DEFAULT_CATEGORY_ICON } from "../data/defaultCategories.js";
 import {
   getCachedAdminToken,
   clearAdminToken,
@@ -8,6 +7,7 @@ import {
 
 let apiMode = null;
 let remoteDataCache = null;
+let defaultConfigCache = null;
 
 export async function detectApiMode() {
   if (apiMode !== null) return apiMode;
@@ -26,6 +26,32 @@ export async function detectApiMode() {
     apiMode = false;
   }
   return apiMode;
+}
+
+export async function loadDefaultConfig() {
+  if (defaultConfigCache) return defaultConfigCache;
+  if (await detectApiMode()) {
+    try {
+      const res = await fetch("/api/config");
+      if (res.ok) {
+        defaultConfigCache = await res.json();
+        return defaultConfigCache;
+      }
+    } catch (e) {
+      console.error("Failed to load default config from API", e);
+    }
+  }
+  // Fallback for static file mode
+  try {
+    const res = await fetch("/config/default-sites.json");
+    if (res.ok) {
+      defaultConfigCache = await res.json();
+      return defaultConfigCache;
+    }
+  } catch (e) {
+    console.error("Failed to load default config from static file", e);
+  }
+  return { categories: {}, defaultCategoryIcon: "M12 2v20 M2 12h20" };
 }
 
 export async function loadAllData() {
@@ -188,11 +214,11 @@ export async function addDefaultRemoved(url) {
   }
 }
 
-export async function addCategory(name, firstLink) {
+export async function addCategory(name, firstLink, defaultIcon) {
   const cats = await loadCustomCategories();
   cats.push({
     name,
-    icon: DEFAULT_CATEGORY_ICON,
+    icon: defaultIcon || "M12 2v20 M2 12h20",
     links: [firstLink]
   });
   await saveCustomCategories(cats);

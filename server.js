@@ -1,6 +1,7 @@
 const express = require("express");
 const helmet = require("helmet");
 const path = require("path");
+const fs = require("fs");
 const { rateLimit } = require("express-rate-limit");
 const { DataStore } = require("./db");
 const { createAdminAuthMiddleware, MIN_TOKEN_LENGTH } = require("./auth");
@@ -8,6 +9,17 @@ const { startBackupScheduler } = require("./backup");
 
 const PORT = process.env.PORT || 3000;
 const WRITE_RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000;
+
+const DEFAULT_SITES_PATH = process.env.DEFAULT_SITES_PATH || path.join(__dirname, "config", "default-sites.json");
+function loadDefaultSites() {
+  try {
+    const raw = fs.readFileSync(DEFAULT_SITES_PATH, "utf8");
+    return JSON.parse(raw);
+  } catch (err) {
+    console.error("Failed to load default sites config:", err.message);
+    return { categories: {}, defaultCategoryIcon: "M12 2v20 M2 12h20" };
+  }
+}
 
 function resolveAdminToken(options) {
   const token = options.adminToken || process.env.ADMIN_TOKEN;
@@ -72,6 +84,7 @@ function createApp(store, options = {}) {
 
   app.use(noCacheStatic(path.join(__dirname, "pages")));
   app.use("/assets", noCacheStatic(path.join(__dirname, "assets")));
+  app.use("/config", noCacheStatic(path.join(__dirname, "config")));
 
   function sanitizeString(input, maxLength = 200) {
     if (typeof input !== "string") return "";
@@ -192,6 +205,10 @@ function createApp(store, options = {}) {
 
   app.get("/health", (req, res) => {
     res.json({ status: "ok", timestamp: new Date().toISOString() });
+  });
+
+  app.get("/api/config", (req, res) => {
+    res.json(loadDefaultSites());
   });
 
   app.get("/api/data", async (req, res, next) => {

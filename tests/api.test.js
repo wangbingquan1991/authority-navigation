@@ -25,6 +25,19 @@ describe("Authority Navigation API", () => {
     });
   });
 
+  describe("GET /api/config", () => {
+    it("returns default sites configuration", async () => {
+      const app = createTestApp(dbPath);
+      const res = await request(app).get("/api/config");
+      expect(res.statusCode).toBe(200);
+      expect(res.body.categories).toBeDefined();
+      expect(Object.keys(res.body.categories).length).toBeGreaterThan(0);
+      expect(res.body.defaultCategoryIcon).toBeDefined();
+      expect(res.body.categories["国家机关"]).toBeDefined();
+      expect(Array.isArray(res.body.categories["国家机关"].links)).toBe(true);
+    });
+  });
+
   describe("GET /api/data", () => {
     it("returns default empty structure when no data exists", async () => {
       const app = createTestApp(dbPath);

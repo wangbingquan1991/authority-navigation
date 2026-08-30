@@ -1,7 +1,5 @@
-import { DEFAULT_CATEGORIES, DEFAULT_CATEGORY_ICON } from "./data/defaultCategories.js";
 import {
   loadAllData,
-  saveAllData,
   loadCustomCategories,
   loadRemovedDefaults,
   loadCategoryOrder,
@@ -11,7 +9,9 @@ import {
   addCategory,
   deleteCategory,
   saveCategoryOrder,
-  saveCustomCategories
+  saveCustomCategories,
+  saveAllData,
+  loadDefaultConfig
 } from "./services/api.js";
 import { normalizeUrl, normalize, isValidUrl, isValidName } from "./utils/validators.js";
 import { NavHeader } from "./components/NavHeader.js?v=2";
@@ -21,8 +21,18 @@ import { CategoryGrid } from "./components/CategoryGrid.js?v=2";
 import { Modal } from "./components/Modal.js?v=2";
 import { ImportExport } from "./components/ImportExport.js?v=3";
 
+let defaultConfig = { categories: {}, defaultCategoryIcon: "M12 2v20 M2 12h20" };
+
+function getDefaultCategories() {
+  return defaultConfig.categories || {};
+}
+
+function getDefaultCategoryIcon() {
+  return defaultConfig.defaultCategoryIcon || "M12 2v20 M2 12h20";
+}
+
 function isDefaultCategory(name) {
-  return Object.prototype.hasOwnProperty.call(DEFAULT_CATEGORIES, name);
+  return Object.prototype.hasOwnProperty.call(getDefaultCategories(), name);
 }
 
 async function isCustomCategory(name) {
@@ -35,8 +45,9 @@ async function mergeCategories() {
   const customCategories = data.customCategories || [];
   const categoryOrder = data.categoryOrder || [];
   const merged = {};
+  const defaultCategories = getDefaultCategories();
 
-  for (const [cat, meta] of Object.entries(DEFAULT_CATEGORIES)) {
+  for (const [cat, meta] of Object.entries(defaultCategories)) {
     merged[cat] = {
       name: cat,
       icon: meta.icon,
@@ -54,7 +65,7 @@ async function mergeCategories() {
   for (const cat of customCategories) {
     merged[cat.name] = {
       name: cat.name,
-      icon: cat.icon || DEFAULT_CATEGORY_ICON,
+      icon: cat.icon || getDefaultCategoryIcon(),
       links: (cat.links || []).map(l => ({ ...l })),
       isDefault: false
     };
@@ -80,6 +91,8 @@ async function mergeCategories() {
 }
 
 async function init() {
+  defaultConfig = await loadDefaultConfig();
+
   const modal = new Modal(document.body);
   const navHeader = new NavHeader(document.querySelector(".nav-header-content"));
   navHeader.render();
@@ -143,7 +156,7 @@ async function init() {
         }
         const url = normalizeUrl(vals.url);
         if (!isValidUrl(url)) return false;
-        await addCategory(cat, { name: vals.linkName, url });
+        await addCategory(cat, { name: vals.linkName, url }, getDefaultCategoryIcon());
         await refresh();
         return true;
       });
