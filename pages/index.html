@@ -473,7 +473,7 @@ h1 {
 
 .import-export-wrap {
   position: fixed;
-  right: 20px;
+  left: 20px;
   bottom: 20px;
   z-index: 50;
 }
@@ -524,7 +524,7 @@ h1 {
 
 @media (max-width: 640px) {
   .import-export-wrap {
-    right: 14px;
+    left: 14px;
     bottom: 14px;
   }
 
@@ -989,15 +989,27 @@ footer {
 }
 
 .theme-switcher {
-  display: flex;
-  justify-content: center;
-  margin-top: var(--tk-space-md);
+  position: fixed;
+  right: 20px;
+  bottom: 148px;
+  z-index: 50;
 }
 
 .theme-switcher-group {
-  flex-direction: row;
-  gap: 6px;
-  padding: 5px;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px;
+  background: var(--tk-surface);
+  border: 1px solid var(--tk-border);
+  border-radius: 999px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.theme-switcher-group .icon-btn {
+  width: 42px;
+  height: 42px;
 }
 
 .theme-switcher-group .icon-btn.is-active {
@@ -1010,6 +1022,18 @@ footer {
   background: var(--tk-primary);
   color: var(--tk-bg);
   transform: scale(1.08);
+}
+
+@media (max-width: 640px) {
+  .theme-switcher {
+    right: 14px;
+    bottom: 136px;
+  }
+
+  .theme-switcher-group .icon-btn {
+    width: 40px;
+    height: 40px;
+  }
 }
 
 .no-scrollbar::-webkit-scrollbar { display: none; }
