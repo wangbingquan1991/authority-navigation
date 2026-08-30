@@ -467,29 +467,37 @@ h1 {
   min-height: 1.4em;
 }
 
+.container {
+  padding-bottom: 80px;
+}
+
 .import-export-wrap {
-  display: flex;
-  justify-content: center;
-  margin-bottom: var(--tk-space-xl);
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 50;
 }
 
 .icon-btn-group {
   display: inline-flex;
+  flex-direction: column;
   align-items: center;
-  gap: 6px;
-  padding: 5px;
+  gap: 8px;
+  padding: 8px;
   background: var(--tk-surface);
   border: 1px solid var(--tk-border);
-  border-radius: var(--tk-radius-pill);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  border-radius: 999px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
 .icon-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 38px;
-  height: 38px;
+  width: 42px;
+  height: 42px;
   padding: 0;
   border: none;
   border-radius: 50%;
@@ -502,16 +510,28 @@ h1 {
 .icon-btn:hover {
   background: var(--tk-surface-hover);
   color: var(--tk-text);
-  transform: translateY(-1px);
+  transform: scale(1.08);
 }
 
 .icon-btn:active {
-  transform: translateY(0);
+  transform: scale(1);
 }
 
 .icon-btn-danger:hover {
   color: var(--tk-primary);
   background: var(--tk-danger-bg);
+}
+
+@media (max-width: 640px) {
+  .import-export-wrap {
+    right: 14px;
+    bottom: 14px;
+  }
+
+  .icon-btn {
+    width: 40px;
+    height: 40px;
+  }
 }
 
 .grid {
