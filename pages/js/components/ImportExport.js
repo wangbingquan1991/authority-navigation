@@ -10,22 +10,16 @@ export class ImportExport {
 
   render() {
     this.container.innerHTML = `
-      <div class="toolbar-group">
-        <span class="toolbar-label">数据管理</span>
-        <div class="toolbar-pill">
-          <button type="button" class="toolbar-item" data-action="export" title="导出数据">
-            <i data-lucide="download" width="14" height="14"></i>
-            <span>导出</span>
-          </button>
-          <button type="button" class="toolbar-item" data-action="import" title="导入数据">
-            <i data-lucide="upload" width="14" height="14"></i>
-            <span>导入</span>
-          </button>
-          <button type="button" class="toolbar-item toolbar-item-danger" data-action="reset" title="恢复默认">
-            <i data-lucide="rotate-ccw" width="14" height="14"></i>
-            <span>恢复默认</span>
-          </button>
-        </div>
+      <div class="icon-btn-group" role="group" aria-label="数据管理">
+        <button type="button" class="icon-btn" data-action="export" aria-label="导出数据" title="导出数据">
+          <i data-lucide="download" width="18" height="18"></i>
+        </button>
+        <button type="button" class="icon-btn" data-action="import" aria-label="导入数据" title="导入数据">
+          <i data-lucide="upload" width="18" height="18"></i>
+        </button>
+        <button type="button" class="icon-btn icon-btn-danger" data-action="reset" aria-label="恢复默认" title="恢复默认">
+          <i data-lucide="rotate-ccw" width="18" height="18"></i>
+        </button>
       </div>
       <input type="file" class="import-file-input" accept="application/json" hidden />
     `;

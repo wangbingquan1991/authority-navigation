@@ -18,7 +18,7 @@ import { ThemeSwitcher } from "./components/ThemeSwitcher.js?v=2";
 import { SearchBar } from "./components/SearchBar.js?v=2";
 import { CategoryGrid } from "./components/CategoryGrid.js?v=2";
 import { Modal } from "./components/Modal.js?v=2";
-import { ImportExport } from "./components/ImportExport.js?v=2";
+import { ImportExport } from "./components/ImportExport.js?v=3";
 
 function isDefaultCategory(name) {
   return Object.prototype.hasOwnProperty.call(DEFAULT_CATEGORIES, name);
