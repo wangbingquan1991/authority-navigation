@@ -1,5 +1,10 @@
 import { STORAGE_KEYS, getJson, setJson } from "../utils/storage.js";
 import { DEFAULT_CATEGORY_ICON } from "../data/defaultCategories.js";
+import {
+  getCachedAdminToken,
+  clearAdminToken,
+  promptForAdminToken
+} from "./adminAuth.js";
 
 let apiMode = null;
 let remoteDataCache = null;
@@ -35,17 +40,75 @@ export async function loadAllData() {
   };
 }
 
+async function readErrorDetail(res) {
+  try {
+    const body = await res.json();
+    if (body && typeof body.error === "string") return body.error;
+  } catch (e) {
+    // 非 JSON 响应体，忽略。
+  }
+  return "";
+}
+
+/**
+ * POST /api/data，附带 x-admin-token 请求头。
+ * 401：清除缓存 token，重新 prompt，重试一次（有且仅有一次，避免循环弹窗）。
+ * 抛出 Error 表示保存未成功，由调用方提示用户。
+ * @param {object} data
+ * @returns {Promise<void>}
+ */
+async function postWithAdminToken(data) {
+  let token = getCachedAdminToken();
+  if (!token) {
+    token = promptForAdminToken();
+    if (!token) {
+      throw new Error("未输入管理员口令，本次保存已取消。");
+    }
+  }
+
+  const doPost = () => fetch("/api/data", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-admin-token": token
+    },
+    body: JSON.stringify(data)
+  });
+
+  let res = await doPost();
+  if (res.status === 401) {
+    clearAdminToken();
+    token = promptForAdminToken({ rejected: true });
+    if (!token) {
+      throw new Error("未输入管理员口令，本次保存已取消。");
+    }
+    res = await doPost();
+    if (res.status === 401) {
+      clearAdminToken();
+      throw new Error("管理员口令不正确，数据未保存。");
+    }
+  }
+  if (res.status === 429) {
+    const retryAfter = parseInt(res.headers.get("Retry-After"), 10);
+    const wait = Number.isFinite(retryAfter) && retryAfter > 0
+      ? `请 ${retryAfter} 秒后重试。`
+      : "请稍后重试。";
+    throw new Error(`保存过于频繁，已触发速率限制，${wait}`);
+  }
+  if (!res.ok) {
+    const detail = await readErrorDetail(res);
+    throw new Error(`保存失败（HTTP ${res.status}）${detail ? "：" + detail : ""}`);
+  }
+}
+
 export async function saveAllData(data) {
   if (await detectApiMode()) {
-    remoteDataCache = data;
     try {
-      await fetch("/api/data", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data)
-      });
+      await postWithAdminToken(data);
+      remoteDataCache = data;
     } catch (e) {
       console.error("Failed to save data to API", e);
+      alert(e.message);
     }
     return;
   }

@@ -1,18 +1,17 @@
 const initSqlJs = require("sql.js");
 const path = require("path");
 const fs = require("fs");
+const {
+  ensureParentDir,
+  atomicWrite,
+  formatTimestamp,
+  rotateBackups,
+} = require("./db-file");
 
 const DATA_DIR = process.env.DATA_DIR
   ? path.resolve(process.env.DATA_DIR)
   : path.join(__dirname, "data");
 const DEFAULT_DB_PATH = process.env.DB_PATH || path.join(DATA_DIR, "data.db");
-const LEGACY_DATA_FILE = path.join(DATA_DIR, "custom-data.json");
-
-function ensureDataDir() {
-  if (!fs.existsSync(DATA_DIR)) {
-    fs.mkdirSync(DATA_DIR, { recursive: true });
-  }
-}
 
 let SQL;
 async function getSql() {
@@ -20,13 +19,6 @@ async function getSql() {
     SQL = await initSqlJs();
   }
   return SQL;
-}
-
-function ensureParentDir(filePath) {
-  const dir = path.dirname(filePath);
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir, { recursive: true });
-  }
 }
 
 async function loadDb(dbPath) {
@@ -40,9 +32,7 @@ async function loadDb(dbPath) {
 }
 
 function persistDb(db, dbPath) {
-  ensureParentDir(dbPath);
-  const data = db.export();
-  fs.writeFileSync(dbPath, Buffer.from(data));
+  atomicWrite(dbPath, Buffer.from(db.export()));
 }
 
 function initSchema(db) {
@@ -302,6 +292,20 @@ class DataStore {
 
     insertLink.free();
     persistDb(db, this.dbPath);
+  }
+
+  // Snapshot the in-memory database to a backup file using db.export() (a
+  // logically consistent full copy), then rotate away surplus old backups.
+  async backup(backupDir, keep = 7) {
+    const db = await this.getDb();
+    if (!fs.existsSync(backupDir)) {
+      fs.mkdirSync(backupDir, { recursive: true });
+    }
+    const data = db.export();
+    const filePath = path.join(backupDir, `backup-${formatTimestamp(new Date())}.db`);
+    atomicWrite(filePath, Buffer.from(data));
+    rotateBackups(backupDir, keep);
+    return filePath;
   }
 }
 

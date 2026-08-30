@@ -3,7 +3,8 @@ export const STORAGE_KEYS = {
   REMOVED: "nav_removed_defaults",
   CATEGORIES: "nav_custom_categories_v1",
   ORDER: "nav_category_order_v1",
-  THEME: "nav-theme"
+  THEME: "nav-theme",
+  ADMIN_TOKEN: "nav_admin_token_v1"
 };
 
 export function getJson(key, defaultValue = null) {

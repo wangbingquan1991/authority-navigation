@@ -16,6 +16,17 @@
 - 后端：Node.js + Express
 - 部署：Docker、Docker Compose
 
+## 环境变量
+
+| 变量 | 必填 | 默认 | 说明 |
+|------|------|------|------|
+| `ADMIN_TOKEN` | 是 | 无 | 写接口管理口令，长度 >= 16 字符；未设置或过短时进程启动即报错退出（fail closed） |
+| `WRITE_RATE_LIMIT_MAX` | 否 | `50` | 单 IP 每 15 分钟窗口允许的写请求次数 |
+| `BACKUP_INTERVAL_HOURS` | 否 | `6` | SQLite 定时备份间隔（小时） |
+| `BACKUP_KEEP` | 否 | `7` | 备份轮转保留份数（仅保留最新 N 份） |
+
+本地开发可复制 `.env.example` 为 `.env` 并按需填写（`docker-compose` 会自动读取 `.env`）。
+
 ## 快速开始
 
 ### 本地 Node.js 运行
@@ -62,13 +73,31 @@ docker-compose up -d
 
 > 注意：如果直接用 `docker run` 启动而不挂载卷，容器销毁后数据会丢失。请务必使用 Docker Compose 或手动挂载 `-v $(pwd)/data:/app/data`。
 
+### SQLite 备份与恢复
+
+应用进程内置定时备份：每 `BACKUP_INTERVAL_HOURS`（默认 6）小时对内存数据库做一次一致性快照，写入 `data/backups/backup-YYYYMMDD-HHmmss.db`，并仅保留最新 `BACKUP_KEEP`（默认 7）份，更早的自动删除。
+
+**恢复步骤**（务必先停止容器，避免写盘窗口）：
+
+```bash
+docker-compose down
+cp data/backups/backup-YYYYMMDD-HHmmss.db data/data.db
+docker-compose up -d
+```
+
+备份文件与主库 `data/data.db` 同为 SQLite 文件，可直接替换使用。
+
 ## API 接口
 
 | 方法 | 路径 | 说明 |
 |------|------|------|
 | GET | `/health` | 健康检查，返回 `{ "status": "ok" }` |
-| GET | `/api/data` | 获取用户自定义数据 |
-| POST | `/api/data` | 保存用户自定义数据 |
+| GET | `/api/data` | 获取用户自定义数据（匿名） |
+| POST | `/api/data` | 保存用户自定义数据（需 `x-admin-token` 认证，且受写限流保护） |
+
+> 写接口 `POST /api/data` 必须携带 `x-admin-token` 请求头，其值为环境变量 `ADMIN_TOKEN`（长度 >= 16 字符）。
+> 缺失或错误返回 `401 {"error":"Unauthorized"}`；写请求超过限流阈值返回 `429 {"error":"Too many requests"}`（附带 `Retry-After` 头）。
+> 读接口（`GET /api/data`、`GET /health`、静态资源、首页）保持匿名开放。
 
 自定义数据结构：
 

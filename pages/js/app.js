@@ -1,6 +1,7 @@
 import { DEFAULT_CATEGORIES, DEFAULT_CATEGORY_ICON } from "./data/defaultCategories.js";
 import {
   loadAllData,
+  saveAllData,
   loadCustomCategories,
   loadRemovedDefaults,
   loadCategoryOrder,

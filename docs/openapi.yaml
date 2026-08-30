@@ -1,0 +1,186 @@
+openapi: 3.0.3
+info:
+  title: Authority Navigation API
+  version: 1.1.0
+  description: >
+    权威综合导航页后端 API。v1.1.0 安全加固变更：POST /api/data 新增
+    x-admin-token 认证与速率限制；读接口保持匿名开放。
+servers:
+  - url: /
+paths:
+  /health:
+    get:
+      summary: 健康检查
+      security: []
+      responses:
+        '200':
+          description: 服务存活
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [status]
+                properties:
+                  status:
+                    type: string
+                    enum: [ok]
+                  timestamp:
+                    type: string
+                    format: date-time
+  /api/data:
+    get:
+      summary: 获取用户自定义数据（匿名）
+      security: []
+      responses:
+        '200':
+          description: 当前自定义数据
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NavData'
+        '500':
+          $ref: '#/components/responses/ServerError'
+    post:
+      summary: 保存用户自定义数据（需管理员认证，限流）
+      description: >
+        全量替换语义。超过速率限制返回 429（Retry-After 头指示重试等待秒数）。
+      security:
+        - adminToken: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NavDataInput'
+      responses:
+        '200':
+          description: 保存成功，返回清洗后的数据
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NavData'
+        '400':
+          description: 载荷校验失败
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: customLinks must be an object
+        '401':
+          description: 缺失或错误的管理口令
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Unauthorized
+        '429':
+          description: 写操作速率超限
+          headers:
+            Retry-After:
+              schema:
+                type: integer
+                description: 建议重试等待秒数
+            RateLimit:
+              schema:
+                type: string
+                description: IETF draft-8 合并限流头
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Too many requests
+        '500':
+          $ref: '#/components/responses/ServerError'
+components:
+  securitySchemes:
+    adminToken:
+      type: apiKey
+      in: header
+      name: x-admin-token
+      description: 管理员口令，由服务端环境变量 ADMIN_TOKEN 配置（>=16 字符）
+  schemas:
+    NavData:
+      type: object
+      properties:
+        customLinks:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/LinkItem'
+        customCategories:
+          type: array
+          items:
+            $ref: '#/components/schemas/Category'
+        removedDefaults:
+          type: array
+          items:
+            type: string
+            format: uri
+        categoryOrder:
+          type: array
+          items:
+            type: string
+    NavDataInput:
+      type: object
+      description: 与 NavData 同构；服务端会做类型校验、XSS 消毒、URL 协议白名单与长度截断
+      properties:
+        customLinks:
+          type: object
+        customCategories:
+          type: array
+          items:
+            type: object
+        removedDefaults:
+          type: array
+          items:
+            type: string
+        categoryOrder:
+          type: array
+          items:
+            type: string
+    LinkItem:
+      type: object
+      required: [name, url]
+      properties:
+        name:
+          type: string
+          maxLength: 100
+        url:
+          type: string
+          maxLength: 2048
+          description: 仅接受 http/https 协议
+        custom:
+          type: boolean
+    Category:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string
+          maxLength: 100
+        icon:
+          type: string
+          maxLength: 500
+        links:
+          type: array
+          items:
+            $ref: '#/components/schemas/LinkItem'
+    Error:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: string
+  responses:
+    ServerError:
+      description: 服务内部错误
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: Internal server error

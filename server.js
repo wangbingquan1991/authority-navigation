@@ -1,13 +1,41 @@
 const express = require("express");
 const helmet = require("helmet");
 const path = require("path");
+const { rateLimit } = require("express-rate-limit");
 const { DataStore } = require("./db");
+const { createAdminAuthMiddleware, MIN_TOKEN_LENGTH } = require("./auth");
+const { startBackupScheduler } = require("./backup");
 
 const PORT = process.env.PORT || 3000;
+const WRITE_RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000;
+
+function resolveAdminToken(options) {
+  const token = options.adminToken || process.env.ADMIN_TOKEN;
+  if (typeof token !== "string" || token.length < MIN_TOKEN_LENGTH) {
+    throw new Error(
+      `ADMIN_TOKEN must be configured as a string of at least ${MIN_TOKEN_LENGTH} characters to protect the write endpoint`
+    );
+  }
+  return token;
+}
+
+function resolveWriteRateLimitMax() {
+  const raw = process.env.WRITE_RATE_LIMIT_MAX;
+  if (raw === undefined || raw === "") return 50;
+  const parsed = Number.parseInt(raw, 10);
+  if (!Number.isFinite(parsed) || parsed <= 0) return 50;
+  return parsed;
+}
 
 // Security headers via Helmet
-function createApp(store) {
+function createApp(store, options = {}) {
+  const adminToken = resolveAdminToken(options);
   const app = express();
+
+  // trust proxy must be set before any rate limiter so req.ip reflects the
+  // real client address behind the Nginx reverse proxy. Without it all
+  // traffic would share a single rate-limit bucket.
+  app.set("trust proxy", 1);
 
   app.use(helmet({
     contentSecurityPolicy: {
@@ -175,7 +203,19 @@ function createApp(store) {
     }
   });
 
-  app.post("/api/data", async (req, res, next) => {
+  // Rate limiting runs before authentication so brute-force token attempts
+  // are counted in the same window as legitimate writes.
+  const writeRateLimiter = rateLimit({
+    windowMs: WRITE_RATE_LIMIT_WINDOW_MS,
+    limit: resolveWriteRateLimitMax(),
+    standardHeaders: "draft-8",
+    legacyHeaders: false,
+    message: { error: "Too many requests" },
+  });
+
+  const requireAdminToken = createAdminAuthMiddleware(adminToken);
+
+  app.post("/api/data", writeRateLimiter, requireAdminToken, async (req, res, next) => {
     try {
       const validation = validatePayload(req.body);
       if (validation.error) {
@@ -201,32 +241,37 @@ function createApp(store) {
   return app;
 }
 
-const defaultStore = new DataStore();
-const app = createApp(defaultStore);
+module.exports = { createApp };
 
-let server;
 if (require.main === module) {
-  server = app.listen(PORT, () => {
+  const store = new DataStore();
+
+  let app;
+  try {
+    app = createApp(store);
+  } catch (err) {
+    console.error(`Startup failed: ${err.message}`);
+    process.exit(1);
+  }
+
+  const server = app.listen(PORT, () => {
     console.log(`Authority navigation server running on port ${PORT}`);
   });
 
-  // Graceful shutdown
-  process.on("SIGTERM", () => {
-    console.log("SIGTERM received, shutting down gracefully");
-    server.close(() => {
-      defaultStore.close();
-      process.exit(0);
-    });
-  });
+  const backupScheduler = startBackupScheduler(store);
 
-  process.on("SIGINT", () => {
-    console.log("SIGINT received, shutting down gracefully");
+  let shuttingDown = false;
+  function shutdown(signal) {
+    if (shuttingDown) return;
+    shuttingDown = true;
+    console.log(`${signal} received, shutting down gracefully`);
+    backupScheduler.stop();
     server.close(() => {
-      defaultStore.close();
+      store.close();
       process.exit(0);
     });
-  });
+  }
+
+  process.on("SIGTERM", () => shutdown("SIGTERM"));
+  process.on("SIGINT", () => shutdown("SIGINT"));
 }
-
-module.exports = app;
-module.exports.createApp = createApp;

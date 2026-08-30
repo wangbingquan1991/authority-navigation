@@ -1,48 +1,18 @@
 const request = require("supertest");
 const fs = require("fs");
 const path = require("path");
-const { DataStore } = require("../db");
-const { createApp } = require("../server");
-
-const TEST_DATA_DIR = path.join(__dirname, "test-data");
-
-function resetTestData() {
-  if (fs.existsSync(TEST_DATA_DIR)) {
-    fs.rmSync(TEST_DATA_DIR, { recursive: true, force: true });
-  }
-}
-
-function getTestDbPath() {
-  return path.join(TEST_DATA_DIR, `test-${Date.now()}.db`);
-}
-
-function writeLegacyData(dbPath, data) {
-  const dir = path.dirname(dbPath);
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir, { recursive: true });
-  }
-  fs.writeFileSync(
-    path.join(dir, "custom-data.json"),
-    JSON.stringify(data, null, 2),
-    "utf-8"
-  );
-}
-
-function createTestApp(dbPath) {
-  const store = new DataStore({ dbPath });
-  return createApp(store);
-}
+const {
+  TEST_TOKEN,
+  getTestDbPath,
+  writeLegacyData,
+  createTestApp,
+} = require("./helpers").createTestContext();
 
 describe("Authority Navigation API", () => {
   let dbPath;
 
   beforeEach(() => {
-    resetTestData();
     dbPath = getTestDbPath();
-  });
-
-  afterAll(() => {
-    resetTestData();
   });
 
   describe("GET /health", () => {
@@ -78,7 +48,10 @@ describe("Authority Navigation API", () => {
         removedDefaults: [],
         categoryOrder: ["国家机关"]
       };
-      await request(app).post("/api/data").send(payload);
+      await request(app)
+        .post("/api/data")
+        .set("x-admin-token", TEST_TOKEN)
+        .send(payload);
 
       const res = await request(app).get("/api/data");
       expect(res.statusCode).toBe(200);
@@ -105,7 +78,10 @@ describe("Authority Navigation API", () => {
         categoryOrder: ["国家机关", "测试分类"]
       };
 
-      const res = await request(app).post("/api/data").send(payload);
+      const res = await request(app)
+        .post("/api/data")
+        .set("x-admin-token", TEST_TOKEN)
+        .send(payload);
       expect(res.statusCode).toBe(200);
       expect(res.body.customLinks["国家机关"]).toHaveLength(1);
       expect(res.body.customCategories).toHaveLength(1);
@@ -121,6 +97,7 @@ describe("Authority Navigation API", () => {
       const app = createTestApp(dbPath);
       const res = await request(app)
         .post("/api/data")
+        .set("x-admin-token", TEST_TOKEN)
         .send({ customLinks: "bad" });
       expect(res.statusCode).toBe(400);
       expect(res.body.error).toBe("customLinks must be an object");
@@ -130,6 +107,7 @@ describe("Authority Navigation API", () => {
       const app = createTestApp(dbPath);
       const res = await request(app)
         .post("/api/data")
+        .set("x-admin-token", TEST_TOKEN)
         .send({ customCategories: "bad" });
       expect(res.statusCode).toBe(400);
       expect(res.body.error).toBe("customCategories must be an array");
@@ -139,6 +117,7 @@ describe("Authority Navigation API", () => {
       const app = createTestApp(dbPath);
       const res = await request(app)
         .post("/api/data")
+        .set("x-admin-token", TEST_TOKEN)
         .send({
           customLinks: {
             "国家机关": [
@@ -155,6 +134,7 @@ describe("Authority Navigation API", () => {
       const app = createTestApp(dbPath);
       const res = await request(app)
         .post("/api/data")
+        .set("x-admin-token", TEST_TOKEN)
         .send({
           customLinks: {
             "国家机关": [
@@ -174,6 +154,7 @@ describe("Authority Navigation API", () => {
       const longName = "a".repeat(300);
       const res = await request(app)
         .post("/api/data")
+        .set("x-admin-token", TEST_TOKEN)
         .send({
           customLinks: {
             "国家机关": [{ name: longName, url: "https://example.com" }]

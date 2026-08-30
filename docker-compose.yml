@@ -11,4 +11,8 @@ services:
     environment:
       - NODE_ENV=production
       - DATA_DIR=/app/data
+      - ADMIN_TOKEN=${ADMIN_TOKEN}
+      - WRITE_RATE_LIMIT_MAX=${WRITE_RATE_LIMIT_MAX:-50}
+      - BACKUP_INTERVAL_HOURS=${BACKUP_INTERVAL_HOURS:-6}
+      - BACKUP_KEEP=${BACKUP_KEEP:-7}
     restart: unless-stopped
