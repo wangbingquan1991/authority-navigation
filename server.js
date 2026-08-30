@@ -21,6 +21,42 @@ function loadDefaultSites() {
   }
 }
 
+const CDN_CONFIG_PATH = process.env.CDN_CONFIG_PATH || path.join(__dirname, "config", "cdn.json");
+function loadCdnConfig() {
+  try {
+    const raw = fs.readFileSync(CDN_CONFIG_PATH, "utf8");
+    const parsed = JSON.parse(raw);
+    const scripts = (Array.isArray(parsed.scripts) ? parsed.scripts : [])
+      .filter((s) => s && typeof s.id === "string" && s.id.length > 0)
+      .filter((s) => {
+        if (typeof s.url !== "string" || s.url.length === 0 || s.url.length > 2048) return false;
+        try {
+          const url = new URL(s.url);
+          return url.protocol === "https:";
+        } catch {
+          return false;
+        }
+      })
+      .map((s) => ({ id: s.id, url: s.url }));
+    return { scripts };
+  } catch (err) {
+    console.error("Failed to load CDN config:", err.message);
+    return { scripts: [] };
+  }
+}
+
+function cdnScriptOrigins(cdnConfig) {
+  const origins = new Set();
+  for (const s of cdnConfig.scripts) {
+    try {
+      origins.add(new URL(s.url).origin);
+    } catch {
+      // already validated https URL in loadCdnConfig
+    }
+  }
+  return [...origins];
+}
+
 function resolveAdminToken(options) {
   const token = options.adminToken || process.env.ADMIN_TOKEN;
   if (typeof token !== "string" || token.length < MIN_TOKEN_LENGTH) {
@@ -44,6 +80,10 @@ function createApp(store, options = {}) {
   const adminToken = resolveAdminToken(options);
   const app = express();
 
+  // CDN script origins are derived from config/cdn.json so external hosts
+  // are never hardcoded in the source.
+  const cdnOrigins = cdnScriptOrigins(loadCdnConfig());
+
   // trust proxy must be set before any rate limiter so req.ip reflects the
   // real client address behind the Nginx reverse proxy. Without it all
   // traffic would share a single rate-limit bucket.
@@ -54,7 +94,7 @@ function createApp(store, options = {}) {
       directives: {
         defaultSrc: ["'self'"],
         styleSrc: ["'self'", "'unsafe-inline'"],
-        scriptSrc: ["'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net", "https://unpkg.com"],
+        scriptSrc: ["'self'", "'unsafe-inline'", ...cdnOrigins],
         imgSrc: ["'self'", "data:", "blob:", "https:"],
         fontSrc: ["'self'", "https:", "data:"],
         connectSrc: ["'self'"],
@@ -208,7 +248,7 @@ function createApp(store, options = {}) {
   });
 
   app.get("/api/config", (req, res) => {
-    res.json(loadDefaultSites());
+    res.json({ ...loadDefaultSites(), cdn: loadCdnConfig() });
   });
 
   app.get("/api/data", async (req, res, next) => {

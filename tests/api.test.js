@@ -36,6 +36,41 @@ describe("Authority Navigation API", () => {
       expect(res.body.categories["国家机关"]).toBeDefined();
       expect(Array.isArray(res.body.categories["国家机关"].links)).toBe(true);
     });
+
+    it("returns CDN script definitions instead of hardcoded URLs", async () => {
+      const app = createTestApp(dbPath);
+      const res = await request(app).get("/api/config");
+      expect(res.statusCode).toBe(200);
+      const scripts = res.body.cdn && res.body.cdn.scripts;
+      expect(Array.isArray(scripts)).toBe(true);
+      expect(scripts.length).toBeGreaterThan(0);
+      for (const s of scripts) {
+        expect(typeof s.id).toBe("string");
+        expect(s.id.length).toBeGreaterThan(0);
+        expect(s.url).toMatch(/^https:\/\//);
+      }
+      const ids = scripts.map((s) => s.id);
+      expect(ids).toContain("tailwind");
+      expect(ids).toContain("lucide");
+    });
+
+    it("serves the CDN config statically for the frontend loader", async () => {
+      const app = createTestApp(dbPath);
+      const res = await request(app).get("/config/cdn.json");
+      expect(res.statusCode).toBe(200);
+      expect(Array.isArray(res.body.scripts)).toBe(true);
+      expect(res.body.scripts.length).toBeGreaterThan(0);
+    });
+
+    it("derives CSP script origins from the CDN config", async () => {
+      const app = createTestApp(dbPath);
+      const res = await request(app).get("/");
+      expect(res.statusCode).toBe(200);
+      const csp = res.headers["content-security-policy"];
+      expect(csp).toBeDefined();
+      expect(csp).toContain("cdn.jsdelivr.net");
+      expect(csp).toContain("unpkg.com");
+    });
   });
 
   describe("GET /api/data", () => {

@@ -1114,8 +1114,39 @@ footer {
 }
 
     </style>
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script>
-    <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
+    <script>
+  // 外部 CDN 脚本地址统一由 config/cdn.json 提供（经 /config 静态目录下发），
+  // 代码中不硬编码任何外部网址。app.js 会 await window.__cdnReady 后再渲染。
+  (function () {
+    var load = fetch("/config/cdn.json")
+      .then(function (r) {
+        if (!r.ok) throw new Error("cdn config HTTP " + r.status);
+        return r.json();
+      })
+      .then(function (cfg) {
+        var scripts = (cfg && cfg.scripts) || [];
+        return Promise.all(scripts.map(function (s) {
+          return new Promise(function (resolve) {
+            var el = document.createElement("script");
+            el.src = s.url;
+            el.async = false; // 保持配置文件中的加载顺序
+            el.onload = resolve;
+            el.onerror = function () {
+              console.error("CDN script failed to load:", s.url);
+              resolve(); // 单个脚本失败不阻塞整体渲染
+            };
+            document.head.appendChild(el);
+          });
+        }));
+      })
+      .catch(function (err) { console.error("Failed to load CDN config:", err); });
+    // 兜底：配置或 CDN 异常时最多等 4 秒，避免页面永久空白
+    window.__cdnReady = Promise.race([
+      load,
+      new Promise(function (resolve) { setTimeout(resolve, 4000); })
+    ]);
+  })();
+    </script>
     <style type="text/tailwindcss">
   @theme inline {
     --color-background: var(--background);

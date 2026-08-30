@@ -93,6 +93,16 @@ async function mergeCategories() {
 async function init() {
   defaultConfig = await loadDefaultConfig();
 
+  // 等待 CDN 脚本（Tailwind / Lucide，地址来自 config/cdn.json）注入完成，
+  // 自带 4s 超时兜底，CDN 故障不会导致页面空白
+  if (window.__cdnReady) {
+    try {
+      await window.__cdnReady;
+    } catch (e) {
+      console.error("CDN scripts unavailable:", e);
+    }
+  }
+
   const modal = new Modal(document.body);
   const navHeader = new NavHeader(document.querySelector(".nav-header-content"));
   navHeader.render();
