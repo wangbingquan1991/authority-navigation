@@ -104,4 +104,4 @@ jobs:
 
       - name: Skip deploy notice
         if: steps.check.outputs.deploy == 'false'
-        run: echo "Deployment skipped: SSH secrets not configured. Image pushed to ghcr.io."
+        run: 'echo "Deployment skipped - SSH secrets not configured. Image pushed to ghcr.io."'
