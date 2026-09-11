@@ -336,6 +336,9 @@
   --tk-space-xl: 40px;
   --tk-transition: 180ms cubic-bezier(0.4, 0, 0.2, 1);
   --tk-font-sans: Inter, "TikTok Sans", ui-sans-serif, sans-serif;
+  /* 卡片统一高度：链接区高度决定分类卡片高度，新建分类卡片取同值，保证整行等高 */
+  --tk-links-h: 210px;
+  --tk-card-h: 315px;
 }
 
 * {
@@ -646,12 +649,15 @@ h1 {
   text-overflow: ellipsis;
 }
 
+/* 链接区固定高度：保证自定义分类与默认分类卡片高度完全一致。
+   若用 max-height，链接少的分栏（如新建的自定义分类）会明显矮于默认分栏，
+   同一行内高度参差不齐。 */
 .links {
   list-style: none;
   display: flex;
   flex-direction: column;
   gap: 2px;
-  max-height: 210px;
+  height: var(--tk-links-h);
   overflow-y: auto;
 }
 
@@ -854,7 +860,7 @@ footer {
   align-items: center;
   justify-content: center;
   gap: var(--tk-space-sm);
-  min-height: 180px;
+  min-height: var(--tk-card-h);
   border: 2px dashed var(--tk-border);
   background: transparent;
   color: var(--tk-text-secondary);
@@ -1238,8 +1244,13 @@ footer {
   .quick-links {
     grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
   }
+  /* 窄屏改为按内容自适应，避免固定高度浪费竖向空间 */
   .links {
+    height: auto;
     max-height: none;
+  }
+  .add-category-card {
+    min-height: 180px;
   }
 }
 
