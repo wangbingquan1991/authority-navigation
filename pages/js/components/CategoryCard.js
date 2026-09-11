@@ -1,4 +1,5 @@
 import { escapeHtml } from "../utils/validators.js";
+import { recordClick } from "../utils/clickTracker.js";
 
 export class CategoryCard {
   constructor(container, options = {}) {
@@ -53,6 +54,8 @@ export class CategoryCard {
       <a href="${link.url}" target="_blank" rel="noopener">${escapeHtml(link.name)}</a>
       <button class="delete-btn" aria-label="删除 ${escapeHtml(link.name)}" title="删除">&times;</button>
     `;
+    const a = li.querySelector("a");
+    a.addEventListener("click", () => recordClick(link.url));
     li.querySelector(".delete-btn").addEventListener("click", (e) => {
       e.stopPropagation();
       this.onDeleteLink(this.category, link.url, this.isDefault);

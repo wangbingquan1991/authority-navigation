@@ -110,6 +110,23 @@ body {
   flex: 1;
 }
 
+/* URL Row (editable) */
+.url-row {
+  display: flex;
+  gap: 6px;
+}
+
+.url-row input {
+  flex: 1;
+  min-width: 0;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 12px;
+}
+
+.url-row .btn-link {
+  flex: 0 0 auto;
+}
+
 .btn-link {
   background: none;
   border: 1px solid #d1d5db;
@@ -126,6 +143,23 @@ body {
 .btn-link:hover {
   background: #eef2ff;
   border-color: #6366f1;
+}
+
+/* 恢复按钮：与当前页面地址一致时保持低调，被改过后高亮 */
+.url-row .btn-link {
+  color: #9ca3af;
+  border-color: #e5e7eb;
+}
+
+.url-row .btn-link:hover {
+  color: #4f46e5;
+  border-color: #c7d2fe;
+}
+
+.url-row .btn-link.is-active {
+  color: #4f46e5;
+  border-color: #c7d2fe;
+  background: #eef2ff;
 }
 
 /* Buttons */

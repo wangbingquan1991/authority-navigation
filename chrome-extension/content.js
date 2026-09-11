@@ -25,9 +25,10 @@
     const twitterTitle = document.querySelector('meta[name="twitter:title"]')?.content;
     const title = ogTitle || twitterTitle || document.title || '';
 
-    // 2. URL - 使用 canonical 链接
-    const canonical = document.querySelector('link[rel="canonical"]')?.href;
-    const url = canonical || location.href;
+    // 2. URL - 使用当前页面的完整 URL（保留所有 query 参数和 hash）
+    // 注意：不使用 canonical 链接，因为 canonical 常用于 SEO 规范化，
+    // 会去除 token、会话 ID 等动态参数，导致导航链接失效
+    const url = location.href;
 
     // 3. Favicon
     let favicon = '';

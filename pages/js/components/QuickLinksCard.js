@@ -1,4 +1,5 @@
 import { escapeHtml } from "../utils/validators.js";
+import { recordClick } from "../utils/clickTracker.js";
 
 const QUICK_LINKS_ICON = "M13.5 2 3 14h9l-1 8 10.5-12h-9l1-8z";
 
@@ -39,6 +40,8 @@ export class QuickLinksCard {
         <a href="${escapeHtml(link.url)}" target="_blank" rel="noopener" title="${escapeHtml(link.name)}">${escapeHtml(link.name)}</a>
         <button class="delete-btn" aria-label="删除 ${escapeHtml(link.name)}" title="删除">&times;</button>
       `;
+      const a = li.querySelector("a");
+      a.addEventListener("click", () => recordClick(link.url));
       li.querySelector(".delete-btn").addEventListener("click", (e) => {
         e.stopPropagation();
         // 来自默认配置的链接标记为 isDefault，删除时记入移除列表；用户自建的直接移除

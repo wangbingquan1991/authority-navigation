@@ -12,7 +12,8 @@ const state = {
   categories: [],       // 合并后的分类列表（default + custom）
   categoriesMap: {},    // 快速查找: { categoryName: { icon, isDefault, links } }
   dataCache: null,      // 从服务器 GET /api/data 得到的完整数据
-  defaultConfig: null   // 从服务器 GET /api/config 得到的默认分类
+  defaultConfig: null,  // 从服务器 GET /api/config 得到的默认分类
+  currentPageUrl: ''    // 当前标签页地址，用于「恢复」按钮
 };
 
 // ------------------------------------------------------------
@@ -21,11 +22,40 @@ const state = {
 
 function $(id) { return document.getElementById(id); }
 
+/**
+ * 判断是否为本地/内网地址（这类地址默认使用 http 而非 https）
+ */
+function isLocalHostname(hostname) {
+  const h = String(hostname || '').toLowerCase();
+  if (!h) return false;
+  if (h === 'localhost' || h.endsWith('.localhost')) return true;
+  if (h === '127.0.0.1' || h === '::1' || h === '[::1]') return true;
+  // 私有网段
+  if (/^10\./.test(h)) return true;
+  if (/^192\.168\./.test(h)) return true;
+  if (/^172\.(1[6-9]|2\d|3[01])\./.test(h)) return true;
+  // 无点主机名（如 nas、devbox）或 .local 内网域名
+  if (!h.includes('.') || h.endsWith('.local')) return true;
+  return false;
+}
+
+/**
+ * 规范化用户输入的网址：
+ * - 自动补全协议（本地/内网地址补 http，其余补 https）
+ * - 保留 query 参数与 hash
+ */
 function normalizeUrl(url) {
   url = String(url || '').trim();
   if (!url) return url;
-  if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
-  return url;
+
+  // 已带协议，直接返回
+  if (/^[a-z][a-z0-9+.-]*:\/\//i.test(url)) return url;
+
+  // 形如 localhost:3000 / 127.0.0.1:3080/path 的输入
+  const hostPart = url.split('/')[0].split('?')[0].split('#')[0];
+  const hostname = hostPart.split(':')[0];
+  const scheme = isLocalHostname(hostname) ? 'http://' : 'https://';
+  return scheme + url;
 }
 
 function isValidUrl(str) {
@@ -339,6 +369,8 @@ async function addToNavigation() {
     $('newCategoryName').value = '';
     $('newCategoryPanel').classList.add('hidden');
     $('pageTitle').value = '';
+    $('pageUrl').value = state.currentPageUrl;
+    updateResetUrlState();
 
     // 重新加载分类
     await loadCategories();
@@ -395,6 +427,17 @@ async function getPageMetadata() {
 // Init
 // ------------------------------------------------------------
 
+/**
+ * 网址栏被手动修改后，恢复按钮高亮；与当前页面地址一致时置灰
+ */
+function updateResetUrlState() {
+  const btn = $('resetUrlBtn');
+  if (!btn) return;
+  const dirty = $('pageUrl').value.trim() !== state.currentPageUrl;
+  btn.classList.toggle('is-active', dirty);
+  btn.title = dirty ? '恢复为当前页面地址' : '当前页面地址';
+}
+
 async function init() {
   await loadSettings();
   bindEvents();
@@ -406,8 +449,12 @@ async function init() {
 
   // 获取当前页面元数据（通过 content script 消息传递）
   const metadata = await getPageMetadata();
+  state.currentPageUrl = metadata.url || '';
   $('pageTitle').value = metadata.title || '';
-  $('pageUrl').value = metadata.url || '';
+  $('pageUrl').value = state.currentPageUrl;
+
+  // 如果地址栏被手动修改过，恢复按钮进入可用态
+  updateResetUrlState();
 
   // 如果有描述信息，可以在控制台显示（预留扩展点）
   if (metadata.description) {
@@ -456,11 +503,25 @@ function bindEvents() {
     }
   });
 
+  // 网址栏：可手动编辑，输入时同步「恢复」按钮状态
+  $('pageUrl').addEventListener('input', updateResetUrlState);
+
+  // 恢复为当前页面地址
+  $('resetUrlBtn').addEventListener('click', () => {
+    $('pageUrl').value = state.currentPageUrl;
+    updateResetUrlState();
+    $('pageUrl').focus();
+  });
+
   // 提交
   $('addBtn').addEventListener('click', addToNavigation);
 
   // 快捷键: Enter 在 title 输入框触发提交
   $('pageTitle').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') addToNavigation();
+  });
+  // 网址栏内按 Enter 也触发提交（避免与手动编辑冲突）
+  $('pageUrl').addEventListener('keydown', (e) => {
     if (e.key === 'Enter') addToNavigation();
   });
   $('newCategoryName').addEventListener('keydown', (e) => {

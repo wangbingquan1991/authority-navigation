@@ -16,6 +16,7 @@ import {
   loadDefaultConfig
 } from "./services/api.js";
 import { normalizeUrl, normalize, isValidUrl, isValidName } from "./utils/validators.js";
+import { sortLinksByFrequency } from "./utils/clickTracker.js";
 import { NavHeader } from "./components/NavHeader.js?v=2";
 import { ThemeSwitcher } from "./components/ThemeSwitcher.js?v=3";
 import { SearchBar } from "./components/SearchBar.js?v=2";
@@ -256,7 +257,8 @@ async function init() {
 
   async function refresh() {
     const categories = await mergeCategories();
-    grid.quickLinks = await getQuickLinks();
+    const rawQuickLinks = await getQuickLinks();
+    grid.quickLinks = sortLinksByFrequency(rawQuickLinks, 125);
     grid.render(categories);
     grid.filter(searchBar.value);
     if (window.lucide?.createIcons) window.lucide.createIcons();
