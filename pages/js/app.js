@@ -17,15 +17,19 @@ import {
 } from "./services/api.js";
 import { normalizeUrl, normalize, isValidUrl, isValidName } from "./utils/validators.js";
 import { sortLinksByFrequency } from "./utils/clickTracker.js";
+import { mergeImportData } from "./utils/exportImport.js?v=2";
 import { NavHeader } from "./components/NavHeader.js?v=2";
 import { ThemeSwitcher } from "./components/ThemeSwitcher.js?v=3";
 import { SearchBar } from "./components/SearchBar.js?v=2";
 import { CategoryGrid } from "./components/CategoryGrid.js?v=4";
 import { Modal } from "./components/Modal.js?v=2";
-import { ImportExport } from "./components/ImportExport.js?v=3";
+import { ImportExport } from "./components/ImportExport.js?v=4";
 
 // “常用链接”卡片在数据层复用一个保留类别名，用于保存用户自建/删除的常用链接
 const QUICK_LINKS_CATEGORY = "常用链接";
+
+// 导入时未指定分类的网站，归入这个分类
+const UNCATEGORIZED_CATEGORY = "未分类";
 
 let defaultConfig = { categories: {}, defaultCategoryIcon: "M12 2v20 M2 12h20" };
 
@@ -238,9 +242,47 @@ async function init() {
         quickLinks
       };
     },
-    onImport: async (data) => {
-      await saveAllData(data);
+    // 增量导入：以链接为最小粒度并入现有数据，同分类内按 URL 去重；
+    // 传入 replace=true 时退化为全量替换（用于还原备份）
+    onImport: async (data, opts = {}) => {
+      const replace = opts.replace === true;
+      const entries = Array.isArray(data.entries) ? data.entries : [];
+
+      if (replace) {
+        const categories = data.customCategories || [];
+        if (categories.length === 0 && entries.length === 0) {
+          return { empty: true, replace: true };
+        }
+        await saveAllData({
+          customLinks: data.customLinks || {},
+          customCategories: categories,
+          removedDefaults: data.removedDefaults || [],
+          removedCommonLinks: data.removedCommonLinks || [],
+          categoryOrder: data.categoryOrder || []
+        });
+        await refresh();
+        return { replace: true, categories: categories.length, links: entries.length };
+      }
+
+      // 没有可导入的链接时不写库，避免无意义变更
+      if (entries.length === 0) return { empty: true };
+
+      const existing = await loadAllData();
+      const merged = mergeImportData(existing, data, {
+        defaultCategoryNames: new Set(Object.keys(getDefaultCategories())),
+        fallbackCategory: UNCATEGORIZED_CATEGORY,
+        defaultIcon: getDefaultCategoryIcon()
+      });
+
+      await saveAllData({
+        customLinks: merged.customLinks,
+        customCategories: merged.customCategories,
+        removedDefaults: merged.removedDefaults,
+        removedCommonLinks: merged.removedCommonLinks,
+        categoryOrder: merged.categoryOrder
+      });
       await refresh();
+      return merged.stats;
     },
     onReset: async () => {
       await saveAllData({
