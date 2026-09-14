@@ -386,6 +386,48 @@ async function addToNavigation() {
 // ------------------------------------------------------------
 
 /**
+ * 读取 background 记录的「跳转前地址」。
+ * 站点若把 ?token= 当一次性凭证并在服务端 302 丢弃它，
+ * 地址栏里就再也拿不到了，这里取回原始地址作为兜底。
+ * @param {number} tabId
+ * @returns {Promise<string>}
+ */
+async function readNavStartUrl(tabId) {
+  if (typeof tabId !== 'number' || tabId < 0) return '';
+  try {
+    const key = 'an_nav_start_' + tabId;
+    const res = await chrome.storage.session.get(key);
+    return res[key] || '';
+  } catch (err) {
+    return '';
+  }
+}
+
+/**
+ * 在当前地址与跳转前地址之间择优。
+ * 仅在「同源 + 同路径 + 跳转前参数更多」时采用跳转前地址，
+ * 避免把上一次导航的残留数据误用到当前页面。
+ * @param {string} current - 地址栏当前地址
+ * @param {string} original - 跳转前地址
+ * @returns {string}
+ */
+function preferRicherUrl(current, original) {
+  if (!original) return current;
+  try {
+    const c = new URL(current);
+    const o = new URL(original);
+    if (c.origin !== o.origin) return current;
+    if (c.pathname !== o.pathname) return current;
+    if (c.href === o.href) return current;
+    // 参数更多 → 说明当前地址是跳转后被裁掉的版本
+    if (o.searchParams.size > c.searchParams.size) return original;
+    return current;
+  } catch (err) {
+    return current;
+  }
+}
+
+/**
  * 通过 content script 获取丰富的页面元数据
  * 优先使用消息传递，如果失败则降级为 chrome.tabs.query
  */
@@ -449,6 +491,15 @@ async function init() {
 
   // 获取当前页面元数据（通过 content script 消息传递）
   const metadata = await getPageMetadata();
+
+  // 站点若在服务端 302 中丢弃了 ?token= 之类的参数，地址栏里已看不到，
+  // 这里取回跳转前的完整地址（仅同源同路径且参数更多时才采用）
+  const [activeTab] = await chrome.tabs.query({ active: true, currentWindow: true });
+  if (activeTab) {
+    const navStart = await readNavStartUrl(activeTab.id);
+    metadata.url = preferRicherUrl(metadata.url || '', navStart);
+  }
+
   state.currentPageUrl = metadata.url || '';
   $('pageTitle').value = metadata.title || '';
   $('pageUrl').value = state.currentPageUrl;
