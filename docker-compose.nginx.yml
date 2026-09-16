@@ -2,7 +2,9 @@ version: "3.8"
 
 services:
   authority-navigation:
-    image: ghcr.io/wangbingquan1991/authority-navigation:latest
+    # 在服务器上从源码本地构建，不再依赖镜像仓库
+    build: .
+    image: authority-navigation:local
     container_name: authority-navigation
     restart: unless-stopped
     expose:

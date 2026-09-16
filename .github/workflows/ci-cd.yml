@@ -6,9 +6,10 @@ on:
   pull_request:
     branches: [master, main]
 
-env:
-  REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
+# 不再向 GitHub Container Registry 推送镜像：
+# 镜像改为在服务器上从源码本地构建，因此工作流只需要读权限。
+permissions:
+  contents: read
 
 jobs:
   test:
@@ -30,52 +31,11 @@ jobs:
       - name: Run tests
         run: npm test
 
-  build-and-push:
-    name: Build and Push Docker Image
-    runs-on: ubuntu-latest
-    needs: test
-    if: github.event_name == 'push'
-    permissions:
-      contents: read
-      packages: write
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Log in to GitHub Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Extract metadata
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          tags: |
-            type=sha,prefix={{branch}}-
-            type=raw,value=latest,enable={{is_default_branch}}
-
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-
   deploy:
     name: Deploy to Server
     runs-on: ubuntu-latest
-    needs: build-and-push
-    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main'
+    needs: test
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main')
     environment: production
     steps:
       - name: Check SSH secrets
@@ -87,21 +47,47 @@ jobs:
             echo "deploy=false" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Deploy via SSH
+      - name: Deploy via SSH (build on server)
         if: steps.check.outputs.deploy == 'true'
         uses: appleboy/ssh-action@v1.0.3
+        env:
+          APP_REPO: ${{ github.repository }}
+          APP_SHA: ${{ github.sha }}
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
           port: ${{ secrets.SSH_PORT || 22 }}
+          envs: APP_REPO,APP_SHA
           script: |
-            cd ~/authority-navigation || exit 1
-            docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
-            docker-compose down
-            docker-compose up -d
-            docker image prune -f
+            # 不使用 pipefail：远端 /bin/sh 可能是 dash，不支持该选项
+            set -eu
+
+            APP_DIR="$HOME/authority-navigation"
+            mkdir -p "$APP_DIR"
+            cd "$APP_DIR"
+
+            # ---------- 1. 拉取目标 commit 的源码 ----------
+            # 压缩包只含仓库内被跟踪的文件，服务器上的 data/、.env、
+            # certbot/ 与生成的 nginx 配置都不在其中，因此不会被覆盖。
+            #
+            # 直连 codeload.github.com：github.com/<repo>/archive/... 需要先
+            # 重定向到该域名，多一跳既是额外故障点也更慢。
+            # 若仓库改为私有，需在此追加 -H "Authorization: Bearer <token>"。
+            echo "==> Fetching source: $APP_REPO@$APP_SHA"
+            curl -fsSL --retry 3 --retry-delay 2 --retry-connrefused --max-time 120 \
+              "https://codeload.github.com/$APP_REPO/tar.gz/$APP_SHA" -o /tmp/nav-src.tar.gz
+            tar -xzf /tmp/nav-src.tar.gz --strip-components=1 -C "$APP_DIR"
+            rm -f /tmp/nav-src.tar.gz
+            echo "==> Source updated"
+
+            # ---------- 2. 交给仓库内的部署脚本完成构建与健康检查 ----------
+            # 部署逻辑只在 scripts/deploy.sh 中实现一份，避免与工作流重复维护。
+            # 该脚本会先校验 .env、按栈选择 compose 文件、留档数据、本地构建
+            # 并在容器内做健康检查，失败即非零退出。
+            echo "==> Running scripts/deploy.sh"
+            bash scripts/deploy.sh
 
       - name: Skip deploy notice
         if: steps.check.outputs.deploy == 'false'
-        run: 'echo "Deployment skipped - SSH secrets not configured. Image pushed to ghcr.io."'
+        run: 'echo "Deployment skipped - SSH secrets not configured."'

@@ -149,9 +149,9 @@ docker-compose up -d
 本项目已配置 GitHub Actions 工作流（`.github/workflows/ci-cd.yml`）：
 
 1. **测试**：每次 Push / PR 自动运行 `npm test`
-2. **构建镜像**：测试通过后自动构建 Docker 镜像
-3. **推送镜像**：镜像推送到 GitHub Container Registry（`ghcr.io/wangbingquan1991/authority-navigation`），标签为 `latest` 和分支 `master-<short-sha>`
-4. **自动部署**（可选）：配置了 SSH 密钥后，推送 `master` 分支会自动登录服务器并拉取最新镜像重启服务
+2. **部署**（仅 `master` / `main` 的 push）：测试通过后登录服务器，拉取该 commit 的源码并**在服务器本地构建镜像**，随后重启服务并做健康检查
+
+镜像不在任何镜像仓库之间中转，因此不需要 GHCR 等 registry 的写权限。
 
 ### 启用自动部署
 
@@ -169,15 +169,28 @@ docker-compose up -d
 ```bash
 mkdir -p ~/authority-navigation
 cd ~/authority-navigation
-# 放入 docker-compose.prod.yml 与 data/ 目录
+# 放入 docker-compose.prod.yml（或 docker-compose.nginx.yml）与 data/ 目录
+# 并创建 .env，至少写入 ADMIN_TOKEN（缺失时部署会被主动中止）
 docker-compose -f docker-compose.prod.yml up -d
 ```
 
-手动部署也可使用脚本：
+之后每次推送 `master`，工作流会覆盖该目录中**受版本控制**的文件（`data/`、`.env`、`certbot/` 与生成的 nginx 配置不在仓库内，因此不受影响）。
+
+**部署脚本行为**（`scripts/deploy.sh`，工作流与手动部署共用同一份实现）：
+
+1. 校验 `.env` 中的 `ADMIN_TOKEN`，缺失则**主动中止**且不动现有容器
+2. 自动探测 compose 命令（`docker compose` / `docker-compose`）与 compose 文件（在跑 nginx 容器时用 `docker-compose.nginx.yml`，否则优先 `docker-compose.prod.yml`）
+3. 把当前 `data/data.db` 快照到 `data/backups/deploy/`，仅保留最新 5 份
+4. 把当前镜像打上 `authority-navigation:previous` 标签，便于回滚
+5. 本地构建并启动，然后在容器内轮询 `/health` 做健康检查；失败会输出最近 50 行容器日志并以非零码退出
+
+手动部署：
 
 ```bash
 bash scripts/deploy.sh
 ```
+
+可用环境变量：`APP_DIR`（默认 `$HOME/authority-navigation`）、`COMPOSE_FILE`（默认自动探测）、`HEALTH_RETRIES`（默认 20）、`HEALTH_INTERVAL`（默认 3 秒）。
 
 ### Nginx 反向代理 + HTTPS
 
@@ -222,19 +235,26 @@ authority-navigation/
 │   ├── index.html          # 前端页面（主题样式内联在页面内的 <style id="theme-vars">）
 │   └── js/                 # 前端组件与服务
 ├── assets/                 # Logo 与主题预览图
-├── data/                   # SQLite 数据库（运行生成，不提交）
+├── data/                   # SQLite 数据库与备份（运行生成，不提交）
 ├── tests/
-│   └── api.test.js         # API 测试套件
+│   ├── api.test.js         # API 测试套件
+│   ├── security.test.js    # 认证、限流、空写守卫与写前快照
+│   └── deploy-script.test.js  # 部署脚本分支逻辑（假 docker，离线）
 ├── scripts/
-│   ├── deploy.sh           # 服务器手动部署脚本
+│   ├── deploy.sh           # 服务器端本地构建部署脚本
 │   └── init-ssl.sh         # SSL 证书初始化脚本
 ├── nginx/
 │   ├── authority-navigation.conf.template  # Nginx 配置模板
 │   └── authority-navigation.conf           # 生成的 Nginx 配置
+├── docs/
+│   ├── decisions/          # ADR：认证、限流、备份、空写守卫
+│   └── openapi.yaml        # API 契约
 ├── .github/workflows/
-│   └── ci-cd.yml           # GitHub Actions CI/CD
+│   └── ci-cd.yml           # 测试 + 服务器端构建部署
 ├── server.js               # Express 后端入口
+├── auth.js                 # 口令校验与登录会话
 ├── db.js                   # SQLite 数据访问层
+├── db-file.js              # 原子写、时间戳与备份轮转
 ├── package.json
 ├── Dockerfile
 ├── docker-compose.yml
