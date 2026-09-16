@@ -20,7 +20,8 @@
 
 | 变量 | 必填 | 默认 | 说明 |
 |------|------|------|------|
-| `ADMIN_TOKEN` | 是 | 无 | 写接口管理口令，长度 >= 16 字符；未设置或过短时进程启动即报错退出（fail closed） |
+| `ADMIN_TOKEN` | 是 | 无 | 管理员登录口令，长度 >= 16 字符；未设置或过短时进程启动即报错退出（fail closed） |
+| `SESSION_SECRET` | 否 | 由 `ADMIN_TOKEN` 派生 | 会话 Cookie 的签名密钥；配置后轮换该值即可让所有已登录会话立即失效 |
 | `WRITE_RATE_LIMIT_MAX` | 否 | `50` | 单 IP 每 15 分钟窗口允许的写请求次数 |
 | `BACKUP_INTERVAL_HOURS` | 否 | `6` | SQLite 定时备份间隔（小时） |
 | `BACKUP_KEEP` | 否 | `7` | 备份轮转保留份数（仅保留最新 N 份） |
@@ -92,12 +93,17 @@ docker-compose up -d
 | 方法 | 路径 | 说明 |
 |------|------|------|
 | GET | `/health` | 健康检查，返回 `{ "status": "ok" }` |
+| GET | `/api/session` | 查询当前登录态，返回 `{ "authenticated": true\|false }` |
+| POST | `/api/login` | 用管理员口令换取登录会话 |
+| POST | `/api/logout` | 退出登录，清除会话 Cookie |
 | GET | `/api/data` | 获取用户自定义数据（匿名） |
-| POST | `/api/data` | 保存用户自定义数据（需 `x-admin-token` 认证，且受写限流保护） |
+| POST | `/api/data` | 保存用户自定义数据（需已登录，且受写限流保护） |
 
-> 写接口 `POST /api/data` 必须携带 `x-admin-token` 请求头，其值为环境变量 `ADMIN_TOKEN`（长度 >= 16 字符）。
-> 缺失或错误返回 `401 {"error":"Unauthorized"}`；写请求超过限流阈值返回 `429 {"error":"Too many requests"}`（附带 `Retry-After` 头）。
-> 读接口（`GET /api/data`、`GET /health`、静态资源、首页）保持匿名开放。
+> 口令只在 `POST /api/login` 校验一次，成功后下发 `nav_session` 会话 Cookie（HttpOnly + SameSite=Strict，有效期 12 小时）。
+> 浏览器端登录后，拖拽修改分类、增删链接、排序、导入等写操作凭 Cookie 直接通过，不再重复索要口令；会话失效时页面会自动弹出登录入口。
+> 脚本 / CI 仍可直接携带 `x-admin-token` 请求头调用 `POST /api/data`（值为环境变量 `ADMIN_TOKEN`），未登录且未带正确口令时返回 `401 {"error":"Unauthorized"}`。
+> 写请求超过限流阈值返回 `429 {"error":"Too many requests"}`（附带 `Retry-After` 头）。
+> 读接口（`GET /api/data`、`GET /api/session`、`GET /health`、静态资源、首页）保持匿名开放。
 
 自定义数据结构：
 

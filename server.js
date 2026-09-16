@@ -4,7 +4,12 @@ const path = require("path");
 const fs = require("fs");
 const { rateLimit } = require("express-rate-limit");
 const { DataStore } = require("./db");
-const { createAdminAuthMiddleware, MIN_TOKEN_LENGTH } = require("./auth");
+const {
+  createSessionAuth,
+  createWriteAuthMiddleware,
+  verifyAdminToken,
+  MIN_TOKEN_LENGTH
+} = require("./auth");
 const { startBackupScheduler } = require("./backup");
 
 const PORT = process.env.PORT || 3000;
@@ -283,9 +288,32 @@ function createApp(store, options = {}) {
     message: { error: "Too many requests" },
   });
 
-  const requireAdminToken = createAdminAuthMiddleware(adminToken);
+  const sessionAuth = createSessionAuth(adminToken, options);
+  const requireWriteAuth = createWriteAuthMiddleware(adminToken, options);
 
-  app.post("/api/data", writeRateLimiter, requireAdminToken, async (req, res, next) => {
+  // 登录：口令只在这里校验一次，成功后下发会话 Cookie，
+  // 之后的写入（拖拽改分类、增删链接、排序、导入）不再校验口令。
+  app.get("/api/session", (req, res) => {
+    // 登录态必须实时读取，禁止任何中间层或浏览器缓存
+    res.set("Cache-Control", "no-store");
+    res.json({ authenticated: sessionAuth.verifyRequest(req) });
+  });
+
+  app.post("/api/login", writeRateLimiter, (req, res) => {
+    const provided = req.body && typeof req.body.token === "string" ? req.body.token : "";
+    if (!verifyAdminToken(adminToken, provided)) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+    const expiresAt = sessionAuth.issue(req, res);
+    res.json({ authenticated: true, expiresAt: new Date(expiresAt).toISOString() });
+  });
+
+  app.post("/api/logout", (req, res) => {
+    sessionAuth.clear(req, res);
+    res.json({ authenticated: false });
+  });
+
+  app.post("/api/data", writeRateLimiter, requireWriteAuth, async (req, res, next) => {
     try {
       const validation = validatePayload(req.body);
       if (validation.error) {

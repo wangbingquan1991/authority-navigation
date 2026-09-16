@@ -1,10 +1,12 @@
 openapi: 3.0.3
 info:
   title: Authority Navigation API
-  version: 1.1.0
+  version: 1.2.0
   description: >
-    权威综合导航页后端 API。v1.1.0 安全加固变更：POST /api/data 新增
-    x-admin-token 认证与速率限制；读接口保持匿名开放。
+    权威综合导航页后端 API。v1.1.0 加入 x-admin-token 认证与写接口限流；
+    v1.2.0 改为「登录一次」模型：口令只在 POST /api/login 校验一次并下发
+    HttpOnly 会话 Cookie，之后写接口凭 Cookie 直接通过，不再重复校验口令；
+    x-admin-token 仍作为脚本 / CI 的兼容入口保留。读接口保持匿名开放。
 servers:
   - url: /
 paths:
@@ -27,6 +29,91 @@ paths:
                   timestamp:
                     type: string
                     format: date-time
+  /api/session:
+    get:
+      summary: 查询当前登录态（匿名，始终 200）
+      security: []
+      responses:
+        '200':
+          description: 是否已登录
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [authenticated]
+                properties:
+                  authenticated:
+                    type: boolean
+  /api/login:
+    post:
+      summary: 用管理员口令换取登录会话（限流）
+      description: >
+        口令正确时下发 HttpOnly + SameSite=Strict 的 nav_session Cookie，
+        有效期内写接口无需再校验口令；口令错误返回与未登录一致的 401。
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [token]
+              properties:
+                token:
+                  type: string
+                  description: 由服务端环境变量 ADMIN_TOKEN 配置的管理员口令
+      responses:
+        '200':
+          description: 登录成功
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+                example: nav_session=1750000000000.signature; Path=/; HttpOnly; SameSite=Strict
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  authenticated:
+                    type: boolean
+                  expiresAt:
+                    type: string
+                    format: date-time
+        '401':
+          description: 口令错误
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Unauthorized
+        '429':
+          description: 尝试速率超限
+          headers:
+            Retry-After:
+              schema:
+                type: integer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Too many requests
+  /api/logout:
+    post:
+      summary: 退出登录，清除会话 Cookie
+      security: []
+      responses:
+        '200':
+          description: 已退出
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  authenticated:
+                    type: boolean
   /api/data:
     get:
       summary: 获取用户自定义数据（匿名）
@@ -41,10 +128,12 @@ paths:
         '500':
           $ref: '#/components/responses/ServerError'
     post:
-      summary: 保存用户自定义数据（需管理员认证，限流）
+      summary: 保存用户自定义数据（需登录会话或管理员口令，限流）
       description: >
-        全量替换语义。超过速率限制返回 429（Retry-After 头指示重试等待秒数）。
+        全量替换语义。认证顺序为：有效登录会话 Cookie 优先，其次兼容
+        x-admin-token 请求头。超过速率限制返回 429（Retry-After 头指示重试等待秒数）。
       security:
+        - sessionCookie: []
         - adminToken: []
       requestBody:
         required: true
@@ -68,7 +157,7 @@ paths:
               example:
                 error: customLinks must be an object
         '401':
-          description: 缺失或错误的管理口令
+          description: 未登录（无有效会话 Cookie 且未提供正确口令）
           content:
             application/json:
               schema:
@@ -96,11 +185,16 @@ paths:
           $ref: '#/components/responses/ServerError'
 components:
   securitySchemes:
+    sessionCookie:
+      type: apiKey
+      in: cookie
+      name: nav_session
+      description: 登录后下发的会话 Cookie（HttpOnly + SameSite=Strict，有效期 12 小时）
     adminToken:
       type: apiKey
       in: header
       name: x-admin-token
-      description: 管理员口令，由服务端环境变量 ADMIN_TOKEN 配置（>=16 字符）
+      description: 管理员口令，由服务端环境变量 ADMIN_TOKEN 配置（>=16 字符）；用于脚本 / CI 直接调用
   schemas:
     NavData:
       type: object

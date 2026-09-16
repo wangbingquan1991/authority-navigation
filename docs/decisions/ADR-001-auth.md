@@ -1,6 +1,36 @@
-# ADR-001: 写操作认证采用环境变量口令 + `x-admin-token` 自定义 Header
+## Update (2026-09-16): 口令改为「登录一次」，写操作凭会话 Cookie
 
-## Status: Accepted (2026-08-30)
+### 背景
+
+原方案下前端每次写入都要带上 `x-admin-token`，首次写入会弹口令输入框、收到 401 还会再弹一次。但实际使用中最频繁的写入是「拖拽网址修改分类」这类轻量操作，每次都被口令打断体验很差。诉求：口令只在登录时校验一次，登录后不再校验。
+
+### 决策
+
+保留 `x-admin-token` 作为脚本 / CI 的兼容入口，浏览器端改为**一次性登录 + 会话 Cookie**：
+
+1. 新增 `POST /api/login`：校验口令（仍用 SHA-256 摘要 + `timingSafeEqual`），成功则下发 `nav_session` Cookie
+2. Cookie 内容为 `过期时间戳.HMAC-SHA256 签名`，密钥由 `ADMIN_TOKEN` 派生（可用 `SESSION_SECRET` 覆盖），因此**无需会话表、无需新增依赖**，重启后已有会话依然有效
+3. Cookie 属性：`HttpOnly`（JS 读不到）、`SameSite=Strict`（跨站请求不携带，天然免疫 CSRF）、`Path=/`、`Max-Age` 12 小时，HTTPS 下追加 `Secure`
+4. 写接口认证顺序：**有效会话 Cookie 优先 → 否则回落 `x-admin-token`**，两条路径的 401 语义完全一致
+5. `POST /api/logout` 清除 Cookie；`GET /api/session` 供前端查询登录态
+6. 前端移除 localStorage 中的口令缓存（模块加载时清理历史 key），会话过期时由 `nav:unauthorized` 事件统一弹出登录弹窗
+
+### 影响
+
+**正面**：
+- 登录一次后可连续修改分类 / 增删链接 / 排序 / 导入，不再被口令打断
+- 口令不再落盘（原先明文存 localStorage 的风险消除），改为浏览器托管 HttpOnly Cookie
+- 脚本与 CI 的 `x-admin-token` 调用方式零改动
+
+**负面**：
+- 会话有效期内持有浏览器即等同持有写权限；单管理员自用场景可接受，`Max-Age` 到期或主动退出即失效
+- 多一台设备登录需各自登录一次（不再共享口令明文）
+
+---
+
+# ADR-001（原始版本）: 写操作认证采用环境变量口令 + `x-admin-token` 自定义 Header
+
+## Status: Accepted (2026-08-30)，2026-09-16 由上述更新部分取代
 
 ## Background
 

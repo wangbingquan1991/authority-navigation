@@ -1,5 +1,6 @@
-export function setupDragAndDrop(element, { onDragStart, onDragEnd, onDragOver, onDragLeave, onDrop, getData }) {
+export function setupDragAndDrop(element, { onDragStart, onDragEnd, onDragOver, onDragLeave, onDrop, getData, accepts }) {
   element.addEventListener("dragstart", (e) => {
+    if (accepts && !accepts(e)) return;
     element.classList.add("dragging");
     element.setAttribute("aria-grabbed", "true");
     e.dataTransfer.effectAllowed = "move";
@@ -14,6 +15,7 @@ export function setupDragAndDrop(element, { onDragStart, onDragEnd, onDragOver, 
   });
 
   element.addEventListener("dragover", (e) => {
+    if (accepts && !accepts(e)) return;
     e.preventDefault();
     element.classList.add("drag-over");
     e.dataTransfer.dropEffect = "move";
@@ -26,6 +28,7 @@ export function setupDragAndDrop(element, { onDragStart, onDragEnd, onDragOver, 
   });
 
   element.addEventListener("drop", (e) => {
+    if (accepts && !accepts(e)) return;
     e.preventDefault();
     element.classList.remove("drag-over");
     if (onDrop) onDrop(element, e);

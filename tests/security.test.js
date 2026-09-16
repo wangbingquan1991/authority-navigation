@@ -1,4 +1,5 @@
 const request = require("supertest");
+const crypto = require("crypto");
 const fs = require("fs");
 const path = require("path");
 const { spawnSync } = require("child_process");
@@ -11,6 +12,23 @@ const {
 } = require("./helpers").createTestContext();
 
 const PROJECT_ROOT = path.join(__dirname, "..");
+const SESSION_COOKIE_NAME = "nav_session";
+
+function sessionCookieFrom(res) {
+  const raw = res.headers["set-cookie"];
+  const list = Array.isArray(raw) ? raw : [raw];
+  const cookie = list.filter(Boolean).find((c) => c.startsWith(`${SESSION_COOKIE_NAME}=`));
+  return cookie || "";
+}
+
+function forgeSession(value) {
+  const secret = crypto.createHash("sha256").update(`nav-session::${TEST_TOKEN}`).digest();
+  const signature = crypto
+    .createHmac("sha256", secret)
+    .update(String(value))
+    .digest("base64url");
+  return `${SESSION_COOKIE_NAME}=${value}.${signature}`;
+}
 
 function runServerWithEnv(env) {
   return spawnSync(process.execPath, ["server.js"], {
@@ -116,6 +134,100 @@ describe("Security hardening", () => {
     it("fails to start when ADMIN_TOKEN is shorter than 16 characters", () => {
       const result = runServerWithEnv({ ...process.env, ADMIN_TOKEN: "short" });
       expect(result.status).not.toBe(0);
+    });
+  });
+
+  describe("Session login", () => {
+    it("reports unauthenticated before login and authenticated after", async () => {
+      const app = createTestApp(dbPath);
+      const before = await request(app).get("/api/session");
+      expect(before.statusCode).toBe(200);
+      expect(before.body).toEqual({ authenticated: false });
+
+      const agent = request.agent(app);
+      const loginRes = await agent.post("/api/login").send({ token: TEST_TOKEN });
+      expect(loginRes.statusCode).toBe(200);
+      expect(loginRes.body.authenticated).toBe(true);
+
+      const after = await agent.get("/api/session");
+      expect(after.body).toEqual({ authenticated: true });
+    });
+
+    it("returns 401 with an identical body for a wrong token", async () => {
+      const app = createTestApp(dbPath);
+      const res = await request(app).post("/api/login").send({ token: "wrong-token-1234567890" });
+      expect(res.statusCode).toBe(401);
+      expect(res.body).toEqual({ error: "Unauthorized" });
+      expect(sessionCookieFrom(res)).toBe("");
+    });
+
+    it("marks the session cookie HttpOnly and SameSite=Strict", async () => {
+      const app = createTestApp(dbPath);
+      const res = await request(app).post("/api/login").send({ token: TEST_TOKEN });
+      const cookie = sessionCookieFrom(res);
+      expect(cookie).toContain(`${SESSION_COOKIE_NAME}=`);
+      expect(cookie).toMatch(/HttpOnly/i);
+      expect(cookie).toMatch(/SameSite=Strict/i);
+    });
+
+    // 核心诉求：口令只在登录时校验一次，之后写操作凭会话 Cookie 直接通过。
+    it("writes with the session cookie and no token header", async () => {
+      const app = createTestApp(dbPath);
+      const agent = request.agent(app);
+      await agent.post("/api/login").send({ token: TEST_TOKEN });
+
+      const res = await agent
+        .post("/api/data")
+        .send({ categoryOrder: ["国家机关"] });
+      expect(res.statusCode).toBe(200);
+
+      const readRes = await request(app).get("/api/data");
+      expect(readRes.body.categoryOrder).toEqual(["国家机关"]);
+    });
+
+    it("keeps the token header working for scripts", async () => {
+      const app = createTestApp(dbPath);
+      const res = await request(app)
+        .post("/api/data")
+        .set("x-admin-token", TEST_TOKEN)
+        .send({ categoryOrder: ["985高校"] });
+      expect(res.statusCode).toBe(200);
+    });
+
+    it("rejects a session cookie whose signature was tampered with", async () => {
+      const app = createTestApp(dbPath);
+      const res = await request(app)
+        .post("/api/data")
+        .set("Cookie", forgeSession(Date.now() + 60_000).replace(/.$/, "x"))
+        .send({ categoryOrder: ["国家机关"] });
+      expect(res.statusCode).toBe(401);
+      expect(res.body).toEqual({ error: "Unauthorized" });
+    });
+
+    it("rejects an expired session cookie", async () => {
+      const app = createTestApp(dbPath);
+      const res = await request(app)
+        .post("/api/data")
+        .set("Cookie", forgeSession(Date.now() - 60_000))
+        .send({ categoryOrder: ["国家机关"] });
+      expect(res.statusCode).toBe(401);
+    });
+
+    it("clears the session on logout so later writes fail", async () => {
+      const app = createTestApp(dbPath);
+      const agent = request.agent(app);
+      await agent.post("/api/login").send({ token: TEST_TOKEN });
+      expect((await agent.post("/api/data").send({ categoryOrder: ["国家机关"] })).statusCode).toBe(200);
+
+      const logoutRes = await agent.post("/api/logout");
+      expect(logoutRes.statusCode).toBe(200);
+      expect(logoutRes.body).toEqual({ authenticated: false });
+
+      const sessionRes = await agent.get("/api/session");
+      expect(sessionRes.body).toEqual({ authenticated: false });
+
+      const writeRes = await agent.post("/api/data").send({ categoryOrder: [] });
+      expect(writeRes.statusCode).toBe(401);
     });
   });
 

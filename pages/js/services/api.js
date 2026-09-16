@@ -1,9 +1,4 @@
 import { STORAGE_KEYS, getJson, setJson } from "../utils/storage.js";
-import {
-  getCachedAdminToken,
-  clearAdminToken,
-  promptForAdminToken
-} from "./adminAuth.js";
 
 let apiMode = null;
 let remoteDataCache = null;
@@ -77,43 +72,36 @@ async function readErrorDetail(res) {
   return "";
 }
 
+// 未登录（或会话过期）时广播，由 app.js 统一弹出登录入口
+export const UNAUTHORIZED_EVENT = "nav:unauthorized";
+
 /**
- * POST /api/data，附带 x-admin-token 请求头。
- * 401：清除缓存 token，重新 prompt，重试一次（有且仅有一次，避免循环弹窗）。
+ * POST /api/data，凭登录会话写入（会话 Cookie 由浏览器自动携带，不再传口令）。
  * 抛出 Error 表示保存未成功，由调用方提示用户。
  * @param {object} data
  * @returns {Promise<void>}
  */
-async function postWithAdminToken(data) {
-  let token = getCachedAdminToken();
-  if (!token) {
-    token = promptForAdminToken();
-    if (!token) {
-      throw new Error("未输入管理员口令，本次保存已取消。");
-    }
+async function postData(data) {
+  let res;
+  try {
+    res = await fetch("/api/data", {
+      method: "POST",
+      credentials: "same-origin",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data)
+    });
+  } catch (e) {
+    throw new Error("无法连接服务器，本次保存未成功，请稍后重试。");
   }
 
-  const doPost = () => fetch("/api/data", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "x-admin-token": token
-    },
-    body: JSON.stringify(data)
-  });
-
-  let res = await doPost();
   if (res.status === 401) {
-    clearAdminToken();
-    token = promptForAdminToken({ rejected: true });
-    if (!token) {
-      throw new Error("未输入管理员口令，本次保存已取消。");
+    // 会话缺失或已过期：提示重新登录，而不是再次索要口令
+    if (typeof window !== "undefined" && typeof window.dispatchEvent === "function") {
+      window.dispatchEvent(new CustomEvent(UNAUTHORIZED_EVENT));
     }
-    res = await doPost();
-    if (res.status === 401) {
-      clearAdminToken();
-      throw new Error("管理员口令不正确，数据未保存。");
-    }
+    const err = new Error("登录状态已失效，请重新登录后重试。");
+    err.unauthorized = true;
+    throw err;
   }
   if (res.status === 429) {
     const retryAfter = parseInt(res.headers.get("Retry-After"), 10);
@@ -131,11 +119,12 @@ async function postWithAdminToken(data) {
 export async function saveAllData(data) {
   if (await detectApiMode()) {
     try {
-      await postWithAdminToken(data);
+      await postData(data);
       remoteDataCache = data;
     } catch (e) {
       console.error("Failed to save data to API", e);
-      alert(e.message);
+      // 登录失效已由登录弹窗提示，这里不再重复弹窗
+      if (!e.unauthorized) alert(e.message);
     }
     return;
   }

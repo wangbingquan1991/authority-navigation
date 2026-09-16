@@ -1,6 +1,8 @@
 import { escapeHtml } from "../utils/validators.js";
 import { recordClick } from "../utils/clickTracker.js";
 
+const LINK_DRAG_TYPE = "application/x-link-move";
+
 export class CategoryCard {
   constructor(container, options = {}) {
     this.container = container;
@@ -11,6 +13,7 @@ export class CategoryCard {
     this.onAddLink = options.onAddLink || (() => {});
     this.onDeleteLink = options.onDeleteLink || (() => {});
     this.onDeleteCategory = options.onDeleteCategory || (() => {});
+    this.onMoveLink = options.onMoveLink || (() => {});
     this.article = null;
   }
 
@@ -39,6 +42,8 @@ export class CategoryCard {
       delCatBtn.addEventListener("click", () => this.onDeleteCategory(this.category));
     }
 
+    this.setupDropZone();
+
     this.ul = this.article.querySelector(".links");
     this.links.forEach(link => this.renderLink(link));
 
@@ -46,14 +51,62 @@ export class CategoryCard {
     return this.article;
   }
 
+  setupDropZone() {
+    this.article.addEventListener("dragover", (e) => {
+      if (!e.dataTransfer.types.includes(LINK_DRAG_TYPE)) return;
+      e.preventDefault();
+      this.article.classList.add("link-drag-over");
+    });
+
+    this.article.addEventListener("dragleave", (e) => {
+      if (this.article.contains(e.relatedTarget)) return;
+      this.article.classList.remove("link-drag-over");
+    });
+
+    this.article.addEventListener("drop", async (e) => {
+      if (!e.dataTransfer.types.includes(LINK_DRAG_TYPE)) return;
+      e.preventDefault();
+      this.article.classList.remove("link-drag-over");
+      const data = e.dataTransfer.getData(LINK_DRAG_TYPE);
+      if (!data) return;
+      try {
+        const link = JSON.parse(data);
+        if (link.sourceCategory === this.category) return;
+        await this.onMoveLink(link.sourceCategory, this.category, link);
+      } catch (err) {
+        console.error("Invalid link drop data", err);
+      }
+    });
+  }
+
   renderLink(link) {
     const li = document.createElement("li");
+    li.draggable = true;
     li.dataset.name = link.name;
     li.dataset.url = link.url;
+    li.dataset.category = this.category;
     li.innerHTML = `
       <a href="${link.url}" target="_blank" rel="noopener">${escapeHtml(link.name)}</a>
       <button class="delete-btn" aria-label="删除 ${escapeHtml(link.name)}" title="删除">&times;</button>
     `;
+
+    li.addEventListener("dragstart", (e) => {
+      e.stopPropagation();
+      li.classList.add("dragging");
+      e.dataTransfer.effectAllowed = "move";
+      e.dataTransfer.setData(LINK_DRAG_TYPE, JSON.stringify({
+        sourceCategory: this.category,
+        sourceIsDefault: this.isDefault,
+        isCustom: link.custom === true,
+        name: link.name,
+        url: link.url
+      }));
+    });
+
+    li.addEventListener("dragend", () => {
+      li.classList.remove("dragging");
+    });
+
     const a = li.querySelector("a");
     a.addEventListener("click", () => recordClick(link.url));
     li.querySelector(".delete-btn").addEventListener("click", (e) => {

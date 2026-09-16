@@ -12,6 +12,7 @@ export class CategoryGrid {
     this.onAddLink = options.onAddLink || (() => {});
     this.onDeleteLink = options.onDeleteLink || (() => {});
     this.onDeleteCategory = options.onDeleteCategory || (() => {});
+    this.onMoveLink = options.onMoveLink || (() => {});
     this.onReorder = options.onReorder || (() => {});
     this.onAddCategory = options.onAddCategory || (() => {});
     this.onFilterChange = options.onFilterChange || (() => {});
@@ -30,7 +31,8 @@ export class CategoryGrid {
       this.quickLinksCard = new QuickLinksCard(this.container, {
         links: this.quickLinks,
         onAddLink: this.onAddLink,
-        onDeleteLink: this.onDeleteLink
+        onDeleteLink: this.onDeleteLink,
+        onMoveLink: this.onMoveLink
       });
       this.quickLinksCard.render();
     }
@@ -43,7 +45,8 @@ export class CategoryGrid {
         isDefault: category.isDefault,
         onAddLink: this.onAddLink,
         onDeleteLink: this.onDeleteLink,
-        onDeleteCategory: this.onDeleteCategory
+        onDeleteCategory: this.onDeleteCategory,
+        onMoveLink: this.onMoveLink
       });
       const el = card.render();
       this.cards.push({ card, element: el });
@@ -56,11 +59,15 @@ export class CategoryGrid {
 
   setupDrag(element) {
     setupDragAndDrop(element, {
+      accepts: (e) => !e.dataTransfer.types.includes("application/x-link-move"),
       getData: () => element.dataset.category,
       onDragStart: () => { this.dragSrc = element; },
       onDragEnd: () => {
         this.dragSrc = null;
-        this.container.querySelectorAll(".card").forEach(c => c.classList.remove("drag-over"));
+        this.container.querySelectorAll(".card").forEach(c => {
+          c.classList.remove("drag-over");
+          c.classList.remove("link-drag-over");
+        });
       },
       onDrop: async () => {
         if (!this.dragSrc || this.dragSrc === element) return;

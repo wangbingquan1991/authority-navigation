@@ -13,13 +13,16 @@ import {
   saveCategoryOrder,
   saveCustomCategories,
   saveAllData,
-  loadDefaultConfig
+  loadDefaultConfig,
+  UNAUTHORIZED_EVENT
 } from "./services/api.js";
+import { checkSession, login, logout } from "./services/adminAuth.js";
 import { normalizeUrl, normalize, isValidUrl, isValidName } from "./utils/validators.js";
 import { sortLinksByFrequency } from "./utils/clickTracker.js";
 import { mergeImportData } from "./utils/exportImport.js?v=2";
 import { NavHeader } from "./components/NavHeader.js?v=2";
 import { ThemeSwitcher } from "./components/ThemeSwitcher.js?v=3";
+import { AuthControl } from "./components/AuthControl.js?v=1";
 import { SearchBar } from "./components/SearchBar.js?v=2";
 import { CategoryGrid } from "./components/CategoryGrid.js?v=4";
 import { Modal } from "./components/Modal.js?v=2";
@@ -94,7 +97,8 @@ async function mergeCategories() {
   return ordered.map(cat => {
     const item = merged[cat];
     if (item.isDefault) {
-      item.links = item.links.filter(l => !removed.includes(l.url));
+      // 用户自建链接（custom: true）不受 removedDefaults 影响，避免被其他分类的删除记录误删
+      item.links = item.links.filter(l => l.custom === true || !removed.includes(l.url));
     }
     return item;
   });
@@ -142,6 +146,46 @@ async function init() {
   const themeSwitcher = new ThemeSwitcher(document.querySelector(".theme-switcher"));
   themeSwitcher.render();
 
+  // 口令只在登录时校验一次；登录后的修改（拖拽改分类、增删链接、排序、导入）
+  // 都凭服务端会话 Cookie 直接保存，不再重复索要口令。
+  const authControl = new AuthControl(document.querySelector(".auth-control"), {
+    onLogin: () => openLoginModal(),
+    onLogout: async () => {
+      await logout();
+      authControl.setAuthenticated(false);
+    }
+  });
+  authControl.render();
+  authControl.setAuthenticated(await checkSession());
+
+  function openLoginModal() {
+    if (!modal.element.hidden) return;
+    modal.open("管理员登录", [
+      { name: "token", label: "管理员口令", placeholder: "请输入管理员口令", type: "password", required: true }
+    ], async (vals) => {
+      let authenticated = false;
+      try {
+        authenticated = await login(vals.token);
+      } catch (err) {
+        alert(err.message);
+        return false;
+      }
+      if (!authenticated) {
+        alert("口令不正确，请重新输入。");
+        return false;
+      }
+      authControl.setAuthenticated(true);
+      await refresh();
+      return true;
+    });
+  }
+
+  // 会话缺失或过期时写接口返回 401，这里统一引导重新登录
+  window.addEventListener(UNAUTHORIZED_EVENT, () => {
+    authControl.setAuthenticated(false);
+    openLoginModal();
+  });
+
   const searchBar = new SearchBar(document.querySelector(".search-wrap"));
   const emptyState = document.getElementById("emptyState");
   const emptyQuery = document.getElementById("emptyQuery");
@@ -178,6 +222,45 @@ async function init() {
           await saveCustomCategories(cats);
         }
       }
+      await refresh();
+    },
+    onMoveLink: async (sourceCategory, targetCategory, link) => {
+      if (sourceCategory === targetCategory) return;
+
+      // 1. 添加到目标分类
+      if (targetCategory === QUICK_LINKS_CATEGORY || isDefaultCategory(targetCategory)) {
+        await addCustomLink(targetCategory, { name: link.name, url: link.url });
+      } else {
+        const cats = await loadCustomCategories();
+        const cat = cats.find(c => c.name === targetCategory);
+        if (cat && !cat.links.some(l => l.url === link.url)) {
+          cat.links.push({ name: link.name, url: link.url });
+          await saveCustomCategories(cats);
+        }
+      }
+
+      // 2. 从源分类移除
+      if (sourceCategory === QUICK_LINKS_CATEGORY) {
+        if (link.isCustom) {
+          await removeCustomLink(QUICK_LINKS_CATEGORY, link.url);
+        } else {
+          await addRemovedCommonLink(link.url);
+        }
+      } else if (isDefaultCategory(sourceCategory)) {
+        if (link.isCustom) {
+          await removeCustomLink(sourceCategory, link.url);
+        } else {
+          await addDefaultRemoved(link.url);
+        }
+      } else {
+        const cats = await loadCustomCategories();
+        const cat = cats.find(c => c.name === sourceCategory);
+        if (cat) {
+          cat.links = cat.links.filter(l => l.url !== link.url);
+          await saveCustomCategories(cats);
+        }
+      }
+
       await refresh();
     },
     onDeleteCategory: async (name) => {

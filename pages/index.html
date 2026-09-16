@@ -548,6 +548,24 @@ h1 {
   box-shadow: 0 0 0 2px var(--tk-glow-primary), 0 12px 32px var(--tk-shadow);
 }
 
+.card.link-drag-over,
+.quick-links-card.link-drag-over {
+  border-color: var(--tk-secondary);
+  box-shadow: 0 0 0 2px var(--tk-glow-secondary), 0 12px 32px var(--tk-shadow);
+}
+
+/* 链接项可拖动 */
+.links li,
+.quick-links li {
+  cursor: grab;
+}
+
+.links li.dragging,
+.quick-links li.dragging {
+  opacity: 0.5;
+  cursor: grabbing;
+}
+
 /* 常用链接卡片：占据整行，链接横排 5 列展示 */
 .quick-links-card {
   grid-column: 1 / -1;
@@ -1137,6 +1155,31 @@ footer {
   display: inline-block;
 }
 
+/* 登录入口：与其他工具按钮同胶囊风格，但需要带文字标签 */
+.auth-control {
+  display: inline-flex;
+  flex: 0 0 auto;
+}
+
+.auth-btn {
+  width: auto;
+  height: 34px;
+  padding: 0 12px 0 10px;
+  gap: 6px;
+  display: inline-flex;
+  align-items: center;
+  font-family: inherit;
+  font-size: 0.8rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.auth-btn svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
 .theme-switcher button {
   appearance: none;
   border: none;
@@ -1367,6 +1410,7 @@ footer {
         <div class="nav-header-content"></div>
         <div class="search-wrap"></div>
         <div class="theme-switcher"></div>
+        <div class="auth-control"></div>
         <div class="import-export-wrap"></div>
       </div>
     </header>
@@ -1382,6 +1426,6 @@ footer {
     本页面仅作导航索引，所有链接指向各机构官方网站，请以官方信息为准。
   </footer>
 
-  <script type="module" src="/js/app.js?v=3"></script>
+  <script type="module" src="/js/app.js?v=4"></script>
 </body>
 </html>
