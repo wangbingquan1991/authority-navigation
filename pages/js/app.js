@@ -24,12 +24,22 @@ import { NavHeader } from "./components/NavHeader.js?v=2";
 import { ThemeSwitcher } from "./components/ThemeSwitcher.js?v=3";
 import { AuthControl } from "./components/AuthControl.js?v=1";
 import { SearchBar } from "./components/SearchBar.js?v=2";
-import { CategoryGrid } from "./components/CategoryGrid.js?v=4";
+import { CategoryGrid } from "./components/CategoryGrid.js?v=5";
+import { QuickAccess } from "./components/QuickAccess.js?v=1";
 import { Modal } from "./components/Modal.js?v=2";
 import { ImportExport } from "./components/ImportExport.js?v=4";
 
-// “常用链接”卡片在数据层复用一个保留类别名，用于保存用户自建/删除的常用链接
+// 快捷入口在数据层沿用保留类别名「常用链接」，用于保存用户自建/移出的快捷链接。
+// 注意不要改动这个字符串：历史用户数据都是以它为键存储的。
 const QUICK_LINKS_CATEGORY = "常用链接";
+
+// 界面显示名与上面的数据键刻意分开：这是一个按使用频率排序的快捷栏，不是分类
+const QUICK_LINKS_LABEL = "快捷入口";
+
+/** 把数据键翻译成界面文案（快捷入口的键名与显示名不同） */
+function categoryLabel(category) {
+  return category === QUICK_LINKS_CATEGORY ? QUICK_LINKS_LABEL : category;
+}
 
 // 导入时未指定分类的网站，归入这个分类
 const UNCATEGORIZED_CATEGORY = "未分类";
@@ -191,10 +201,12 @@ async function init() {
   const emptyQuery = document.getElementById("emptyQuery");
 
   const gridContainer = document.querySelector("main#grid");
-  const grid = new CategoryGrid(gridContainer, {
-    quickLinks: [],
+  const quickAccessContainer = document.getElementById("quickAccess");
+
+  // 分类网格与快捷入口共用同一套链接增删 / 跨分类移动逻辑
+  const linkHandlers = {
     onAddLink: (category) => {
-      modal.open(`添加链接到“${category}”`, [
+      modal.open(`添加链接到“${categoryLabel(category)}”`, [
         { name: "name", label: "名称", placeholder: "名称", required: true },
         { name: "url", label: "网址", placeholder: "https://", required: true }
       ], async (vals) => {
@@ -240,16 +252,17 @@ async function init() {
       }
 
       // 2. 从源分类移除
+      // 两种来源机制都要清干净：默认链接可能因之前「移入」过而在 customLinks
+      // 下留有一条自建记录，只写移除列表会让它作为自建项重新出现。
+      // 这里的清理方式与 onDeleteLink 保持一致。
       if (sourceCategory === QUICK_LINKS_CATEGORY) {
-        if (link.isCustom) {
-          await removeCustomLink(QUICK_LINKS_CATEGORY, link.url);
-        } else {
+        await removeCustomLink(QUICK_LINKS_CATEGORY, link.url);
+        if (!link.isCustom) {
           await addRemovedCommonLink(link.url);
         }
       } else if (isDefaultCategory(sourceCategory)) {
-        if (link.isCustom) {
-          await removeCustomLink(sourceCategory, link.url);
-        } else {
+        await removeCustomLink(sourceCategory, link.url);
+        if (!link.isCustom) {
           await addDefaultRemoved(link.url);
         }
       } else {
@@ -262,7 +275,17 @@ async function init() {
       }
 
       await refresh();
-    },
+    }
+  };
+
+  const quickAccess = new QuickAccess(quickAccessContainer, {
+    label: QUICK_LINKS_LABEL,
+    dataCategory: QUICK_LINKS_CATEGORY,
+    ...linkHandlers
+  });
+
+  const grid = new CategoryGrid(gridContainer, {
+    ...linkHandlers,
     onDeleteCategory: async (name) => {
       if (confirm(`确定删除自定义类别“${name}”及其所有链接吗？`)) {
         await deleteCategory(name);
@@ -281,7 +304,8 @@ async function init() {
       ], async (vals) => {
         const cat = vals.categoryName.trim();
         if (!isValidName(cat)) return false;
-        if (cat === QUICK_LINKS_CATEGORY || isDefaultCategory(cat) || (await isCustomCategory(cat))) {
+        // 快捷入口的数据键与显示名都属于系统保留，不允许被用作分类名
+        if (cat === QUICK_LINKS_CATEGORY || cat === QUICK_LINKS_LABEL || isDefaultCategory(cat) || (await isCustomCategory(cat))) {
           alert("该类别名称已存在，请使用其他名称。");
           return false;
         }
@@ -308,7 +332,11 @@ async function init() {
     }
   });
 
-  searchBar.onInput = (value) => grid.filter(value);
+  // 快捷入口不在分类网格内，需要单独跟随搜索收起
+  searchBar.onInput = (value) => {
+    grid.filter(value);
+    quickAccess.setHidden(String(value).trim().length > 0);
+  };
   searchBar.render();
 
   const importExport = new ImportExport(document.querySelector(".import-export-wrap"), {
@@ -384,9 +412,11 @@ async function init() {
   async function refresh() {
     const categories = await mergeCategories();
     const rawQuickLinks = await getQuickLinks();
-    grid.quickLinks = sortLinksByFrequency(rawQuickLinks, 125);
+    quickAccess.links = sortLinksByFrequency(rawQuickLinks, 125);
+    quickAccess.render();
     grid.render(categories);
     grid.filter(searchBar.value);
+    quickAccess.setHidden(String(searchBar.value).trim().length > 0);
     if (window.lucide?.createIcons) window.lucide.createIcons();
   }
 

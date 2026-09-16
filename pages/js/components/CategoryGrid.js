@@ -1,14 +1,14 @@
 import { CategoryCard } from "./CategoryCard.js";
 import { AddCategoryCard } from "./AddCategoryCard.js";
-import { QuickLinksCard } from "./QuickLinksCard.js";
 import { setupDragAndDrop } from "../utils/dragDrop.js";
 import { normalize } from "../utils/validators.js";
 
+// 分类网格只负责「分类」。快捷入口是按使用频率排序的跨分类快捷栏，
+// 不属于这个网格，因此由 app.js 渲染到独立的容器中。
 export class CategoryGrid {
   constructor(container, options = {}) {
     this.container = container;
     this.categories = [];
-    this.quickLinks = options.quickLinks || [];
     this.onAddLink = options.onAddLink || (() => {});
     this.onDeleteLink = options.onDeleteLink || (() => {});
     this.onDeleteCategory = options.onDeleteCategory || (() => {});
@@ -18,7 +18,6 @@ export class CategoryGrid {
     this.onFilterChange = options.onFilterChange || (() => {});
     this.cards = [];
     this.addCard = null;
-    this.quickLinksCard = null;
     this.dragSrc = null;
   }
 
@@ -26,16 +25,6 @@ export class CategoryGrid {
     this.categories = categories;
     this.container.innerHTML = "";
     this.cards = [];
-
-    if (Array.isArray(this.quickLinks) && this.quickLinks.length > 0) {
-      this.quickLinksCard = new QuickLinksCard(this.container, {
-        links: this.quickLinks,
-        onAddLink: this.onAddLink,
-        onDeleteLink: this.onDeleteLink,
-        onMoveLink: this.onMoveLink
-      });
-      this.quickLinksCard.render();
-    }
 
     for (const category of this.categories) {
       const card = new CategoryCard(this.container, {
@@ -71,7 +60,7 @@ export class CategoryGrid {
       },
       onDrop: async () => {
         if (!this.dragSrc || this.dragSrc === element) return;
-        const cards = [...this.container.querySelectorAll(".card:not(.add-category-card):not(.quick-links-card)")];
+        const cards = [...this.container.querySelectorAll(".card:not(.add-category-card)")];
         const srcIndex = cards.indexOf(this.dragSrc);
         const targetIndex = cards.indexOf(element);
         if (srcIndex === -1 || targetIndex === -1) return;
@@ -90,7 +79,6 @@ export class CategoryGrid {
     let visibleLinks = 0;
 
     if (this.addCard) this.addCard.setHidden(normalized.length > 0);
-    if (this.quickLinksCard) this.quickLinksCard.setHidden(normalized.length > 0);
 
     this.cards.forEach(({ card, element }) => {
       const category = card.category || "";

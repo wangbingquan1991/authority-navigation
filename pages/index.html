@@ -548,87 +548,143 @@ h1 {
   box-shadow: 0 0 0 2px var(--tk-glow-primary), 0 12px 32px var(--tk-shadow);
 }
 
-.card.link-drag-over,
-.quick-links-card.link-drag-over {
+.card.link-drag-over {
   border-color: var(--tk-secondary);
   box-shadow: 0 0 0 2px var(--tk-glow-secondary), 0 12px 32px var(--tk-shadow);
 }
 
 /* 链接项可拖动 */
-.links li,
-.quick-links li {
+.links li {
   cursor: grab;
 }
 
-.links li.dragging,
-.quick-links li.dragging {
+.links li.dragging {
   opacity: 0.5;
   cursor: grabbing;
 }
 
-/* 常用链接卡片：占据整行，链接横排 5 列展示 */
-.quick-links-card {
-  grid-column: 1 / -1;
-  cursor: default;
+/* ============================================================
+   快捷入口：按使用频率排序的跨分类快捷栏
+   ============================================================
+   刻意不使用卡片外壳（无背景面 / 无边框 / 无内边距 / 无圆角），
+   也不使用分类图标与分类级标题。它不是一个分类，因此不能在视觉上
+   与下方的分类卡片同构，否则会被读成「又一个分类」。 */
+.quick-access {
+  margin-bottom: var(--tk-space-xl);
 }
 
-.quick-links-card:hover {
-  transform: none;
-  border-color: var(--tk-border);
-  box-shadow: none;
-}
-
-.quick-links {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: var(--tk-space-xs) var(--tk-space-sm);
-  list-style: none;
-}
-
-.quick-links li {
-  min-width: 0;
+.quick-access-head {
   display: flex;
   align-items: center;
-  gap: 2px;
-  border-radius: var(--tk-radius-sm);
-  transition: background var(--tk-transition);
+  gap: var(--tk-space-sm);
+  margin-bottom: var(--tk-space-xs);
 }
 
-.quick-links li:hover {
-  background: var(--tk-surface-hover);
+.quick-access-label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--tk-text);
+  letter-spacing: 0.02em;
 }
 
-.quick-links a {
-  flex: 1 1 auto;
-  min-width: 0;
-  display: block;
-  padding: 7px 10px;
-  border-radius: var(--tk-radius-sm);
+.quick-access-hint {
+  font-size: 0.72rem;
+  color: var(--tk-text-tertiary);
+}
+
+.quick-access-add {
+  margin-left: auto;
+  padding: 4px 12px;
+  border: 1px solid var(--tk-border);
+  border-radius: var(--tk-radius-pill);
+  background: transparent;
   color: var(--tk-text-secondary);
-  font-size: 0.85rem;
+  font-family: inherit;
+  font-size: 0.76rem;
+  font-weight: 500;
+  line-height: 1.5;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background var(--tk-transition), color var(--tk-transition), border-color var(--tk-transition);
+}
+
+.quick-access-add:hover {
+  background: var(--tk-secondary-subtle);
+  color: var(--tk-secondary);
+  border-color: var(--tk-secondary);
+}
+
+.quick-access-list {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--tk-space-xs);
+}
+
+.quick-access-item {
+  display: inline-flex;
+  align-items: center;
+  cursor: grab;
+}
+
+.quick-access-item.dragging {
+  opacity: 0.5;
+  cursor: grabbing;
+}
+
+.quick-chip {
+  display: inline-block;
+  max-width: 15em;
+  overflow: hidden;
+  padding: 6px 12px;
+  border: 1px solid var(--tk-border);
+  border-radius: var(--tk-radius-pill);
+  background: var(--tk-surface);
+  color: var(--tk-text-secondary);
+  font-size: 0.82rem;
   text-decoration: none;
   white-space: nowrap;
-  overflow: hidden;
   text-overflow: ellipsis;
-  transition: color var(--tk-transition);
+  transition: background var(--tk-transition), color var(--tk-transition), border-color var(--tk-transition);
 }
 
-.quick-links a:hover {
+.quick-chip:hover {
+  background: var(--tk-surface-hover);
+  color: var(--tk-text);
+  border-color: var(--tk-secondary);
+}
+
+/* 移出按钮默认收起，悬停或键盘聚焦时展开，保持横条整洁 */
+.quick-chip-remove {
+  width: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--tk-text-tertiary);
+  font-size: 0.9rem;
+  line-height: 1;
+  cursor: pointer;
+  opacity: 0;
+  overflow: hidden;
+  transition: opacity var(--tk-transition), color var(--tk-transition);
+}
+
+.quick-access-item:hover .quick-chip-remove,
+.quick-access-item:focus-within .quick-chip-remove {
+  opacity: 1;
+  width: 18px;
+}
+
+.quick-chip-remove:hover {
   color: var(--tk-primary);
 }
 
-/* 删除按钮默认隐藏，悬停或键盘聚焦时出现，保持列表整洁 */
-.quick-links .delete-btn {
-  width: 22px;
-  height: 22px;
-  font-size: 1rem;
-  margin-right: 4px;
-  opacity: 0;
-}
-
-.quick-links li:hover .delete-btn,
-.quick-links .delete-btn:focus-visible {
-  opacity: 1;
+/* 把分类里的链接拖到横条上时，给出可投放提示 */
+.quick-access.link-drag-over .quick-access-list {
+  border-radius: var(--tk-radius-md);
+  background: var(--tk-secondary-subtle);
+  outline: 1px dashed var(--tk-secondary);
+  outline-offset: 4px;
 }
 
 .card-header {
@@ -1284,8 +1340,9 @@ footer {
   .grid {
     grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
   }
-  .quick-links {
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  /* 快捷入口胶囊在窄屏放开宽度上限，避免长机构名被过早截断 */
+  .quick-chip {
+    max-width: 100%;
   }
   /* 窄屏改为按内容自适应，避免固定高度浪费竖向空间 */
   .links {
@@ -1415,6 +1472,10 @@ footer {
       </div>
     </header>
 
+    <!-- 快捷入口：按使用频率排序的跨分类快捷栏，渲染为胶囊横条。
+         刻意放在分类网格之外——它不是一个分类，不应占据网格的卡片槽位。 -->
+    <div id="quickAccess"></div>
+
     <main class="grid" id="grid"></main>
 
     <div class="empty-state" id="emptyState">
@@ -1426,6 +1487,6 @@ footer {
     本页面仅作导航索引，所有链接指向各机构官方网站，请以官方信息为准。
   </footer>
 
-  <script type="module" src="/js/app.js?v=5"></script>
+  <script type="module" src="/js/app.js?v=6"></script>
 </body>
 </html>
