@@ -176,6 +176,25 @@ function createApp(store, options = {}) {
     return { name, icon: sanitizeString(cat.icon, 500), links };
   }
 
+  /**
+   * 判断一份数据是否「完全为空」。
+   * 在整库替换语义下，空数据等价于清空全库，因此这是空写守卫的判据。
+   * @param {object} data
+   * @returns {boolean}
+   */
+  function isEmptyDataState(data) {
+    if (!isPlainObject(data)) return true;
+    const linkGroups = isPlainObject(data.customLinks) ? Object.keys(data.customLinks).length : 0;
+    const count = (value) => (Array.isArray(value) ? value.length : 0);
+    return (
+      linkGroups +
+      count(data.customCategories) +
+      count(data.removedDefaults) +
+      count(data.removedCommonLinks) +
+      count(data.categoryOrder) === 0
+    );
+  }
+
   function validatePayload(payload) {
     if (!isPlainObject(payload)) {
       return { error: "Payload must be a JSON object" };
@@ -319,6 +338,22 @@ function createApp(store, options = {}) {
       if (validation.error) {
         return res.status(400).json({ error: validation.error });
       }
+
+      // 空写守卫：库里有数据而本次提交为空时，默认拒绝写入。
+      // 整库替换语义下这会清空全部自定义数据，且旧版 / 缓存前端在
+      // 「内存状态为空」时会自然地发出这种请求，必须在此拦下。
+      // 确有清空意图的操作（前端「恢复默认」、全量还原备份）需显式带 allowEmpty: true。
+      const allowEmpty = isPlainObject(req.body) && req.body.allowEmpty === true;
+      if (!allowEmpty && isEmptyDataState(validation.data)) {
+        const current = await store.read();
+        if (!isEmptyDataState(current)) {
+          return res.status(409).json({
+            error: "Refused to overwrite existing data with an empty payload",
+            code: "EMPTY_OVERWRITE"
+          });
+        }
+      }
+
       await store.write(validation.data);
       res.json(validation.data);
     } catch (err) {

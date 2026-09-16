@@ -231,6 +231,189 @@ describe("Security hardening", () => {
     });
   });
 
+  describe("Empty-overwrite guard on POST /api/data", () => {
+    const SEED = {
+      customLinks: {
+        "国家机关": [{ name: "人大", url: "https://www.npc.gov.cn", custom: true }]
+      },
+      customCategories: [],
+      removedDefaults: [],
+      categoryOrder: ["国家机关"]
+    };
+
+    async function seed(app) {
+      const res = await request(app)
+        .post("/api/data")
+        .set("x-admin-token", TEST_TOKEN)
+        .send(SEED);
+      expect(res.statusCode).toBe(200);
+    }
+
+    // 核心防线：旧版 / 缓存前端在内存状态为空时会自然发出空写入，
+    // 整库替换语义下这等于删库，必须被拒绝。
+    it("refuses to wipe a non-empty store with an empty payload", async () => {
+      const app = createTestApp(dbPath);
+      await seed(app);
+
+      const res = await request(app)
+        .post("/api/data")
+        .set("x-admin-token", TEST_TOKEN)
+        .send({});
+      expect(res.statusCode).toBe(409);
+      expect(res.body.code).toBe("EMPTY_OVERWRITE");
+
+      // 既有数据必须原样保留
+      const readRes = await request(app).get("/api/data");
+      expect(readRes.body.customLinks["国家机关"]).toHaveLength(1);
+      expect(readRes.body.categoryOrder).toEqual(["国家机关"]);
+    });
+
+    it("refuses an explicitly empty payload without the allowEmpty flag", async () => {
+      const app = createTestApp(dbPath);
+      await seed(app);
+
+      const res = await request(app)
+        .post("/api/data")
+        .set("x-admin-token", TEST_TOKEN)
+        .send({
+          customLinks: {},
+          customCategories: [],
+          removedDefaults: [],
+          removedCommonLinks: [],
+          categoryOrder: []
+        });
+      expect(res.statusCode).toBe(409);
+      expect(res.body.code).toBe("EMPTY_OVERWRITE");
+
+      const readRes = await request(app).get("/api/data");
+      expect(readRes.body.customLinks["国家机关"]).toHaveLength(1);
+    });
+
+    it("allows an explicit reset when allowEmpty is set", async () => {
+      const app = createTestApp(dbPath);
+      await seed(app);
+
+      const res = await request(app)
+        .post("/api/data")
+        .set("x-admin-token", TEST_TOKEN)
+        .send({
+          customLinks: {},
+          customCategories: [],
+          removedDefaults: [],
+          removedCommonLinks: [],
+          categoryOrder: [],
+          allowEmpty: true
+        });
+      expect(res.statusCode).toBe(200);
+
+      const readRes = await request(app).get("/api/data");
+      expect(readRes.body.customLinks).toEqual({});
+      expect(readRes.body.categoryOrder).toEqual([]);
+    });
+
+    it("accepts an empty payload when the store is already empty", async () => {
+      const app = createTestApp(dbPath);
+      const res = await request(app)
+        .post("/api/data")
+        .set("x-admin-token", TEST_TOKEN)
+        .send({ customLinks: {}, customCategories: [] });
+      expect(res.statusCode).toBe(200);
+    });
+
+    it("still accepts a non-empty payload", async () => {
+      const app = createTestApp(dbPath);
+      await seed(app);
+      const res = await request(app)
+        .post("/api/data")
+        .set("x-admin-token", TEST_TOKEN)
+        .send({
+          customLinks: {
+            "985高校": [{ name: "清华", url: "https://www.tsinghua.edu.cn" }]
+          },
+          customCategories: [],
+          removedDefaults: [],
+          categoryOrder: ["985高校"]
+        });
+      expect(res.statusCode).toBe(200);
+      expect(res.body.customLinks["985高校"]).toHaveLength(1);
+    });
+  });
+
+  describe("Pre-write snapshots", () => {
+    function preWriteDirFor(dbPath) {
+      return path.join(path.dirname(dbPath), "backups", "pre-write");
+    }
+
+    function preWriteFiles(dbPath) {
+      const dir = preWriteDirFor(dbPath);
+      if (!fs.existsSync(dir)) return [];
+      return fs.readdirSync(dir).filter((name) => name.endsWith(".db")).sort();
+    }
+
+    it("snapshots the previous state before an overwrite", async () => {
+      const store = new DataStore({ dbPath });
+      await store.write({
+        customLinks: {
+          "国家机关": [{ name: "人大", url: "https://www.npc.gov.cn", custom: true }]
+        },
+        customCategories: [],
+        removedDefaults: [],
+        categoryOrder: ["国家机关"]
+      });
+
+      expect(preWriteFiles(dbPath)).toHaveLength(0);
+
+      // 第二次写入前应留下第一次的状态
+      await store.write({
+        customLinks: {},
+        customCategories: [],
+        removedDefaults: [],
+        categoryOrder: []
+      });
+
+      const files = preWriteFiles(dbPath);
+      expect(files).toHaveLength(1);
+
+      const restored = new DataStore({ dbPath: path.join(preWriteDirFor(dbPath), files[0]) });
+      const snapshot = await restored.read();
+      expect(snapshot.customLinks["国家机关"]).toHaveLength(1);
+      expect(snapshot.customLinks["国家机关"][0].name).toBe("人大");
+
+      restored.close();
+      store.close();
+    });
+
+    it("does not snapshot when the store has no content", async () => {
+      const store = new DataStore({ dbPath });
+      await store.write({
+        customLinks: {},
+        customCategories: [],
+        removedDefaults: [],
+        categoryOrder: []
+      });
+      expect(preWriteFiles(dbPath)).toHaveLength(0);
+      store.close();
+    });
+
+    it("bounds snapshot growth by rotating the newest N", async () => {
+      const store = new DataStore({ dbPath });
+      for (let i = 0; i < 14; i++) {
+        await store.write({
+          customLinks: {
+            "国家机关": [{ name: `链接${i}`, url: `https://example.com/${i}`, custom: true }]
+          },
+          customCategories: [],
+          removedDefaults: [],
+          categoryOrder: ["国家机关"]
+        });
+      }
+      const files = preWriteFiles(dbPath);
+      expect(files.length).toBeGreaterThan(0);
+      expect(files.length).toBeLessThanOrEqual(10);
+      store.close();
+    });
+  });
+
   describe("Rate limiting on POST /api/data", () => {
     afterEach(() => {
       delete process.env.WRITE_RATE_LIMIT_MAX;

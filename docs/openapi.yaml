@@ -1,12 +1,15 @@
 openapi: 3.0.3
 info:
   title: Authority Navigation API
-  version: 1.2.0
+  version: 1.3.0
   description: >
     权威综合导航页后端 API。v1.1.0 加入 x-admin-token 认证与写接口限流；
     v1.2.0 改为「登录一次」模型：口令只在 POST /api/login 校验一次并下发
     HttpOnly 会话 Cookie，之后写接口凭 Cookie 直接通过，不再重复校验口令；
-    x-admin-token 仍作为脚本 / CI 的兼容入口保留。读接口保持匿名开放。
+    x-admin-token 仍作为脚本 / CI 的兼容入口保留。
+    v1.3.0 针对「整库替换语义下空写即清空全库」的隐患加入空写保护（409），
+    并为确有清空意图的调用方提供 allowEmpty 显式放行。
+    读接口保持匿名开放。
 servers:
   - url: /
 paths:
@@ -164,6 +167,18 @@ paths:
                 $ref: '#/components/schemas/Error'
               example:
                 error: Unauthorized
+        '409':
+          description: >
+            空写保护拦截。整库替换语义下「提交空数据」等价于清空全库，
+            因此当库中已有数据而本次提交为空（且未带 allowEmpty）时拒绝写入，
+            既有数据保持不变。
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Refused to overwrite existing data with an empty payload
+                code: EMPTY_OVERWRITE
         '429':
           description: 写操作速率超限
           headers:
@@ -236,6 +251,11 @@ components:
           type: array
           items:
             type: string
+        allowEmpty:
+          type: boolean
+          description: >
+            显式声明本次写入确有清空意图（如「恢复默认」、全量还原备份）。
+            缺省或为 false 时，空载荷会被 409 拒绝。
     LinkItem:
       type: object
       required: [name, url]

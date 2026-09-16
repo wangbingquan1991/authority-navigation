@@ -342,7 +342,7 @@ async function init() {
           removedDefaults: data.removedDefaults || [],
           removedCommonLinks: data.removedCommonLinks || [],
           categoryOrder: data.categoryOrder || []
-        });
+        }, { allowEmpty: true });
         await refresh();
         return { replace: true, categories: categories.length, links: entries.length };
       }
@@ -368,13 +368,14 @@ async function init() {
       return merged.stats;
     },
     onReset: async () => {
+      // 「恢复默认」是明确的清空意图，需要显式放行空写保护
       await saveAllData({
         customLinks: {},
         customCategories: [],
         removedDefaults: [],
         removedCommonLinks: [],
         categoryOrder: []
-      });
+      }, { allowEmpty: true });
       await refresh();
     }
   });

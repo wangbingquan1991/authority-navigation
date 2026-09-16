@@ -30,17 +30,47 @@ function formatTimestamp(date) {
   return `${yyyy}${mm}${dd}-${hh}${min}${ss}`;
 }
 
-// Keep only the newest `keep` backup files in the directory, oldest first.
-function rotateBackups(backupDir, keep) {
-  if (!fs.existsSync(backupDir)) return;
+// 写前快照的额外毫秒位：整库替换可能在同一秒内连续发生多次
+// （如一次拖拽同时触发「加到目标分类」和「从源分类移除」），
+// 仅精确到秒会互相覆盖，丢掉可回滚的中间状态。
+function preWriteStamp(date) {
+  return `${formatTimestamp(date)}-${String(date.getMilliseconds()).padStart(3, "0")}`;
+}
+
+const BACKUP_FILE_PATTERN = /^backup-\d{8}-\d{6}\.db$/;
+const PRE_WRITE_FILE_PATTERN = /^pre-write-\d{8}-\d{6}-\d{3}\.db$/;
+
+// Keep only the newest `keep` files matching `pattern`, oldest first.
+function rotateMatchingFiles(dir, keep, pattern) {
+  if (!fs.existsSync(dir)) return;
   const files = fs
-    .readdirSync(backupDir)
-    .filter((name) => /^backup-\d{8}-\d{6}\.db$/.test(name))
+    .readdirSync(dir)
+    .filter((name) => pattern.test(name))
     .sort();
   const excess = files.length - keep;
   for (let i = 0; i < excess; i++) {
-    fs.unlinkSync(path.join(backupDir, files[i]));
+    fs.unlinkSync(path.join(dir, files[i]));
   }
 }
 
-module.exports = { ensureParentDir, atomicWrite, formatTimestamp, rotateBackups };
+// Keep only the newest `keep` backup files in the directory, oldest first.
+function rotateBackups(backupDir, keep) {
+  rotateMatchingFiles(backupDir, keep, BACKUP_FILE_PATTERN);
+}
+
+// 写前快照单独轮转：避免高频写入的快照把定时备份挤出保留窗口。
+function rotatePreWriteSnapshots(dir, keep) {
+  rotateMatchingFiles(dir, keep, PRE_WRITE_FILE_PATTERN);
+}
+
+module.exports = {
+  ensureParentDir,
+  atomicWrite,
+  formatTimestamp,
+  preWriteStamp,
+  rotateBackups,
+  rotatePreWriteSnapshots,
+  rotateMatchingFiles,
+  BACKUP_FILE_PATTERN,
+  PRE_WRITE_FILE_PATTERN,
+};

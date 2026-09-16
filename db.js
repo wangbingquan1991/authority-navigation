@@ -5,13 +5,19 @@ const {
   ensureParentDir,
   atomicWrite,
   formatTimestamp,
+  preWriteStamp,
   rotateBackups,
+  rotatePreWriteSnapshots,
 } = require("./db-file");
 
 const DATA_DIR = process.env.DATA_DIR
   ? path.resolve(process.env.DATA_DIR)
   : path.join(__dirname, "data");
 const DEFAULT_DB_PATH = process.env.DB_PATH || path.join(DATA_DIR, "data.db");
+
+// 写前快照保留份数：写入频率远高于定时备份，单独轮转、份数略多
+const PRE_WRITE_KEEP = 10;
+const PRE_WRITE_DIR_NAME = "pre-write";
 
 let SQL;
 async function getSql() {
@@ -158,6 +164,31 @@ function writeSetting(db, key, value) {
   stmt.free();
 }
 
+/**
+ * 库里是否有值得留档的内容。
+ * 只看真实的用户内容，不看 settings 的占位行——否则每次「写到空库」
+ * 都会留下没有回滚价值的快照，把保留窗口挤满。
+ * @param {object} db
+ * @returns {boolean}
+ */
+function hasStoredContent(db) {
+  const countRows = (table) => {
+    const stmt = db.prepare(`SELECT COUNT(*) AS total FROM ${table}`);
+    stmt.step();
+    const row = stmt.getAsObject();
+    stmt.free();
+    return Number(row.total) || 0;
+  };
+
+  if (countRows("custom_links") + countRows("custom_categories") > 0) return true;
+
+  // 移除记录与排序同样是用户改动过的内容，但空数组只是默认值，不算
+  return ["removedDefaults", "removedCommonLinks", "categoryOrder"].some((key) => {
+    const value = readSetting(db, key, []);
+    return Array.isArray(value) && value.length > 0;
+  });
+}
+
 class DataStore {
   constructor(options = {}) {
     this.dbPath = options.dbPath || DEFAULT_DB_PATH;
@@ -231,8 +262,16 @@ class DataStore {
     return { customLinks, customCategories, removedDefaults, removedCommonLinks, categoryOrder };
   }
 
-  async write(data) {
+  async write(data, options = {}) {
     const db = await this.getDb();
+
+    // 写前快照：write() 是「先 DELETE 全表再重插」的整库替换语义，
+    // 一旦写入内容有误（例如空数据），既有数据会被整体抹掉。
+    // 因此在动刀之前先把当前状态留档，配合定时备份实现秒级回滚。
+    // 快照只是兜底，失败不应阻断写入本身，故整体 try/catch 吞掉异常。
+    if (options.snapshot !== false) {
+      this.snapshotBeforeWrite(db);
+    }
 
     // Settings
     writeSetting(db, "categoryOrder", data.categoryOrder || []);
@@ -294,6 +333,29 @@ class DataStore {
 
     insertLink.free();
     persistDb(db, this.dbPath);
+  }
+
+  /**
+   * 把当前内存库导出为写前快照文件。
+   * 单独放在 backups/pre-write/ 下，避免与定时备份争抢同一保留窗口。
+   * @param {object} db
+   * @returns {string|null} 快照路径；无内容或失败时返回 null
+   */
+  snapshotBeforeWrite(db) {
+    try {
+      if (!hasStoredContent(db)) return null;
+      const dir = path.join(path.dirname(this.dbPath), "backups", PRE_WRITE_DIR_NAME);
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+      }
+      const filePath = path.join(dir, `pre-write-${preWriteStamp(new Date())}.db`);
+      atomicWrite(filePath, Buffer.from(db.export()));
+      rotatePreWriteSnapshots(dir, PRE_WRITE_KEEP);
+      return filePath;
+    } catch (err) {
+      console.error("Pre-write snapshot failed:", err.message);
+      return null;
+    }
   }
 
   // Snapshot the in-memory database to a backup file using db.export() (a
