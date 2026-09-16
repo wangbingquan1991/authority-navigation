@@ -32,6 +32,7 @@ tests/*.png
 # Design tooling generated artifacts（内含本机绝对路径，不提交）
 validation-report.json
 runtime-orchestration-summary.json
+runtime-dispatch-manifest.json
 
 # Environment
 .env

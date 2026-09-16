@@ -1,0 +1,2483 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="dark" data-theme="tiktok">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>权威导航首页 - 快捷入口对比稿</title>
+    <style id="theme-vars">
+/* Authority Navigation custom styles */
+
+:root {
+  /* solo-design consumption aliases: explicit prefix for fill-html-head.mjs */
+  --tk-background: var(--background, #ffffff);
+  --tk-foreground: var(--foreground, #0f172a);
+  --tk-card: var(--card, var(--background));
+  --tk-card-foreground: var(--card-foreground, var(--foreground));
+  --tk-popover: var(--popover, var(--card));
+  --tk-popover-foreground: var(--popover-foreground, var(--card-foreground, var(--foreground)));
+  --tk-primary: var(--primary, #111827);
+  --tk-primary-foreground: var(--primary-foreground, #ffffff);
+  --tk-secondary: var(--secondary, var(--muted, var(--card)));
+  --tk-secondary-foreground: var(--secondary-foreground, var(--foreground));
+  --tk-muted: var(--muted, var(--card));
+  --tk-muted-foreground: var(--muted-foreground, var(--foreground));
+  --tk-accent: var(--accent, var(--secondary, var(--muted, var(--card))));
+  --tk-accent-foreground: var(--accent-foreground, var(--foreground));
+  --tk-destructive: var(--destructive, #ef4444);
+  --tk-destructive-foreground: var(--destructive-foreground, #ffffff);
+  --tk-border: var(--border, currentColor);
+  --tk-input: var(--input, var(--border));
+  --tk-ring: var(--ring, var(--primary));
+  --tk-chart-1: var(--chart-1, var(--primary));
+  --tk-chart-2: var(--chart-2, var(--secondary, var(--primary)));
+  --tk-chart-3: var(--chart-3, var(--accent, var(--primary)));
+  --tk-chart-4: var(--chart-4, var(--muted-foreground, var(--foreground)));
+  --tk-chart-5: var(--chart-5, var(--foreground));
+  --tk-sidebar: var(--sidebar, var(--background));
+  --tk-sidebar-foreground: var(--sidebar-foreground, var(--foreground));
+  --tk-sidebar-primary: var(--sidebar-primary, var(--primary));
+  --tk-sidebar-primary-foreground: var(--sidebar-primary-foreground, var(--primary-foreground));
+  --tk-sidebar-accent: var(--sidebar-accent, var(--accent, var(--muted, var(--card))));
+  --tk-sidebar-accent-foreground: var(--sidebar-accent-foreground, var(--accent-foreground, var(--foreground)));
+
+  /* Brand colors */
+  /* tk-red scale */
+  --tk-red-100: #FFE9EE;
+  --tk-red-200: #FFC9D5;
+  --tk-red-300: #FFA0B5;
+  --tk-red-400: #FF6485;
+  --tk-red-500: #FE2C55;
+  --tk-red-600: #E61E45;
+  --tk-red-700: #C01338;
+  --tk-red-800: #990C2B;
+  --tk-red-900: #6B061D;
+  --tk-red-1000: #3D0210;
+
+  /* tk-cyan scale */
+  --tk-cyan-100: #E3FEFD;
+  --tk-cyan-200: #BAFCFA;
+  --tk-cyan-300: #7CF8F4;
+  --tk-cyan-400: #25F4EE;
+  --tk-cyan-500: #14D6D0;
+  --tk-cyan-600: #0FB3AE;
+  --tk-cyan-700: #0C8F8B;
+  --tk-cyan-800: #086B68;
+  --tk-cyan-900: #054745;
+  --tk-cyan-1000: #022322;
+
+  /* tk-black scale */
+  --tk-black-100: #EBEBED;
+  --tk-black-200: #D2D3D7;
+  --tk-black-300: #ABACB4;
+  --tk-black-400: #84868F;
+  --tk-black-500: #5D5F6B;
+  --tk-black-600: #44454F;
+  --tk-black-700: #313340;
+  --tk-black-800: #232533;
+  --tk-black-900: #1B1D29;
+  --tk-black-1000: #161823;
+
+  /* tk-white scale */
+  --tk-white-100: #FFFFFF;
+  --tk-white-200: #FAFAFB;
+  --tk-white-300: #F2F2F4;
+  --tk-white-400: #E8E8EC;
+  --tk-white-500: #DCDCE2;
+  --tk-white-600: #C9C9D1;
+  --tk-white-700: #ABABB5;
+  --tk-white-800: #87878F;
+  --tk-white-900: #5E5E66;
+  --tk-white-1000: #36363B;
+
+  /* Brand */
+  --primary: #FE2C55;
+  --secondary: #25F4EE;
+
+  /* Surface */
+  --background: #0B0B10;
+  --card: #161823;
+  --card-elevated: #1C1E2A;
+  --video-bg: #16161C;
+  --muted: #1C1E2A;
+
+  /* Content */
+  --foreground: #F5F5F7;
+  --muted-foreground: #AEB2C0;
+  --on-media: #FFFFFF;
+  --on-accent: #161823;
+
+  /* Border */
+  --border: #3A3D52;
+
+  /* Radius */
+  --radius-xs: 2px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-shell: 32px;
+  --radius-pill: 999px;
+
+  /* Success */
+  --success: #10B981;
+  --success-bg: #0E2A22;
+  --success-fg: #34D399;
+
+  /* Error */
+  --destructive: #E5484D;
+  --error-bg: #2E1416;
+  --error-fg: #FF6485;
+
+  /* Type families */
+  --font-display: Inter, "TikTok Display", ui-sans-serif, sans-serif;
+  --font-sans: Inter, "TikTok Sans", ui-sans-serif, sans-serif;
+  --font-serif: Georgia, Times, serif;
+  --font-mono: "JetBrains Mono", monospace;
+
+  /* Type metrics */
+  --display-size: clamp(48px, 7vw, 96px);
+  --display-weight: 600-700;
+  --display-line-height: 0.95;
+  --display-letter-spacing: -0.02em;
+  --h2-size: 28-32;
+  --h2-weight: 600;
+  --h2-line-height: 1.15;
+  --h3-size: 18-20;
+  --h3-weight: 600;
+  --h3-line-height: 1.3;
+  --body-size: 14-15;
+  --body-weight: 400;
+  --body-line-height: 1.6;
+  --kicker-size: 11;
+  --kicker-weight: 400;
+  --kicker-letter-spacing: 0.14em;
+  --kicker-text-transform: uppercase;
+
+  /* Component aliases used by page styles */
+  --tk-bg: #0B0B10;
+  --tk-text: #F5F5F7;
+  --tk-text-secondary: #AEB2C0;
+  --tk-text-tertiary: #87878F;
+  --tk-surface: #161823;
+  --tk-surface-hover: #1C1E2A;
+  --tk-surface-elevated: #1C1E2A;
+  --tk-primary: #FE2C55;
+  --tk-secondary: #25F4EE;
+  --tk-secondary-subtle: rgba(37, 244, 238, 0.12);
+  --tk-secondary-hover: rgba(37, 244, 238, 0.22);
+  --tk-glow-primary: rgba(254, 44, 85, 0.35);
+  --tk-glow-secondary: rgba(37, 244, 238, 0.25);
+  --tk-shadow: rgba(0, 0, 0, 0.45);
+  --tk-danger-bg: rgba(254, 44, 85, 0.15);
+  --tk-modal-overlay: rgba(11, 11, 16, 0.85);
+  --tk-modal-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
+
+  /* 顶栏统一高度 */
+  --tk-bar-height: 44px;
+}
+
+[data-theme="claude-light"] {
+  --background: #faf9f5;
+  --foreground: #3d3929;
+  --card: #ffffff;
+  --card-foreground: #3d3929;
+  --muted: #f5f4ef;
+  --muted-foreground: #6f6b5e;
+  --border: #e6e4dc;
+  --primary: #c96442;
+  --primary-foreground: #ffffff;
+  --secondary: #d97757;
+  --secondary-foreground: #ffffff;
+  --accent: #d97757;
+  --accent-foreground: #ffffff;
+  --destructive: #c96442;
+  --destructive-foreground: #ffffff;
+
+  --tk-bg: #faf9f5;
+  --tk-text: #3d3929;
+  --tk-text-secondary: #6f6b5e;
+  --tk-text-tertiary: #908c7c;
+  --tk-surface: #ffffff;
+  --tk-surface-hover: #f5f4ef;
+  --tk-surface-elevated: #ffffff;
+  --tk-border: #e6e4dc;
+  --tk-primary: #c96442;
+  --tk-secondary: #d97757;
+  --tk-secondary-subtle: rgba(201, 100, 66, 0.10);
+  --tk-secondary-hover: rgba(201, 100, 66, 0.18);
+  --tk-glow-primary: rgba(201, 100, 66, 0.25);
+  --tk-glow-secondary: rgba(217, 119, 87, 0.20);
+  --tk-shadow: rgba(61, 57, 41, 0.10);
+  --tk-danger-bg: rgba(201, 100, 66, 0.12);
+  --tk-modal-overlay: rgba(61, 57, 41, 0.45);
+  --tk-modal-shadow: 0 24px 60px rgba(61, 57, 41, 0.18);
+}
+
+[data-theme="claude-dark"] {
+  --background: #262624;
+  --foreground: #f1f1ef;
+  --card: #2e2e2b;
+  --card-foreground: #f1f1ef;
+  --muted: #3a3a36;
+  --muted-foreground: #b9b5a9;
+  --border: #4a4945;
+  --primary: #d97757;
+  --primary-foreground: #ffffff;
+  --secondary: #e08d70;
+  --secondary-foreground: #262624;
+  --accent: #e08d70;
+  --accent-foreground: #262624;
+  --destructive: #e08d70;
+  --destructive-foreground: #262624;
+
+  --tk-bg: #262624;
+  --tk-text: #f1f1ef;
+  --tk-text-secondary: #b9b5a9;
+  --tk-text-tertiary: #8a877d;
+  --tk-surface: #2e2e2b;
+  --tk-surface-hover: #3a3a36;
+  --tk-surface-elevated: #363632;
+  --tk-border: #4a4945;
+  --tk-primary: #d97757;
+  --tk-secondary: #e08d70;
+  --tk-secondary-subtle: rgba(217, 119, 87, 0.15);
+  --tk-secondary-hover: rgba(217, 119, 87, 0.25);
+  --tk-glow-primary: rgba(217, 119, 87, 0.30);
+  --tk-glow-secondary: rgba(224, 141, 112, 0.22);
+  --tk-shadow: rgba(0, 0, 0, 0.35);
+  --tk-danger-bg: rgba(217, 119, 87, 0.15);
+  --tk-modal-overlay: rgba(18, 18, 16, 0.80);
+  --tk-modal-shadow: 0 24px 60px rgba(0, 0, 0, 0.50);
+}
+
+[data-theme="apple-light"] {
+  --background: #ffffff;
+  --foreground: #1d1d1f;
+  --card: #ffffff;
+  --card-foreground: #1d1d1f;
+  --muted: #f2f2f7;
+  --muted-foreground: #8e8e93;
+  --border: #e5e5ea;
+  --primary: #007aff;
+  --primary-foreground: #ffffff;
+  --secondary: #f2f2f7;
+  --secondary-foreground: #1d1d1f;
+  --accent: #f7f7fa;
+  --accent-foreground: #1d1d1f;
+  --destructive: #ff3b30;
+  --destructive-foreground: #ffffff;
+
+  --tk-bg: #ffffff;
+  --tk-text: #1d1d1f;
+  --tk-text-secondary: #6e6e73;
+  --tk-text-tertiary: #8e8e93;
+  --tk-surface: #ffffff;
+  --tk-surface-hover: #f7f7fa;
+  --tk-surface-elevated: #ffffff;
+  --tk-border: #e5e5ea;
+  --tk-primary: #007aff;
+  --tk-secondary: #34c759;
+  --tk-secondary-subtle: rgba(0, 122, 255, 0.10);
+  --tk-secondary-hover: rgba(0, 122, 255, 0.18);
+  --tk-glow-primary: rgba(0, 122, 255, 0.25);
+  --tk-glow-secondary: rgba(52, 199, 89, 0.20);
+  --tk-shadow: rgba(0, 0, 0, 0.08);
+  --tk-danger-bg: rgba(255, 59, 48, 0.12);
+  --tk-modal-overlay: rgba(0, 0, 0, 0.35);
+  --tk-modal-shadow: 0 24px 60px rgba(0, 0, 0, 0.15);
+}
+
+[data-theme="apple-dark"] {
+  --background: #000000;
+  --foreground: #f5f5f7;
+  --card: #1c1c1e;
+  --card-foreground: #f5f5f7;
+  --muted: #1c1c1e;
+  --muted-foreground: #8e8e93;
+  --border: #3a3a3c;
+  --primary: #2e8dff;
+  --primary-foreground: #000000;
+  --secondary: #1c1c1e;
+  --secondary-foreground: #f5f5f7;
+  --accent: #2c2c2e;
+  --accent-foreground: #f5f5f7;
+  --destructive: #ff453a;
+  --destructive-foreground: #000000;
+
+  --tk-bg: #000000;
+  --tk-text: #f5f5f7;
+  --tk-text-secondary: #aeaeb2;
+  --tk-text-tertiary: #8e8e93;
+  --tk-surface: #1c1c1e;
+  --tk-surface-hover: #2c2c2e;
+  --tk-surface-elevated: #2c2c2e;
+  --tk-border: #3a3a3c;
+  --tk-primary: #2e8dff;
+  --tk-secondary: #30d158;
+  --tk-secondary-subtle: rgba(46, 141, 255, 0.15);
+  --tk-secondary-hover: rgba(46, 141, 255, 0.25);
+  --tk-glow-primary: rgba(46, 141, 255, 0.35);
+  --tk-glow-secondary: rgba(48, 209, 88, 0.25);
+  --tk-shadow: rgba(0, 0, 0, 0.45);
+  --tk-danger-bg: rgba(255, 69, 58, 0.15);
+  --tk-modal-overlay: rgba(0, 0, 0, 0.75);
+  --tk-modal-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
+}
+
+:root {
+  --tk-radius-sm: 8px;
+  --tk-radius-md: 14px;
+  --tk-radius-lg: 22px;
+  --tk-radius-pill: 999px;
+  --tk-space-xs: 8px;
+  --tk-space-sm: 12px;
+  --tk-space-md: 16px;
+  --tk-space-lg: 24px;
+  --tk-space-xl: 40px;
+  --tk-transition: 180ms cubic-bezier(0.4, 0, 0.2, 1);
+  --tk-font-sans: Inter, "TikTok Sans", ui-sans-serif, sans-serif;
+  /* 卡片统一高度：链接区高度决定分类卡片高度，新建分类卡片取同值，保证整行等高 */
+  --tk-links-h: 210px;
+  --tk-card-h: 315px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--tk-font-sans);
+  background: var(--tk-bg);
+  color: var(--tk-text);
+  line-height: 1.55;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 12% 18%, var(--tk-glow-primary), transparent 28%),
+    radial-gradient(circle at 88% 82%, var(--tk-glow-secondary), transparent 28%);
+  opacity: 0.45;
+  z-index: 0;
+}
+
+.container {
+  position: relative;
+  z-index: 1;
+  width: min(1180px, calc(100% - var(--tk-space-lg) * 2));
+  margin-inline: auto;
+  padding-block: var(--tk-space-xl);
+}
+
+header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--tk-space-lg);
+  margin-bottom: var(--tk-space-xl);
+}
+
+/* 单行顶栏：品牌 | 搜索（占最宽） | 主题切换 | 数据管理 */
+.top-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--tk-space-md);
+  flex-wrap: nowrap;
+}
+
+/* 顶栏统一风格：品牌 / 主题切换 / 数据管理共用同一套胶囊容器，与搜索框等高 */
+.nav-header-content,
+.theme-switcher,
+.icon-btn-group {
+  display: inline-flex;
+  align-items: center;
+  height: var(--tk-bar-height);
+  background: var(--tk-surface);
+  border: 1px solid var(--tk-border);
+  border-radius: var(--tk-radius-pill);
+  flex: 0 0 auto;
+}
+
+.nav-header-content {
+  padding: 0 var(--tk-space-md) 0 6px;
+  min-width: 0;
+}
+
+/* 主题切换的按钮组已在外层 .theme-switcher 上成胶囊，内层去掉重复的边框与底色 */
+.theme-switcher .icon-btn-group {
+  height: auto;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--tk-space-sm);
+  white-space: nowrap;
+}
+
+.brand-mark {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 4px 18px var(--tk-glow-primary);
+}
+
+.brand-mark img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+h1 {
+  font-size: clamp(1rem, 1.6vw, 1.15rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  background: linear-gradient(90deg, var(--tk-text) 0%, var(--tk-text-secondary) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  white-space: nowrap;
+}
+
+.search-wrap {
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 180px;
+}
+
+.search-icon {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 18px;
+  height: 18px;
+  color: var(--tk-text-tertiary);
+  pointer-events: none;
+}
+
+#search {
+  width: 100%;
+  height: var(--tk-bar-height);
+  padding: 0 20px 0 44px;
+  font-size: 0.95rem;
+  font-family: inherit;
+  color: var(--tk-text);
+  background: var(--tk-surface);
+  border: 1px solid var(--tk-border);
+  border-radius: var(--tk-radius-pill);
+  outline: none;
+  transition: border-color var(--tk-transition), box-shadow var(--tk-transition);
+}
+
+#search::placeholder {
+  color: var(--tk-text-tertiary);
+}
+
+#search:focus {
+  border-color: var(--tk-primary);
+  box-shadow: 0 0 0 4px var(--tk-glow-primary);
+}
+
+/* 结果计数悬浮在搜索框下方，避免撑高单行顶栏 */
+.result-count {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  text-align: center;
+  color: var(--tk-text-secondary);
+  font-size: 0.8rem;
+  margin-top: 6px;
+  min-height: 1.2em;
+  pointer-events: none;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: var(--tk-space-lg);
+  align-items: start;
+}
+
+.card {
+  background: var(--tk-surface);
+  border: 1px solid var(--tk-border);
+  border-radius: var(--tk-radius-md);
+  padding: var(--tk-space-lg);
+  transition: transform var(--tk-transition), border-color var(--tk-transition), box-shadow var(--tk-transition), opacity var(--tk-transition);
+  display: flex;
+  flex-direction: column;
+  gap: var(--tk-space-md);
+  cursor: grab;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  border-color: var(--tk-glow-primary);
+  box-shadow: 0 12px 32px var(--tk-shadow), 0 0 0 1px var(--tk-glow-primary);
+}
+
+.card.dragging {
+  opacity: 0.5;
+  transform: scale(0.98);
+  box-shadow: 0 20px 40px var(--tk-shadow);
+  cursor: grabbing;
+}
+
+.card.drag-over {
+  border-color: var(--tk-primary);
+  box-shadow: 0 0 0 2px var(--tk-glow-primary), 0 12px 32px var(--tk-shadow);
+}
+
+.card.link-drag-over,
+.quick-links-card.link-drag-over {
+  border-color: var(--tk-secondary);
+  box-shadow: 0 0 0 2px var(--tk-glow-secondary), 0 12px 32px var(--tk-shadow);
+}
+
+/* 链接项可拖动 */
+.links li,
+.quick-links li {
+  cursor: grab;
+}
+
+.links li.dragging,
+.quick-links li.dragging {
+  opacity: 0.5;
+  cursor: grabbing;
+}
+
+/* 常用链接卡片：占据整行，链接横排 5 列展示 */
+.quick-links-card {
+  grid-column: 1 / -1;
+  cursor: default;
+}
+
+.quick-links-card:hover {
+  transform: none;
+  border-color: var(--tk-border);
+  box-shadow: none;
+}
+
+.quick-links {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: var(--tk-space-xs) var(--tk-space-sm);
+  list-style: none;
+}
+
+.quick-links li {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  border-radius: var(--tk-radius-sm);
+  transition: background var(--tk-transition);
+}
+
+.quick-links li:hover {
+  background: var(--tk-surface-hover);
+}
+
+.quick-links a {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: block;
+  padding: 7px 10px;
+  border-radius: var(--tk-radius-sm);
+  color: var(--tk-text-secondary);
+  font-size: 0.85rem;
+  text-decoration: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color var(--tk-transition);
+}
+
+.quick-links a:hover {
+  color: var(--tk-primary);
+}
+
+/* 删除按钮默认隐藏，悬停或键盘聚焦时出现，保持列表整洁 */
+.quick-links .delete-btn {
+  width: 22px;
+  height: 22px;
+  font-size: 1rem;
+  margin-right: 4px;
+  opacity: 0;
+}
+
+.quick-links li:hover .delete-btn,
+.quick-links .delete-btn:focus-visible {
+  opacity: 1;
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: var(--tk-space-xs);
+  padding-bottom: var(--tk-space-sm);
+  border-bottom: 1px solid var(--tk-border);
+}
+
+.category-icon {
+  width: 26px;
+  height: 26px;
+  border-radius: var(--tk-radius-sm);
+  background: var(--tk-secondary-subtle);
+  color: var(--tk-secondary);
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.category-icon svg {
+  width: 15px;
+  height: 15px;
+}
+
+/* 标题横排占满整行；已移除“网址总数”徽标，为标题腾出空间 */
+.card h2 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--tk-text);
+  flex: 1 1 auto;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 链接区固定高度：保证自定义分类与默认分类卡片高度完全一致。
+   若用 max-height，链接少的分栏（如新建的自定义分类）会明显矮于默认分栏，
+   同一行内高度参差不齐。 */
+.links {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  height: var(--tk-links-h);
+  overflow-y: auto;
+}
+
+.links::-webkit-scrollbar {
+  width: 4px;
+}
+.links::-webkit-scrollbar-thumb {
+  background: var(--tk-border);
+  border-radius: 2px;
+}
+
+.links li {
+  border-radius: var(--tk-radius-sm);
+  transition: background var(--tk-transition);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+  padding-right: 4px;
+}
+
+.links li:hover {
+  background: var(--tk-surface-hover);
+}
+
+.links a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex: 1;
+  padding: 10px var(--tk-space-sm);
+  color: var(--tk-text-secondary);
+  text-decoration: none;
+  font-size: 0.92rem;
+  transition: color var(--tk-transition);
+  min-width: 0;
+}
+
+.links a:hover {
+  color: var(--tk-text);
+}
+
+.delete-btn {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  color: var(--tk-text-tertiary);
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  transition: background var(--tk-transition), color var(--tk-transition);
+}
+
+.delete-btn:hover {
+  background: var(--tk-danger-bg);
+  color: var(--tk-primary);
+}
+
+.add-form {
+  display: flex;
+  gap: 6px;
+  margin-top: 4px;
+  padding-top: var(--tk-space-sm);
+  border-top: 1px solid var(--tk-border);
+}
+
+.add-form input {
+  flex: 1;
+  min-width: 0;
+  padding: 8px 10px;
+  font-size: 0.85rem;
+  font-family: inherit;
+  color: var(--tk-text);
+  background: var(--tk-surface-hover);
+  border: 1px solid var(--tk-border);
+  border-radius: var(--tk-radius-sm);
+  outline: none;
+  transition: border-color var(--tk-transition);
+}
+
+.add-form input::placeholder {
+  color: var(--tk-text-tertiary);
+}
+
+.add-form input:focus {
+  border-color: var(--tk-secondary);
+}
+
+.add-form .add-url {
+  flex: 1.5;
+}
+
+.add-btn {
+  width: 34px;
+  height: 34px;
+  border: none;
+  border-radius: var(--tk-radius-sm);
+  background: var(--tk-secondary-subtle);
+  color: var(--tk-secondary);
+  font-size: 1.25rem;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  transition: background var(--tk-transition), transform var(--tk-transition);
+  flex-shrink: 0;
+}
+
+.add-btn:hover {
+  background: var(--tk-secondary-hover);
+  transform: scale(1.05);
+}
+
+.empty-state {
+  display: none;
+  text-align: center;
+  padding: var(--tk-space-xl);
+  color: var(--tk-text-secondary);
+}
+
+.empty-state.visible {
+  display: block;
+}
+
+footer {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  padding: var(--tk-space-xl) var(--tk-space-lg);
+  color: var(--tk-text-tertiary);
+  font-size: 0.8rem;
+}
+
+.add-link-btn {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 1px solid var(--tk-border);
+  background: transparent;
+  color: var(--tk-secondary);
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  margin-left: 4px;
+  transition: background var(--tk-transition), color var(--tk-transition), transform var(--tk-transition);
+}
+
+.add-link-btn:hover,
+.add-link-btn:focus {
+  background: var(--tk-secondary-subtle);
+  color: var(--tk-text);
+  transform: scale(1.08);
+  outline: none;
+}
+
+.delete-category-btn {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  color: var(--tk-text-tertiary);
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  margin-left: 2px;
+  transition: background var(--tk-transition), color var(--tk-transition);
+}
+
+.delete-category-btn:hover,
+.delete-category-btn:focus {
+  background: var(--tk-danger-bg);
+  color: var(--tk-primary);
+  outline: none;
+}
+
+.links li .delete-btn {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.links li:hover .delete-btn,
+.links li:focus-within .delete-btn {
+  opacity: 1;
+  visibility: visible;
+}
+
+.add-category-card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--tk-space-sm);
+  min-height: var(--tk-card-h);
+  border: 2px dashed var(--tk-border);
+  background: transparent;
+  color: var(--tk-text-secondary);
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color var(--tk-transition), background var(--tk-transition), color var(--tk-transition), transform var(--tk-transition);
+}
+
+.add-category-card:hover,
+.add-category-card:focus {
+  border-color: var(--tk-secondary);
+  background: var(--tk-secondary-subtle);
+  color: var(--tk-secondary);
+  transform: translateY(-4px);
+  outline: none;
+}
+
+.add-category-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--tk-secondary-subtle);
+  color: var(--tk-secondary);
+  display: grid;
+  place-items: center;
+  font-size: 1.25rem;
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--tk-modal-overlay);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 180ms, visibility 180ms;
+}
+
+.modal-overlay:not([hidden]) {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal {
+  background: var(--tk-surface);
+  border: 1px solid var(--tk-border);
+  border-radius: var(--tk-radius-md);
+  width: min(380px, calc(100% - 32px));
+  max-height: calc(100vh - 32px);
+  overflow-y: auto;
+  padding: var(--tk-space-lg);
+  box-shadow: var(--tk-modal-shadow);
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--tk-space-md);
+}
+
+.modal-header h3 {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--tk-text);
+}
+
+.modal-close {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  color: var(--tk-text-tertiary);
+  font-size: 1.25rem;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+}
+
+.modal-close:hover {
+  color: var(--tk-text);
+  background: var(--tk-surface-hover);
+}
+
+.modal-body form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--tk-space-sm);
+}
+
+.modal-body label {
+  font-size: 0.85rem;
+  color: var(--tk-text-secondary);
+}
+
+.modal-body input {
+  padding: 10px 12px;
+  font-family: inherit;
+  font-size: 0.95rem;
+  color: var(--tk-text);
+  background: var(--tk-surface-hover);
+  border: 1px solid var(--tk-border);
+  border-radius: var(--tk-radius-sm);
+  outline: none;
+  transition: border-color var(--tk-transition);
+}
+
+.modal-body input:focus {
+  border-color: var(--tk-secondary);
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--tk-space-sm);
+  margin-top: var(--tk-space-md);
+}
+
+.modal-cancel,
+.modal-submit {
+  padding: 8px 16px;
+  border-radius: var(--tk-radius-sm);
+  border: none;
+  font-family: inherit;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background var(--tk-transition), transform var(--tk-transition);
+}
+
+.modal-cancel {
+  background: var(--tk-surface-hover);
+  color: var(--tk-text-secondary);
+}
+
+.modal-cancel:hover {
+  background: var(--tk-elevated);
+  color: var(--tk-text);
+}
+
+.modal-submit {
+  background: var(--tk-primary);
+  color: var(--tk-text);
+}
+
+.modal-submit:hover {
+  background: var(--tk-primary-hover);
+  transform: translateY(-1px);
+}
+
+.import-export-wrap {
+  display: flex;
+  justify-content: flex-end;
+  flex: 0 0 auto;
+}
+
+.toolbar-group {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--tk-space-sm);
+  padding: 4px;
+  background: var(--tk-surface);
+  border: 1px solid var(--tk-border);
+  border-radius: var(--tk-radius-pill);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.toolbar-label {
+  padding: 0 8px 0 12px;
+  color: var(--tk-text-secondary);
+  font-size: 0.8rem;
+  font-weight: 500;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.toolbar-pill {
+  display: inline-flex;
+  align-items: center;
+}
+
+.toolbar-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 12px;
+  border: none;
+  border-radius: var(--tk-radius-pill);
+  background: transparent;
+  color: var(--tk-text-secondary);
+  font-family: inherit;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background var(--tk-transition), color var(--tk-transition), transform var(--tk-transition);
+}
+
+.toolbar-item:hover {
+  background: var(--tk-surface-hover);
+  color: var(--tk-text);
+  transform: translateY(-1px);
+}
+
+.toolbar-item:active {
+  transform: translateY(0);
+}
+
+.toolbar-item-danger:hover {
+  color: var(--tk-primary);
+  background: var(--tk-danger-bg);
+}
+
+.theme-switcher {
+  display: inline-flex;
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  padding: 4px;
+  background: var(--tk-surface);
+  border: 1px solid var(--tk-border);
+  border-radius: var(--tk-radius-pill);
+  flex: 0 0 auto;
+}
+
+.icon-btn-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px;
+  background: var(--tk-surface);
+  border: 1px solid var(--tk-border);
+  border-radius: var(--tk-radius-pill);
+  flex: 0 0 auto;
+}
+
+.icon-btn {
+  appearance: none;
+  display: inline-grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: none;
+  border-radius: var(--tk-radius-pill);
+  background: transparent;
+  color: var(--tk-text-secondary);
+  cursor: pointer;
+  transition: background var(--tk-transition), color var(--tk-transition);
+}
+
+.icon-btn:hover {
+  background: var(--tk-surface-hover);
+  color: var(--tk-text);
+}
+
+.icon-btn.is-active {
+  background: var(--tk-secondary-subtle);
+  color: var(--tk-secondary);
+}
+
+.icon-btn-danger:hover {
+  background: var(--tk-danger-bg);
+  color: var(--tk-primary);
+}
+
+.icon-btn svg,
+.icon-btn i {
+  width: 18px;
+  height: 18px;
+  display: inline-block;
+}
+
+/* 登录入口：与其他工具按钮同胶囊风格，但需要带文字标签 */
+.auth-control {
+  display: inline-flex;
+  flex: 0 0 auto;
+}
+
+.auth-btn {
+  width: auto;
+  height: 34px;
+  padding: 0 12px 0 10px;
+  gap: 6px;
+  display: inline-flex;
+  align-items: center;
+  font-family: inherit;
+  font-size: 0.8rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.auth-btn svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.theme-switcher button {
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: var(--tk-text-secondary);
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border-radius: var(--tk-radius-pill);
+  cursor: pointer;
+  transition: background var(--tk-transition), color var(--tk-transition), box-shadow var(--tk-transition);
+}
+
+.theme-switcher button:hover {
+  color: var(--tk-text);
+  background: var(--tk-surface-hover);
+}
+
+.theme-switcher button.active {
+  background: var(--tk-primary);
+  color: var(--tk-bg);
+  box-shadow: 0 2px 10px var(--tk-glow-primary);
+}
+
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+[data-icon] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  background-color: currentColor;
+}
+
+/* Semantic token fallback utilities */
+.bg-background { background-color: var(--background); }
+.text-background { color: var(--background); }
+.border-background { border-color: var(--background); }
+.ring-background { --tw-ring-color: var(--background); }
+.bg-foreground { background-color: var(--foreground); }
+.text-foreground { color: var(--foreground); }
+.border-foreground { border-color: var(--foreground); }
+.ring-foreground { --tw-ring-color: var(--foreground); }
+.bg-card { background-color: var(--card); }
+.text-card { color: var(--card); }
+.border-card { border-color: var(--card); }
+.ring-card { --tw-ring-color: var(--card); }
+.bg-primary { background-color: var(--primary); }
+.text-primary { color: var(--primary); }
+.border-primary { border-color: var(--primary); }
+.ring-primary { --tw-ring-color: var(--primary); }
+.bg-secondary { background-color: var(--secondary); }
+.text-secondary { color: var(--secondary); }
+.border-secondary { border-color: var(--secondary); }
+.ring-secondary { --tw-ring-color: var(--secondary); }
+.bg-muted { background-color: var(--muted); }
+.text-muted { color: var(--muted); }
+.border-muted { border-color: var(--muted); }
+.ring-muted { --tw-ring-color: var(--muted); }
+.bg-muted-foreground { background-color: var(--muted-foreground); }
+.text-muted-foreground { color: var(--muted-foreground); }
+.border-muted-foreground { border-color: var(--muted-foreground); }
+.ring-muted-foreground { --tw-ring-color: var(--muted-foreground); }
+.bg-destructive { background-color: var(--destructive); }
+.text-destructive { color: var(--destructive); }
+.border-destructive { border-color: var(--destructive); }
+.ring-destructive { --tw-ring-color: var(--destructive); }
+.bg-border { background-color: var(--border); }
+.text-border { color: var(--border); }
+.border-border { border-color: var(--border); }
+.ring-border { --tw-ring-color: var(--border); }
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* 中等屏幕：允许换行，搜索框独占一行 */
+@media (max-width: 900px) {
+  .top-bar {
+    flex-wrap: wrap;
+  }
+  .search-wrap {
+    order: 3;
+    flex: 1 1 100%;
+  }
+}
+
+@media (max-width: 640px) {
+  .container {
+    padding-block: var(--tk-space-lg);
+  }
+  .grid {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  }
+  .quick-links {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  }
+  /* 窄屏改为按内容自适应，避免固定高度浪费竖向空间 */
+  .links {
+    height: auto;
+    max-height: none;
+  }
+  .add-category-card {
+    min-height: 180px;
+  }
+}
+
+/* ============================================================
+   快捷入口：紧凑胶囊横条（对比稿新增区域）
+   「常用链接」是频率排序的快捷入口，但此前用 article.card.quick-links-card
+   渲染，带 category-icon / h2 标题 / 卡片底色与边框 / 独占整行，看起来像第 9 个分类。
+   这里改为无卡片外壳的横条：无背景面、无边框、无 24px 内边距、无 14px 圆角，
+   仅保留垂直间距，与下方 article.card 分类卡片形成明确区分。
+   分类 = 卡片，快捷入口 = 胶囊横条。
+   ============================================================ */
+.quick-access {
+  margin-bottom: var(--tk-space-xl);
+}
+
+.quick-access-head {
+  display: flex;
+  align-items: center;
+  gap: var(--tk-space-sm);
+  margin-bottom: var(--tk-space-xs);
+}
+
+.quick-access-label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--tk-text);
+  letter-spacing: 0.02em;
+}
+
+.quick-access-hint {
+  font-size: 0.72rem;
+  color: var(--tk-text-tertiary);
+}
+
+.quick-access-add {
+  margin-left: auto;
+  padding: 4px 12px;
+  border: 1px solid var(--tk-border);
+  border-radius: var(--tk-radius-pill);
+  background: transparent;
+  color: var(--tk-text-secondary);
+  font-family: inherit;
+  font-size: 0.76rem;
+  cursor: pointer;
+  transition: background var(--tk-transition), color var(--tk-transition), border-color var(--tk-transition);
+}
+
+.quick-access-add:hover,
+.quick-access-add:focus-visible {
+  background: var(--tk-secondary-subtle);
+  color: var(--tk-secondary);
+  border-color: var(--tk-secondary);
+  outline: none;
+}
+
+.quick-access-list {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--tk-space-xs);
+}
+
+.quick-access-item {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.quick-chip {
+  display: inline-block;
+  max-width: 15em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 6px 12px;
+  border: 1px solid var(--tk-border);
+  border-radius: var(--tk-radius-pill);
+  background: var(--tk-surface);
+  color: var(--tk-text-secondary);
+  font-size: 0.82rem;
+  text-decoration: none;
+  transition: background var(--tk-transition), color var(--tk-transition), border-color var(--tk-transition);
+}
+
+.quick-chip:hover,
+.quick-chip:focus-visible {
+  background: var(--tk-surface-hover);
+  color: var(--tk-text);
+  border-color: var(--tk-secondary);
+  outline: none;
+}
+
+/* 移出按钮默认收起为 0 宽，悬停或键盘聚焦才让位出现，保持胶囊横条整洁 */
+.quick-chip-remove {
+  opacity: 0;
+  width: 0;
+  overflow: hidden;
+  border: none;
+  background: transparent;
+  color: var(--tk-text-tertiary);
+  font-family: inherit;
+  font-size: 0.95rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+  transition: opacity var(--tk-transition);
+}
+
+.quick-access-item:hover .quick-chip-remove,
+.quick-access-item:focus-within .quick-chip-remove {
+  opacity: 1;
+  width: 18px;
+  padding: 0;
+  transition: opacity var(--tk-transition);
+}
+
+@media (max-width: 640px) {
+  .quick-chip {
+    max-width: 100%;
+  }
+}
+
+    </style>
+    <script id="theme-bootstrap">
+      // 在样式生效前就应用已保存的主题，避免首屏闪烁（与 ThemeSwitcher.js 的映射保持一致）
+      (function () {
+        try {
+          var raw = localStorage.getItem("nav-theme");
+          if (!raw) return;
+          var id = JSON.parse(raw);
+          var MAP = {
+            "tiktok-dark": ["tiktok", true],
+            "claude-light": ["claude-light", false],
+            "claude-dark": ["claude-dark", true],
+            "apple-light": ["apple-light", false],
+            "apple-dark": ["apple-dark", true]
+          };
+          var theme = MAP[id];
+          if (!theme) return;
+          var root = document.documentElement;
+          root.setAttribute("data-theme", theme[0]);
+          root.classList.toggle("dark", theme[1]);
+          root.style.colorScheme = theme[1] ? "dark" : "light";
+        } catch (e) {
+          // 主题读取失败时沿用 HTML 默认主题
+        }
+      })();
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script>
+    <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
+    <style type="text/tailwindcss">
+  @theme inline {
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+    --color-card: var(--card);
+    --color-primary: var(--primary);
+    --color-secondary: var(--secondary);
+    --color-muted: var(--muted);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-destructive: var(--destructive);
+    --color-border: var(--border);
+    --radius-sm: var(--radius-sm);
+    --radius-md: var(--radius-md);
+    --radius-lg: var(--radius-lg);
+    --radius-xl: var(--radius-xl);
+  }
+  @layer base {
+    body { background: var(--background); color: var(--foreground); }
+    td, th { @apply break-words; word-break: break-all; word-break: auto-phrase; }
+    th { @apply whitespace-nowrap; }
+  }
+    </style>
+    <style id="semantic-token-fallback">
+      .bg-background { background-color: var(--background); }
+      .text-background { color: var(--background); }
+      .border-background { border-color: var(--background); }
+      .ring-background { --tw-ring-color: var(--background); }
+      .bg-foreground { background-color: var(--foreground); }
+      .text-foreground { color: var(--foreground); }
+      .border-foreground { border-color: var(--foreground); }
+      .ring-foreground { --tw-ring-color: var(--foreground); }
+      .bg-card { background-color: var(--card); }
+      .text-card { color: var(--card); }
+      .border-card { border-color: var(--card); }
+      .ring-card { --tw-ring-color: var(--card); }
+      .bg-primary { background-color: var(--primary); }
+      .text-primary { color: var(--primary); }
+      .border-primary { border-color: var(--primary); }
+      .ring-primary { --tw-ring-color: var(--primary); }
+      .bg-secondary { background-color: var(--secondary); }
+      .text-secondary { color: var(--secondary); }
+      .border-secondary { border-color: var(--secondary); }
+      .ring-secondary { --tw-ring-color: var(--secondary); }
+      .bg-muted { background-color: var(--muted); }
+      .text-muted { color: var(--muted); }
+      .border-muted { border-color: var(--muted); }
+      .ring-muted { --tw-ring-color: var(--muted); }
+      .bg-muted-foreground { background-color: var(--muted-foreground); }
+      .text-muted-foreground { color: var(--muted-foreground); }
+      .border-muted-foreground { border-color: var(--muted-foreground); }
+      .ring-muted-foreground { --tw-ring-color: var(--muted-foreground); }
+      .bg-destructive { background-color: var(--destructive); }
+      .text-destructive { color: var(--destructive); }
+      .border-destructive { border-color: var(--destructive); }
+      .ring-destructive { --tw-ring-color: var(--destructive); }
+      .bg-border { background-color: var(--border); }
+      .text-border { color: var(--border); }
+      .border-border { border-color: var(--border); }
+      .ring-border { --tw-ring-color: var(--border); }
+    </style>
+    <style>
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      [data-icon] {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        -webkit-mask-size: contain;
+        mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-position: center;
+        background-color: currentColor;
+      }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="top-bar">
+        <!-- 品牌：对应 NavHeader.js 的静态产出 -->
+        <div class="nav-header-content">
+          <div class="brand">
+            <div class="brand-mark">
+              <img src="../assets/logo.jpg" alt="权威导航" width="38" height="38" />
+            </div>
+            <h1>权威导航</h1>
+          </div>
+        </div>
+
+        <!-- 搜索：对应 SearchBar.js 的静态产出 -->
+        <div class="search-wrap">
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.35-4.35"></path></svg>
+          <input type="search" id="search" placeholder="搜索机构、媒体、高校或工具…" autocomplete="off">
+          <div class="result-count" id="resultCount" aria-live="polite"></div>
+        </div>
+
+        <!-- 主题切换：对应 ThemeSwitcher.js 的 5 个主题按钮 -->
+        <div class="theme-switcher">
+          <div class="icon-btn-group theme-switcher-group" role="group" aria-label="主题切换">
+            <button type="button" class="icon-btn is-active" data-theme="tiktok-dark" aria-label="抖音暗色" aria-pressed="true" title="抖音暗色">
+              <i data-lucide="flame" width="18" height="18"></i>
+            </button>
+            <button type="button" class="icon-btn" data-theme="claude-light" aria-label="Claude 浅色" aria-pressed="false" title="Claude 浅色">
+              <i data-lucide="sun" width="18" height="18"></i>
+            </button>
+            <button type="button" class="icon-btn" data-theme="claude-dark" aria-label="Claude 深色" aria-pressed="false" title="Claude 深色">
+              <i data-lucide="moon" width="18" height="18"></i>
+            </button>
+            <button type="button" class="icon-btn" data-theme="apple-light" aria-label="Apple 浅色" aria-pressed="false" title="Apple 浅色">
+              <i data-lucide="sun-dim" width="18" height="18"></i>
+            </button>
+            <button type="button" class="icon-btn" data-theme="apple-dark" aria-label="Apple 深色" aria-pressed="false" title="Apple 深色">
+              <i data-lucide="moon-star" width="18" height="18"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- 登录：对应未登录态的 AuthControl.js（锁图标 + “登录”） -->
+        <div class="auth-control">
+          <div class="icon-btn-group auth-group" role="group" aria-label="登录状态">
+            <button type="button" class="icon-btn auth-btn" title="登录后可修改分类与链接" aria-label="登录后可修改分类与链接">
+              <svg class="auth-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 11V8a5 5 0 0 1 10 0v3"/><rect x="4" y="11" width="16" height="10" rx="2"/></svg>
+              <span class="auth-label">登录</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 数据管理：对应 ImportExport.js 的导出 / 导入 / 恢复默认 -->
+        <div class="import-export-wrap">
+          <div class="icon-btn-group" role="group" aria-label="数据管理">
+            <button type="button" class="icon-btn" data-action="export" aria-label="导出数据" title="导出数据">
+              <i data-lucide="download" width="18" height="18"></i>
+            </button>
+            <button type="button" class="icon-btn" data-action="import" aria-label="增量导入" title="增量导入（合并到现有数据，自动去重）；按住 Shift 点击则全量替换">
+              <i data-lucide="upload" width="18" height="18"></i>
+            </button>
+            <button type="button" class="icon-btn icon-btn-danger" data-action="reset" aria-label="恢复默认" title="恢复默认">
+              <i data-lucide="rotate-ccw" width="18" height="18"></i>
+            </button>
+          </div>
+          <input type="file" class="import-file-input" accept="application/json,.json" hidden />
+        </div>
+      </div>
+    </header>
+
+    <!-- 快捷入口：紧凑胶囊横条。无卡片外壳（无 .card / 无背景面 / 无边框 / 无 24px 内边距 / 无 14px 圆角），
+         因此不再读作“第 9 个分类”。25 条按 config/default-sites.json 的 commonLinks 原始顺序，
+         即冷启动顺序；线上页面会在运行时按点击频率重排。 -->
+    <section class="quick-access" aria-labelledby="quick-access-title">
+      <div class="quick-access-head">
+        <span class="quick-access-label" id="quick-access-title">快捷入口</span>
+        <span class="quick-access-hint">按使用频率自动排序</span>
+        <button type="button" class="quick-access-add">+ 添加</button>
+      </div>
+      <ul class="quick-access-list">
+        <li class="quick-access-item">
+          <a class="quick-chip" href="https://www.gov.cn" title="中国政府网">中国政府网</a>
+          <button type="button" class="quick-chip-remove" aria-hidden="true" tabindex="-1" title="移出快捷入口">&times;</button>
+        </li>
+        <li class="quick-access-item">
+          <a class="quick-chip" href="https://zwfw.npc.gov.cn" title="国家政务服务平台">国家政务服务平台</a>
+          <button type="button" class="quick-chip-remove" aria-hidden="true" tabindex="-1" title="移出快捷入口">&times;</button>
+        </li>
+        <li class="quick-access-item">
+          <a class="quick-chip" href="https://www.chinatax.gov.cn" title="国家税务总局">国家税务总局</a>
+          <button type="button" class="quick-chip-remove" aria-hidden="true" tabindex="-1" title="移出快捷入口">&times;</button>
+        </li>
+        <li class="quick-access-item">
+          <a class="quick-chip" href="https://etax.chinatax.gov.cn" title="个人所得税">个人所得税</a>
+          <button type="button" class="quick-chip-remove" aria-hidden="true" tabindex="-1" title="移出快捷入口">&times;</button>
+        </li>
+        <li class="quick-access-item">
+          <a class="quick-chip" href="https://www.12306.cn" title="12306">12306</a>
+          <button type="button" class="quick-chip-remove" aria-hidden="true" tabindex="-1" title="移出快捷入口">&times;</button>
+        </li>
+        <li class="quick-access-item">
+          <a class="quick-chip" href="https://data.stats.gov.cn" title="国家统计局">国家统计局</a>
+          <button type="button" class="quick-chip-remove" aria-hidden="true" tabindex="-1" title="移出快捷入口">&times;</button>
+        </li>
+        <li class="quick-access-item">
+          <a class="quick-chip" href="https://www.pbc.gov.cn" title="中国人民银行">中国人民银行</a>
+          <button type="button" class="quick-chip-remove" aria-hidden="true" tabindex="-1" title="移出快捷入口">&times;</button>
+        </li>
+        <li class="quick-access-item">
+          <a class="quick-chip" href="https://www.tianyancha.com" title="天眼查">天眼查</a>
+          <button type="button" class="quick-chip-remove" aria-hidden="true" tabindex="-1" title="移出快捷入口">&times;</button>
+        </li>
+        <li class="quick-access-item">
+          <a class="quick-chip" href="https://www.cninfo.com.cn" title="巨潮资讯">巨潮资讯</a>
+          <button type="button" class="quick-chip-remove" aria-hidden="true" tabindex="-1" title="移出快捷入口">&times;</button>
+        </li>
+        <li class="quick-access-item">
+          <a class="quick-chip" href="https://www.chsi.com.cn" title="学信网">学信网</a>
+          <button type="button" class="quick-chip-remove" aria-hidden="true" tabindex="-1" title="移出快捷入口">&times;</button>
+        </li>
+        <li class="quick-access-item">
+          <a class="quick-chip" href="http://www.people.com.cn" title="人民网">人民网</a>
+          <button type="button" class="quick-chip-remove" aria-hidden="true" tabindex="-1" title="移出快捷入口">&times;</button>
+        </li>
+        <li class="quick-access-item">
+          <a class="quick-chip" href="http://www.xinhuanet.com" title="新华网">新华网</a>
+          <button type="button" class="quick-chip-remove" aria-hidden="true" tabindex="-1" title="移出快捷入口">&times;</button>
+        </li>
+        <li class="quick-access-item">
+          <a class="quick-chip" href="https://www.cctv.com" title="央视网">央视网</a>
+          <button type="button" class="quick-chip-remove" aria-hidden="true" tabindex="-1" title="移出快捷入口">&times;</button>
+        </li>
+        <li class="quick-access-item">
+          <a class="quick-chip" href="https://www.gmw.cn" title="光明网">光明网</a>
+          <button type="button" class="quick-chip-remove" aria-hidden="true" tabindex="-1" title="移出快捷入口">&times;</button>
+        </li>
+        <li class="quick-access-item">
+          <a class="quick-chip" href="https://www.chinanews.com" title="中国新闻网">中国新闻网</a>
+          <button type="button" class="quick-chip-remove" aria-hidden="true" tabindex="-1" title="移出快捷入口">&times;</button>
+        </li>
+        <li class="quick-access-item">
+          <a class="quick-chip" href="https://www.cnki.net" title="中国知网 CNKI">中国知网 CNKI</a>
+          <button type="button" class="quick-chip-remove" aria-hidden="true" tabindex="-1" title="移出快捷入口">&times;</button>
+        </li>
+        <li class="quick-access-item">
+          <a class="quick-chip" href="https://www.wanfangdata.com.cn" title="万方数据">万方数据</a>
+          <button type="button" class="quick-chip-remove" aria-hidden="true" tabindex="-1" title="移出快捷入口">&times;</button>
+        </li>
+        <li class="quick-access-item">
+          <a class="quick-chip" href="https://scholar.google.com" title="Google Scholar">Google Scholar</a>
+          <button type="button" class="quick-chip-remove" aria-hidden="true" tabindex="-1" title="移出快捷入口">&times;</button>
+        </li>
+        <li class="quick-access-item">
+          <a class="quick-chip" href="https://www.nlc.cn" title="中国国家图书馆">中国国家图书馆</a>
+          <button type="button" class="quick-chip-remove" aria-hidden="true" tabindex="-1" title="移出快捷入口">&times;</button>
+        </li>
+        <li class="quick-access-item">
+          <a class="quick-chip" href="https://www.nssd.cn" title="国家哲学社会科学文献中心">国家哲学社会科学文献中心</a>
+          <button type="button" class="quick-chip-remove" aria-hidden="true" tabindex="-1" title="移出快捷入口">&times;</button>
+        </li>
+        <li class="quick-access-item">
+          <a class="quick-chip" href="https://flk.npc.gov.cn" title="国家法律法规数据库">国家法律法规数据库</a>
+          <button type="button" class="quick-chip-remove" aria-hidden="true" tabindex="-1" title="移出快捷入口">&times;</button>
+        </li>
+        <li class="quick-access-item">
+          <a class="quick-chip" href="https://www.pkulaw.com" title="北大法宝">北大法宝</a>
+          <button type="button" class="quick-chip-remove" aria-hidden="true" tabindex="-1" title="移出快捷入口">&times;</button>
+        </li>
+        <li class="quick-access-item">
+          <a class="quick-chip" href="https://wenshu.court.gov.cn" title="中国裁判文书网">中国裁判文书网</a>
+          <button type="button" class="quick-chip-remove" aria-hidden="true" tabindex="-1" title="移出快捷入口">&times;</button>
+        </li>
+        <li class="quick-access-item">
+          <a class="quick-chip" href="http://www.gb688.cn" title="国家标准全文公开系统">国家标准全文公开系统</a>
+          <button type="button" class="quick-chip-remove" aria-hidden="true" tabindex="-1" title="移出快捷入口">&times;</button>
+        </li>
+        <li class="quick-access-item">
+          <a class="quick-chip" href="https://www.cnipa.gov.cn" title="国家知识产权局">国家知识产权局</a>
+          <button type="button" class="quick-chip-remove" aria-hidden="true" tabindex="-1" title="移出快捷入口">&times;</button>
+        </li>
+      </ul>
+    </section>
+
+    <!-- 分类区保持既有卡片处理，与上方胶囊横条形成对比 -->
+    <main class="grid" id="grid">
+      <article class="card" data-category="国家机关" draggable="true" role="listitem" aria-grabbed="false">
+        <div class="card-header">
+          <div class="category-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18 M5 21V7l8-4 8 4v14 M10 9a2 2 0 0 1 4 0 M10 14h4v7h-4z"/></svg></div>
+          <h2 title="国家机关">国家机关</h2>
+          <button class="add-link-btn" aria-label="添加链接">+</button>
+        </div>
+        <ul class="links">
+          <li draggable="true" data-name="中国政府网" data-url="https://www.gov.cn" data-category="国家机关">
+            <a href="https://www.gov.cn" target="_blank" rel="noopener">中国政府网</a>
+            <button class="delete-btn" aria-label="删除 中国政府网" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="全国人大" data-url="http://www.npc.gov.cn" data-category="国家机关">
+            <a href="http://www.npc.gov.cn" target="_blank" rel="noopener">全国人大</a>
+            <button class="delete-btn" aria-label="删除 全国人大" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="全国政协" data-url="http://www.cppcc.gov.cn" data-category="国家机关">
+            <a href="http://www.cppcc.gov.cn" target="_blank" rel="noopener">全国政协</a>
+            <button class="delete-btn" aria-label="删除 全国政协" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="中央纪委国家监委" data-url="https://www.ccdi.gov.cn" data-category="国家机关">
+            <a href="https://www.ccdi.gov.cn" target="_blank" rel="noopener">中央纪委国家监委</a>
+            <button class="delete-btn" aria-label="删除 中央纪委国家监委" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="最高人民法院" data-url="https://www.court.gov.cn" data-category="国家机关">
+            <a href="https://www.court.gov.cn" target="_blank" rel="noopener">最高人民法院</a>
+            <button class="delete-btn" aria-label="删除 最高人民法院" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="最高人民检察院" data-url="https://www.spp.gov.cn" data-category="国家机关">
+            <a href="https://www.spp.gov.cn" target="_blank" rel="noopener">最高人民检察院</a>
+            <button class="delete-btn" aria-label="删除 最高人民检察院" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="外交部" data-url="https://www.mfa.gov.cn" data-category="国家机关">
+            <a href="https://www.mfa.gov.cn" target="_blank" rel="noopener">外交部</a>
+            <button class="delete-btn" aria-label="删除 外交部" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="教育部" data-url="https://www.moe.gov.cn" data-category="国家机关">
+            <a href="https://www.moe.gov.cn" target="_blank" rel="noopener">教育部</a>
+            <button class="delete-btn" aria-label="删除 教育部" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="工业和信息化部" data-url="https://www.miit.gov.cn" data-category="国家机关">
+            <a href="https://www.miit.gov.cn" target="_blank" rel="noopener">工业和信息化部</a>
+            <button class="delete-btn" aria-label="删除 工业和信息化部" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="公安部" data-url="https://www.mps.gov.cn" data-category="国家机关">
+            <a href="https://www.mps.gov.cn" target="_blank" rel="noopener">公安部</a>
+            <button class="delete-btn" aria-label="删除 公安部" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="人力资源和社会保障部" data-url="http://www.mohrss.gov.cn" data-category="国家机关">
+            <a href="http://www.mohrss.gov.cn" target="_blank" rel="noopener">人力资源和社会保障部</a>
+            <button class="delete-btn" aria-label="删除 人力资源和社会保障部" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="国家政务服务平台" data-url="https://gjzwfw.www.gov.cn" data-category="国家机关">
+            <a href="https://gjzwfw.www.gov.cn" target="_blank" rel="noopener">国家政务服务平台</a>
+            <button class="delete-btn" aria-label="删除 国家政务服务平台" title="删除">&times;</button>
+          </li>
+        </ul>
+      </article>
+
+      <article class="card" data-category="权威官媒" draggable="true" role="listitem" aria-grabbed="false">
+        <div class="card-header">
+          <div class="category-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 7v10 M6 5v14 M10 8h12v8H10z"/></svg></div>
+          <h2 title="权威官媒">权威官媒</h2>
+          <button class="add-link-btn" aria-label="添加链接">+</button>
+        </div>
+        <ul class="links">
+          <li draggable="true" data-name="人民网" data-url="http://www.people.com.cn" data-category="权威官媒">
+            <a href="http://www.people.com.cn" target="_blank" rel="noopener">人民网</a>
+            <button class="delete-btn" aria-label="删除 人民网" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="新华网" data-url="http://www.xinhuanet.com" data-category="权威官媒">
+            <a href="http://www.xinhuanet.com" target="_blank" rel="noopener">新华网</a>
+            <button class="delete-btn" aria-label="删除 新华网" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="央视网" data-url="https://www.cctv.com" data-category="权威官媒">
+            <a href="https://www.cctv.com" target="_blank" rel="noopener">央视网</a>
+            <button class="delete-btn" aria-label="删除 央视网" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="央广网" data-url="https://www.cnr.cn" data-category="权威官媒">
+            <a href="https://www.cnr.cn" target="_blank" rel="noopener">央广网</a>
+            <button class="delete-btn" aria-label="删除 央广网" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="光明网" data-url="https://www.gmw.cn" data-category="权威官媒">
+            <a href="https://www.gmw.cn" target="_blank" rel="noopener">光明网</a>
+            <button class="delete-btn" aria-label="删除 光明网" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="中国新闻网" data-url="https://www.chinanews.com" data-category="权威官媒">
+            <a href="https://www.chinanews.com" target="_blank" rel="noopener">中国新闻网</a>
+            <button class="delete-btn" aria-label="删除 中国新闻网" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="中国青年网" data-url="https://www.youth.cn" data-category="权威官媒">
+            <a href="https://www.youth.cn" target="_blank" rel="noopener">中国青年网</a>
+            <button class="delete-btn" aria-label="删除 中国青年网" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="求是网" data-url="http://www.qstheory.cn" data-category="权威官媒">
+            <a href="http://www.qstheory.cn" target="_blank" rel="noopener">求是网</a>
+            <button class="delete-btn" aria-label="删除 求是网" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="中国网" data-url="http://www.china.com.cn" data-category="权威官媒">
+            <a href="http://www.china.com.cn" target="_blank" rel="noopener">中国网</a>
+            <button class="delete-btn" aria-label="删除 中国网" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="学习强国" data-url="https://www.xuexi.cn" data-category="权威官媒">
+            <a href="https://www.xuexi.cn" target="_blank" rel="noopener">学习强国</a>
+            <button class="delete-btn" aria-label="删除 学习强国" title="删除">&times;</button>
+          </li>
+        </ul>
+      </article>
+
+      <article class="card" data-category="985高校" draggable="true" role="listitem" aria-grabbed="false">
+        <div class="card-header">
+          <div class="category-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6 M2 10l10-5 10 5-10 5z M6 12v5c0 1.7 1.3 3 3 3h6c1.7 0 3-1.3 3-3v-5"/></svg></div>
+          <h2 title="985高校">985高校</h2>
+          <button class="add-link-btn" aria-label="添加链接">+</button>
+        </div>
+        <ul class="links">
+          <li draggable="true" data-name="清华大学" data-url="https://www.tsinghua.edu.cn" data-category="985高校">
+            <a href="https://www.tsinghua.edu.cn" target="_blank" rel="noopener">清华大学</a>
+            <button class="delete-btn" aria-label="删除 清华大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="北京大学" data-url="https://www.pku.edu.cn" data-category="985高校">
+            <a href="https://www.pku.edu.cn" target="_blank" rel="noopener">北京大学</a>
+            <button class="delete-btn" aria-label="删除 北京大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="中国人民大学" data-url="https://www.ruc.edu.cn" data-category="985高校">
+            <a href="https://www.ruc.edu.cn" target="_blank" rel="noopener">中国人民大学</a>
+            <button class="delete-btn" aria-label="删除 中国人民大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="北京航空航天大学" data-url="https://www.buaa.edu.cn" data-category="985高校">
+            <a href="https://www.buaa.edu.cn" target="_blank" rel="noopener">北京航空航天大学</a>
+            <button class="delete-btn" aria-label="删除 北京航空航天大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="北京理工大学" data-url="https://www.bit.edu.cn" data-category="985高校">
+            <a href="https://www.bit.edu.cn" target="_blank" rel="noopener">北京理工大学</a>
+            <button class="delete-btn" aria-label="删除 北京理工大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="北京师范大学" data-url="https://www.bnu.edu.cn" data-category="985高校">
+            <a href="https://www.bnu.edu.cn" target="_blank" rel="noopener">北京师范大学</a>
+            <button class="delete-btn" aria-label="删除 北京师范大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="复旦大学" data-url="https://www.fudan.edu.cn" data-category="985高校">
+            <a href="https://www.fudan.edu.cn" target="_blank" rel="noopener">复旦大学</a>
+            <button class="delete-btn" aria-label="删除 复旦大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="上海交通大学" data-url="https://www.sjtu.edu.cn" data-category="985高校">
+            <a href="https://www.sjtu.edu.cn" target="_blank" rel="noopener">上海交通大学</a>
+            <button class="delete-btn" aria-label="删除 上海交通大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="同济大学" data-url="https://www.tongji.edu.cn" data-category="985高校">
+            <a href="https://www.tongji.edu.cn" target="_blank" rel="noopener">同济大学</a>
+            <button class="delete-btn" aria-label="删除 同济大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="华东师范大学" data-url="https://www.ecnu.edu.cn" data-category="985高校">
+            <a href="https://www.ecnu.edu.cn" target="_blank" rel="noopener">华东师范大学</a>
+            <button class="delete-btn" aria-label="删除 华东师范大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="南京大学" data-url="https://www.nju.edu.cn" data-category="985高校">
+            <a href="https://www.nju.edu.cn" target="_blank" rel="noopener">南京大学</a>
+            <button class="delete-btn" aria-label="删除 南京大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="东南大学" data-url="https://www.seu.edu.cn" data-category="985高校">
+            <a href="https://www.seu.edu.cn" target="_blank" rel="noopener">东南大学</a>
+            <button class="delete-btn" aria-label="删除 东南大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="浙江大学" data-url="https://www.zju.edu.cn" data-category="985高校">
+            <a href="https://www.zju.edu.cn" target="_blank" rel="noopener">浙江大学</a>
+            <button class="delete-btn" aria-label="删除 浙江大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="中国科学技术大学" data-url="https://www.ustc.edu.cn" data-category="985高校">
+            <a href="https://www.ustc.edu.cn" target="_blank" rel="noopener">中国科学技术大学</a>
+            <button class="delete-btn" aria-label="删除 中国科学技术大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="厦门大学" data-url="https://www.xmu.edu.cn" data-category="985高校">
+            <a href="https://www.xmu.edu.cn" target="_blank" rel="noopener">厦门大学</a>
+            <button class="delete-btn" aria-label="删除 厦门大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="山东大学" data-url="https://www.sdu.edu.cn" data-category="985高校">
+            <a href="https://www.sdu.edu.cn" target="_blank" rel="noopener">山东大学</a>
+            <button class="delete-btn" aria-label="删除 山东大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="中国海洋大学" data-url="https://www.ouc.edu.cn" data-category="985高校">
+            <a href="https://www.ouc.edu.cn" target="_blank" rel="noopener">中国海洋大学</a>
+            <button class="delete-btn" aria-label="删除 中国海洋大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="武汉大学" data-url="https://www.whu.edu.cn" data-category="985高校">
+            <a href="https://www.whu.edu.cn" target="_blank" rel="noopener">武汉大学</a>
+            <button class="delete-btn" aria-label="删除 武汉大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="华中科技大学" data-url="https://www.hust.edu.cn" data-category="985高校">
+            <a href="https://www.hust.edu.cn" target="_blank" rel="noopener">华中科技大学</a>
+            <button class="delete-btn" aria-label="删除 华中科技大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="湖南大学" data-url="https://www.hnu.edu.cn" data-category="985高校">
+            <a href="https://www.hnu.edu.cn" target="_blank" rel="noopener">湖南大学</a>
+            <button class="delete-btn" aria-label="删除 湖南大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="中南大学" data-url="https://www.csu.edu.cn" data-category="985高校">
+            <a href="https://www.csu.edu.cn" target="_blank" rel="noopener">中南大学</a>
+            <button class="delete-btn" aria-label="删除 中南大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="中山大学" data-url="https://www.sysu.edu.cn" data-category="985高校">
+            <a href="https://www.sysu.edu.cn" target="_blank" rel="noopener">中山大学</a>
+            <button class="delete-btn" aria-label="删除 中山大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="华南理工大学" data-url="https://www.scut.edu.cn" data-category="985高校">
+            <a href="https://www.scut.edu.cn" target="_blank" rel="noopener">华南理工大学</a>
+            <button class="delete-btn" aria-label="删除 华南理工大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="四川大学" data-url="https://www.scu.edu.cn" data-category="985高校">
+            <a href="https://www.scu.edu.cn" target="_blank" rel="noopener">四川大学</a>
+            <button class="delete-btn" aria-label="删除 四川大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="电子科技大学" data-url="https://www.uestc.edu.cn" data-category="985高校">
+            <a href="https://www.uestc.edu.cn" target="_blank" rel="noopener">电子科技大学</a>
+            <button class="delete-btn" aria-label="删除 电子科技大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="重庆大学" data-url="https://www.cqu.edu.cn" data-category="985高校">
+            <a href="https://www.cqu.edu.cn" target="_blank" rel="noopener">重庆大学</a>
+            <button class="delete-btn" aria-label="删除 重庆大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="西安交通大学" data-url="https://www.xjtu.edu.cn" data-category="985高校">
+            <a href="https://www.xjtu.edu.cn" target="_blank" rel="noopener">西安交通大学</a>
+            <button class="delete-btn" aria-label="删除 西安交通大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="西北工业大学" data-url="https://www.nwpu.edu.cn" data-category="985高校">
+            <a href="https://www.nwpu.edu.cn" target="_blank" rel="noopener">西北工业大学</a>
+            <button class="delete-btn" aria-label="删除 西北工业大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="兰州大学" data-url="https://www.lzu.edu.cn" data-category="985高校">
+            <a href="https://www.lzu.edu.cn" target="_blank" rel="noopener">兰州大学</a>
+            <button class="delete-btn" aria-label="删除 兰州大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="东北大学" data-url="https://www.neu.edu.cn" data-category="985高校">
+            <a href="https://www.neu.edu.cn" target="_blank" rel="noopener">东北大学</a>
+            <button class="delete-btn" aria-label="删除 东北大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="大连理工大学" data-url="https://www.dlut.edu.cn" data-category="985高校">
+            <a href="https://www.dlut.edu.cn" target="_blank" rel="noopener">大连理工大学</a>
+            <button class="delete-btn" aria-label="删除 大连理工大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="吉林大学" data-url="https://www.jlu.edu.cn" data-category="985高校">
+            <a href="https://www.jlu.edu.cn" target="_blank" rel="noopener">吉林大学</a>
+            <button class="delete-btn" aria-label="删除 吉林大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="哈尔滨工业大学" data-url="https://www.hit.edu.cn" data-category="985高校">
+            <a href="https://www.hit.edu.cn" target="_blank" rel="noopener">哈尔滨工业大学</a>
+            <button class="delete-btn" aria-label="删除 哈尔滨工业大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="南开大学" data-url="https://www.nankai.edu.cn" data-category="985高校">
+            <a href="https://www.nankai.edu.cn" target="_blank" rel="noopener">南开大学</a>
+            <button class="delete-btn" aria-label="删除 南开大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="天津大学" data-url="https://www.tju.edu.cn" data-category="985高校">
+            <a href="https://www.tju.edu.cn" target="_blank" rel="noopener">天津大学</a>
+            <button class="delete-btn" aria-label="删除 天津大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="西北农林科技大学" data-url="https://www.nwafu.edu.cn" data-category="985高校">
+            <a href="https://www.nwafu.edu.cn" target="_blank" rel="noopener">西北农林科技大学</a>
+            <button class="delete-btn" aria-label="删除 西北农林科技大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="中央民族大学" data-url="https://www.muc.edu.cn" data-category="985高校">
+            <a href="https://www.muc.edu.cn" target="_blank" rel="noopener">中央民族大学</a>
+            <button class="delete-btn" aria-label="删除 中央民族大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="国防科技大学" data-url="https://www.nudt.edu.cn" data-category="985高校">
+            <a href="https://www.nudt.edu.cn" target="_blank" rel="noopener">国防科技大学</a>
+            <button class="delete-btn" aria-label="删除 国防科技大学" title="删除">&times;</button>
+          </li>
+        </ul>
+      </article>
+
+      <article class="card" data-category="211高校" draggable="true" role="listitem" aria-grabbed="false">
+        <div class="card-header">
+          <div class="category-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3L2 9l10 6 10-6-10-6z M2 15l10 6 10-6 M2 12l10 6 10-6"/></svg></div>
+          <h2 title="211高校">211高校</h2>
+          <button class="add-link-btn" aria-label="添加链接">+</button>
+        </div>
+        <ul class="links">
+          <li draggable="true" data-name="北京邮电大学" data-url="https://www.bupt.edu.cn" data-category="211高校">
+            <a href="https://www.bupt.edu.cn" target="_blank" rel="noopener">北京邮电大学</a>
+            <button class="delete-btn" aria-label="删除 北京邮电大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="中国政法大学" data-url="https://www.cupl.edu.cn" data-category="211高校">
+            <a href="https://www.cupl.edu.cn" target="_blank" rel="noopener">中国政法大学</a>
+            <button class="delete-btn" aria-label="删除 中国政法大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="对外经济贸易大学" data-url="https://www.uibe.edu.cn" data-category="211高校">
+            <a href="https://www.uibe.edu.cn" target="_blank" rel="noopener">对外经济贸易大学</a>
+            <button class="delete-btn" aria-label="删除 对外经济贸易大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="北京交通大学" data-url="https://www.bjtu.edu.cn" data-category="211高校">
+            <a href="https://www.bjtu.edu.cn" target="_blank" rel="noopener">北京交通大学</a>
+            <button class="delete-btn" aria-label="删除 北京交通大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="北京工业大学" data-url="https://www.bjut.edu.cn" data-category="211高校">
+            <a href="https://www.bjut.edu.cn" target="_blank" rel="noopener">北京工业大学</a>
+            <button class="delete-btn" aria-label="删除 北京工业大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="北京化工大学" data-url="https://www.buct.edu.cn" data-category="211高校">
+            <a href="https://www.buct.edu.cn" target="_blank" rel="noopener">北京化工大学</a>
+            <button class="delete-btn" aria-label="删除 北京化工大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="北京科技大学" data-url="https://www.ustb.edu.cn" data-category="211高校">
+            <a href="https://www.ustb.edu.cn" target="_blank" rel="noopener">北京科技大学</a>
+            <button class="delete-btn" aria-label="删除 北京科技大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="北京林业大学" data-url="https://www.bjfu.edu.cn" data-category="211高校">
+            <a href="https://www.bjfu.edu.cn" target="_blank" rel="noopener">北京林业大学</a>
+            <button class="delete-btn" aria-label="删除 北京林业大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="北京中医药大学" data-url="https://www.bucm.edu.cn" data-category="211高校">
+            <a href="https://www.bucm.edu.cn" target="_blank" rel="noopener">北京中医药大学</a>
+            <button class="delete-btn" aria-label="删除 北京中医药大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="上海财经大学" data-url="https://www.shufe.edu.cn" data-category="211高校">
+            <a href="https://www.shufe.edu.cn" target="_blank" rel="noopener">上海财经大学</a>
+            <button class="delete-btn" aria-label="删除 上海财经大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="上海外国语大学" data-url="https://www.shisu.edu.cn" data-category="211高校">
+            <a href="https://www.shisu.edu.cn" target="_blank" rel="noopener">上海外国语大学</a>
+            <button class="delete-btn" aria-label="删除 上海外国语大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="东华大学" data-url="https://www.dhu.edu.cn" data-category="211高校">
+            <a href="https://www.dhu.edu.cn" target="_blank" rel="noopener">东华大学</a>
+            <button class="delete-btn" aria-label="删除 东华大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="华东理工大学" data-url="https://www.ecust.edu.cn" data-category="211高校">
+            <a href="https://www.ecust.edu.cn" target="_blank" rel="noopener">华东理工大学</a>
+            <button class="delete-btn" aria-label="删除 华东理工大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="上海大学" data-url="https://www.shu.edu.cn" data-category="211高校">
+            <a href="https://www.shu.edu.cn" target="_blank" rel="noopener">上海大学</a>
+            <button class="delete-btn" aria-label="删除 上海大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="南京航空航天大学" data-url="https://www.nuaa.edu.cn" data-category="211高校">
+            <a href="https://www.nuaa.edu.cn" target="_blank" rel="noopener">南京航空航天大学</a>
+            <button class="delete-btn" aria-label="删除 南京航空航天大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="南京理工大学" data-url="https://www.njust.edu.cn" data-category="211高校">
+            <a href="https://www.njust.edu.cn" target="_blank" rel="noopener">南京理工大学</a>
+            <button class="delete-btn" aria-label="删除 南京理工大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="河海大学" data-url="https://www.hhu.edu.cn" data-category="211高校">
+            <a href="https://www.hhu.edu.cn" target="_blank" rel="noopener">河海大学</a>
+            <button class="delete-btn" aria-label="删除 河海大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="江南大学" data-url="https://www.jiangnan.edu.cn" data-category="211高校">
+            <a href="https://www.jiangnan.edu.cn" target="_blank" rel="noopener">江南大学</a>
+            <button class="delete-btn" aria-label="删除 江南大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="中国矿业大学" data-url="https://www.cumt.edu.cn" data-category="211高校">
+            <a href="https://www.cumt.edu.cn" target="_blank" rel="noopener">中国矿业大学</a>
+            <button class="delete-btn" aria-label="删除 中国矿业大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="南京农业大学" data-url="https://www.njau.edu.cn" data-category="211高校">
+            <a href="https://www.njau.edu.cn" target="_blank" rel="noopener">南京农业大学</a>
+            <button class="delete-btn" aria-label="删除 南京农业大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="中国药科大学" data-url="https://www.cpu.edu.cn" data-category="211高校">
+            <a href="https://www.cpu.edu.cn" target="_blank" rel="noopener">中国药科大学</a>
+            <button class="delete-btn" aria-label="删除 中国药科大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="苏州大学" data-url="https://www.suda.edu.cn" data-category="211高校">
+            <a href="https://www.suda.edu.cn" target="_blank" rel="noopener">苏州大学</a>
+            <button class="delete-btn" aria-label="删除 苏州大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="合肥工业大学" data-url="https://www.hfut.edu.cn" data-category="211高校">
+            <a href="https://www.hfut.edu.cn" target="_blank" rel="noopener">合肥工业大学</a>
+            <button class="delete-btn" aria-label="删除 合肥工业大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="安徽大学" data-url="https://www.ahu.edu.cn" data-category="211高校">
+            <a href="https://www.ahu.edu.cn" target="_blank" rel="noopener">安徽大学</a>
+            <button class="delete-btn" aria-label="删除 安徽大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="福州大学" data-url="https://www.fzu.edu.cn" data-category="211高校">
+            <a href="https://www.fzu.edu.cn" target="_blank" rel="noopener">福州大学</a>
+            <button class="delete-btn" aria-label="删除 福州大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="南昌大学" data-url="https://www.ncu.edu.cn" data-category="211高校">
+            <a href="https://www.ncu.edu.cn" target="_blank" rel="noopener">南昌大学</a>
+            <button class="delete-btn" aria-label="删除 南昌大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="郑州大学" data-url="https://www.zzu.edu.cn" data-category="211高校">
+            <a href="https://www.zzu.edu.cn" target="_blank" rel="noopener">郑州大学</a>
+            <button class="delete-btn" aria-label="删除 郑州大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="武汉理工大学" data-url="https://www.whut.edu.cn" data-category="211高校">
+            <a href="https://www.whut.edu.cn" target="_blank" rel="noopener">武汉理工大学</a>
+            <button class="delete-btn" aria-label="删除 武汉理工大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="华中农业大学" data-url="https://www.hzau.edu.cn" data-category="211高校">
+            <a href="https://www.hzau.edu.cn" target="_blank" rel="noopener">华中农业大学</a>
+            <button class="delete-btn" aria-label="删除 华中农业大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="华中师范大学" data-url="https://www.ccnu.edu.cn" data-category="211高校">
+            <a href="https://www.ccnu.edu.cn" target="_blank" rel="noopener">华中师范大学</a>
+            <button class="delete-btn" aria-label="删除 华中师范大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="中南财经政法大学" data-url="http://www.zuel.edu.cn" data-category="211高校">
+            <a href="http://www.zuel.edu.cn" target="_blank" rel="noopener">中南财经政法大学</a>
+            <button class="delete-btn" aria-label="删除 中南财经政法大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="暨南大学" data-url="https://www.jnu.edu.cn" data-category="211高校">
+            <a href="https://www.jnu.edu.cn" target="_blank" rel="noopener">暨南大学</a>
+            <button class="delete-btn" aria-label="删除 暨南大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="华南师范大学" data-url="https://www.scnu.edu.cn" data-category="211高校">
+            <a href="https://www.scnu.edu.cn" target="_blank" rel="noopener">华南师范大学</a>
+            <button class="delete-btn" aria-label="删除 华南师范大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="西南大学" data-url="https://www.swu.edu.cn" data-category="211高校">
+            <a href="https://www.swu.edu.cn" target="_blank" rel="noopener">西南大学</a>
+            <button class="delete-btn" aria-label="删除 西南大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="西南交通大学" data-url="https://www.swjtu.edu.cn" data-category="211高校">
+            <a href="https://www.swjtu.edu.cn" target="_blank" rel="noopener">西南交通大学</a>
+            <button class="delete-btn" aria-label="删除 西南交通大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="西南财经大学" data-url="https://www.swufe.edu.cn" data-category="211高校">
+            <a href="https://www.swufe.edu.cn" target="_blank" rel="noopener">西南财经大学</a>
+            <button class="delete-btn" aria-label="删除 西南财经大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="四川农业大学" data-url="https://www.sicau.edu.cn" data-category="211高校">
+            <a href="https://www.sicau.edu.cn" target="_blank" rel="noopener">四川农业大学</a>
+            <button class="delete-btn" aria-label="删除 四川农业大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="云南大学" data-url="https://www.ynu.edu.cn" data-category="211高校">
+            <a href="https://www.ynu.edu.cn" target="_blank" rel="noopener">云南大学</a>
+            <button class="delete-btn" aria-label="删除 云南大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="贵州大学" data-url="https://www.gzu.edu.cn" data-category="211高校">
+            <a href="https://www.gzu.edu.cn" target="_blank" rel="noopener">贵州大学</a>
+            <button class="delete-btn" aria-label="删除 贵州大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="西北大学" data-url="https://www.nwu.edu.cn" data-category="211高校">
+            <a href="https://www.nwu.edu.cn" target="_blank" rel="noopener">西北大学</a>
+            <button class="delete-btn" aria-label="删除 西北大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="西安电子科技大学" data-url="https://www.xidian.edu.cn" data-category="211高校">
+            <a href="https://www.xidian.edu.cn" target="_blank" rel="noopener">西安电子科技大学</a>
+            <button class="delete-btn" aria-label="删除 西安电子科技大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="长安大学" data-url="https://www.chd.edu.cn" data-category="211高校">
+            <a href="https://www.chd.edu.cn" target="_blank" rel="noopener">长安大学</a>
+            <button class="delete-btn" aria-label="删除 长安大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="陕西师范大学" data-url="https://www.snnu.edu.cn" data-category="211高校">
+            <a href="https://www.snnu.edu.cn" target="_blank" rel="noopener">陕西师范大学</a>
+            <button class="delete-btn" aria-label="删除 陕西师范大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="新疆大学" data-url="https://www.xju.edu.cn" data-category="211高校">
+            <a href="https://www.xju.edu.cn" target="_blank" rel="noopener">新疆大学</a>
+            <button class="delete-btn" aria-label="删除 新疆大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="石河子大学" data-url="https://www.shzu.edu.cn" data-category="211高校">
+            <a href="https://www.shzu.edu.cn" target="_blank" rel="noopener">石河子大学</a>
+            <button class="delete-btn" aria-label="删除 石河子大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="宁夏大学" data-url="https://www.nxu.edu.cn" data-category="211高校">
+            <a href="https://www.nxu.edu.cn" target="_blank" rel="noopener">宁夏大学</a>
+            <button class="delete-btn" aria-label="删除 宁夏大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="青海大学" data-url="https://www.qhu.edu.cn" data-category="211高校">
+            <a href="https://www.qhu.edu.cn" target="_blank" rel="noopener">青海大学</a>
+            <button class="delete-btn" aria-label="删除 青海大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="西藏大学" data-url="https://www.utibet.edu.cn" data-category="211高校">
+            <a href="https://www.utibet.edu.cn" target="_blank" rel="noopener">西藏大学</a>
+            <button class="delete-btn" aria-label="删除 西藏大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="广西大学" data-url="https://www.gxu.edu.cn" data-category="211高校">
+            <a href="https://www.gxu.edu.cn" target="_blank" rel="noopener">广西大学</a>
+            <button class="delete-btn" aria-label="删除 广西大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="海南大学" data-url="https://www.hainu.edu.cn" data-category="211高校">
+            <a href="https://www.hainu.edu.cn" target="_blank" rel="noopener">海南大学</a>
+            <button class="delete-btn" aria-label="删除 海南大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="内蒙古大学" data-url="https://www.imu.edu.cn" data-category="211高校">
+            <a href="https://www.imu.edu.cn" target="_blank" rel="noopener">内蒙古大学</a>
+            <button class="delete-btn" aria-label="删除 内蒙古大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="太原理工大学" data-url="https://www.tyut.edu.cn" data-category="211高校">
+            <a href="https://www.tyut.edu.cn" target="_blank" rel="noopener">太原理工大学</a>
+            <button class="delete-btn" aria-label="删除 太原理工大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="辽宁大学" data-url="https://www.lnu.edu.cn" data-category="211高校">
+            <a href="https://www.lnu.edu.cn" target="_blank" rel="noopener">辽宁大学</a>
+            <button class="delete-btn" aria-label="删除 辽宁大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="大连海事大学" data-url="https://www.dlmu.edu.cn" data-category="211高校">
+            <a href="https://www.dlmu.edu.cn" target="_blank" rel="noopener">大连海事大学</a>
+            <button class="delete-btn" aria-label="删除 大连海事大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="东北师范大学" data-url="https://www.nenu.edu.cn" data-category="211高校">
+            <a href="https://www.nenu.edu.cn" target="_blank" rel="noopener">东北师范大学</a>
+            <button class="delete-btn" aria-label="删除 东北师范大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="延边大学" data-url="https://www.ybu.edu.cn" data-category="211高校">
+            <a href="https://www.ybu.edu.cn" target="_blank" rel="noopener">延边大学</a>
+            <button class="delete-btn" aria-label="删除 延边大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="东北林业大学" data-url="https://www.nefu.edu.cn" data-category="211高校">
+            <a href="https://www.nefu.edu.cn" target="_blank" rel="noopener">东北林业大学</a>
+            <button class="delete-btn" aria-label="删除 东北林业大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="哈尔滨工程大学" data-url="https://www.hrbeu.edu.cn" data-category="211高校">
+            <a href="https://www.hrbeu.edu.cn" target="_blank" rel="noopener">哈尔滨工程大学</a>
+            <button class="delete-btn" aria-label="删除 哈尔滨工程大学" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="东北农业大学" data-url="https://www.neau.edu.cn" data-category="211高校">
+            <a href="https://www.neau.edu.cn" target="_blank" rel="noopener">东北农业大学</a>
+            <button class="delete-btn" aria-label="删除 东北农业大学" title="删除">&times;</button>
+          </li>
+        </ul>
+      </article>
+
+      <article class="card" data-category="数据查询" draggable="true" role="listitem" aria-grabbed="false">
+        <div class="card-header">
+          <div class="category-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5a9 3 0 1 0 0 6 9 3 0 1 0 0-6z M3 12c0 1.7 4 3 9 3s9-1.3 9-3 M3 17c0 1.7 4 3 9 3s9-1.3 9-3"/></svg></div>
+          <h2 title="数据查询">数据查询</h2>
+          <button class="add-link-btn" aria-label="添加链接">+</button>
+        </div>
+        <ul class="links">
+          <li draggable="true" data-name="国家统计局" data-url="https://data.stats.gov.cn" data-category="数据查询">
+            <a href="https://data.stats.gov.cn" target="_blank" rel="noopener">国家统计局</a>
+            <button class="delete-btn" aria-label="删除 国家统计局" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="中国人民银行" data-url="https://www.pbc.gov.cn" data-category="数据查询">
+            <a href="https://www.pbc.gov.cn" target="_blank" rel="noopener">中国人民银行</a>
+            <button class="delete-btn" aria-label="删除 中国人民银行" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="海关总署" data-url="https://www.customs.gov.cn" data-category="数据查询">
+            <a href="https://www.customs.gov.cn" target="_blank" rel="noopener">海关总署</a>
+            <button class="delete-btn" aria-label="删除 海关总署" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="国家企业信用信息公示系统" data-url="https://www.gsxt.gov.cn" data-category="数据查询">
+            <a href="https://www.gsxt.gov.cn" target="_blank" rel="noopener">国家企业信用信息公示系统</a>
+            <button class="delete-btn" aria-label="删除 国家企业信用信息公示系统" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="天眼查" data-url="https://www.tianyancha.com" data-category="数据查询">
+            <a href="https://www.tianyancha.com" target="_blank" rel="noopener">天眼查</a>
+            <button class="delete-btn" aria-label="删除 天眼查" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="企查查" data-url="https://www.qcc.com" data-category="数据查询">
+            <a href="https://www.qcc.com" target="_blank" rel="noopener">企查查</a>
+            <button class="delete-btn" aria-label="删除 企查查" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="巨潮资讯" data-url="https://www.cninfo.com.cn" data-category="数据查询">
+            <a href="https://www.cninfo.com.cn" target="_blank" rel="noopener">巨潮资讯</a>
+            <button class="delete-btn" aria-label="删除 巨潮资讯" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="12306" data-url="https://www.12306.cn" data-category="数据查询">
+            <a href="https://www.12306.cn" target="_blank" rel="noopener">12306</a>
+            <button class="delete-btn" aria-label="删除 12306" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="中国裁判文书网" data-url="https://wenshu.court.gov.cn" data-category="数据查询">
+            <a href="https://wenshu.court.gov.cn" target="_blank" rel="noopener">中国裁判文书网</a>
+            <button class="delete-btn" aria-label="删除 中国裁判文书网" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="中国执行信息公开网" data-url="http://zxgk.court.gov.cn" data-category="数据查询">
+            <a href="http://zxgk.court.gov.cn" target="_blank" rel="noopener">中国执行信息公开网</a>
+            <button class="delete-btn" aria-label="删除 中国执行信息公开网" title="删除">&times;</button>
+          </li>
+        </ul>
+      </article>
+
+      <article class="card" data-category="法律标准" draggable="true" role="listitem" aria-grabbed="false">
+        <div class="card-header">
+          <div class="category-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l7 4v6c0 5.5-3.8 10.7-7 12-3.2-1.3-7-6.5-7-12V6l7-4z"/></svg></div>
+          <h2 title="法律标准">法律标准</h2>
+          <button class="add-link-btn" aria-label="添加链接">+</button>
+        </div>
+        <ul class="links">
+          <li draggable="true" data-name="国家法律法规数据库" data-url="https://flk.npc.gov.cn" data-category="法律标准">
+            <a href="https://flk.npc.gov.cn" target="_blank" rel="noopener">国家法律法规数据库</a>
+            <button class="delete-btn" aria-label="删除 国家法律法规数据库" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="北大法宝" data-url="https://www.pkulaw.com" data-category="法律标准">
+            <a href="https://www.pkulaw.com" target="_blank" rel="noopener">北大法宝</a>
+            <button class="delete-btn" aria-label="删除 北大法宝" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="中国法院网" data-url="https://www.chinacourt.org" data-category="法律标准">
+            <a href="https://www.chinacourt.org" target="_blank" rel="noopener">中国法院网</a>
+            <button class="delete-btn" aria-label="删除 中国法院网" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="最高人民检察院" data-url="https://www.spp.gov.cn" data-category="法律标准">
+            <a href="https://www.spp.gov.cn" target="_blank" rel="noopener">最高人民检察院</a>
+            <button class="delete-btn" aria-label="删除 最高人民检察院" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="国家标准全文公开系统" data-url="http://www.gb688.cn" data-category="法律标准">
+            <a href="http://www.gb688.cn" target="_blank" rel="noopener">国家标准全文公开系统</a>
+            <button class="delete-btn" aria-label="删除 国家标准全文公开系统" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="国家知识产权局" data-url="https://www.cnipa.gov.cn" data-category="法律标准">
+            <a href="https://www.cnipa.gov.cn" target="_blank" rel="noopener">国家知识产权局</a>
+            <button class="delete-btn" aria-label="删除 国家知识产权局" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="中国商标网" data-url="https://sbj.cnipa.gov.cn" data-category="法律标准">
+            <a href="https://sbj.cnipa.gov.cn" target="_blank" rel="noopener">中国商标网</a>
+            <button class="delete-btn" aria-label="删除 中国商标网" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="中国版权保护中心" data-url="https://www.ccopyright.com.cn" data-category="法律标准">
+            <a href="https://www.ccopyright.com.cn" target="_blank" rel="noopener">中国版权保护中心</a>
+            <button class="delete-btn" aria-label="删除 中国版权保护中心" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="全国标准信息公共服务平台" data-url="http://std.samr.gov.cn" data-category="法律标准">
+            <a href="http://std.samr.gov.cn" target="_blank" rel="noopener">全国标准信息公共服务平台</a>
+            <button class="delete-btn" aria-label="删除 全国标准信息公共服务平台" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="发票查验平台" data-url="https://inv-veri.chinatax.gov.cn" data-category="法律标准">
+            <a href="https://inv-veri.chinatax.gov.cn" target="_blank" rel="noopener">发票查验平台</a>
+            <button class="delete-btn" aria-label="删除 发票查验平台" title="删除">&times;</button>
+          </li>
+        </ul>
+      </article>
+
+      <article class="card" data-category="学术资源" draggable="true" role="listitem" aria-grabbed="false">
+        <div class="card-header">
+          <div class="category-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20 M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></div>
+          <h2 title="学术资源">学术资源</h2>
+          <button class="add-link-btn" aria-label="添加链接">+</button>
+        </div>
+        <ul class="links">
+          <li draggable="true" data-name="中国知网 CNKI" data-url="https://www.cnki.net" data-category="学术资源">
+            <a href="https://www.cnki.net" target="_blank" rel="noopener">中国知网 CNKI</a>
+            <button class="delete-btn" aria-label="删除 中国知网 CNKI" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="万方数据" data-url="https://www.wanfangdata.com.cn" data-category="学术资源">
+            <a href="https://www.wanfangdata.com.cn" target="_blank" rel="noopener">万方数据</a>
+            <button class="delete-btn" aria-label="删除 万方数据" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="维普网" data-url="https://www.cqvip.com" data-category="学术资源">
+            <a href="https://www.cqvip.com" target="_blank" rel="noopener">维普网</a>
+            <button class="delete-btn" aria-label="删除 维普网" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="国家哲学社会科学文献中心" data-url="https://www.nssd.cn" data-category="学术资源">
+            <a href="https://www.nssd.cn" target="_blank" rel="noopener">国家哲学社会科学文献中心</a>
+            <button class="delete-btn" aria-label="删除 国家哲学社会科学文献中心" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="国家科技图书文献中心" data-url="https://www.nstl.gov.cn" data-category="学术资源">
+            <a href="https://www.nstl.gov.cn" target="_blank" rel="noopener">国家科技图书文献中心</a>
+            <button class="delete-btn" aria-label="删除 国家科技图书文献中心" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="中国国家图书馆" data-url="https://www.nlc.cn" data-category="学术资源">
+            <a href="https://www.nlc.cn" target="_blank" rel="noopener">中国国家图书馆</a>
+            <button class="delete-btn" aria-label="删除 中国国家图书馆" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="Google Scholar" data-url="https://scholar.google.com" data-category="学术资源">
+            <a href="https://scholar.google.com" target="_blank" rel="noopener">Google Scholar</a>
+            <button class="delete-btn" aria-label="删除 Google Scholar" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="PubMed" data-url="https://pubmed.ncbi.nlm.nih.gov" data-category="学术资源">
+            <a href="https://pubmed.ncbi.nlm.nih.gov" target="_blank" rel="noopener">PubMed</a>
+            <button class="delete-btn" aria-label="删除 PubMed" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="IEEE Xplore" data-url="https://ieeexplore.ieee.org" data-category="学术资源">
+            <a href="https://ieeexplore.ieee.org" target="_blank" rel="noopener">IEEE Xplore</a>
+            <button class="delete-btn" aria-label="删除 IEEE Xplore" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="arXiv" data-url="https://arxiv.org" data-category="学术资源">
+            <a href="https://arxiv.org" target="_blank" rel="noopener">arXiv</a>
+            <button class="delete-btn" aria-label="删除 arXiv" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="Web of Science" data-url="https://www.webofscience.com" data-category="学术资源">
+            <a href="https://www.webofscience.com" target="_blank" rel="noopener">Web of Science</a>
+            <button class="delete-btn" aria-label="删除 Web of Science" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="学信网" data-url="https://www.chsi.com.cn" data-category="学术资源">
+            <a href="https://www.chsi.com.cn" target="_blank" rel="noopener">学信网</a>
+            <button class="delete-btn" aria-label="删除 学信网" title="删除">&times;</button>
+          </li>
+        </ul>
+      </article>
+
+      <article class="card" data-category="政务工具" draggable="true" role="listitem" aria-grabbed="false">
+        <div class="card-header">
+          <div class="category-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h18v18H3z M3 9h18 M9 21V9"/></svg></div>
+          <h2 title="政务工具">政务工具</h2>
+          <button class="add-link-btn" aria-label="添加链接">+</button>
+        </div>
+        <ul class="links">
+          <li draggable="true" data-name="国家政务服务平台" data-url="https://zwfw.npc.gov.cn" data-category="政务工具">
+            <a href="https://zwfw.npc.gov.cn" target="_blank" rel="noopener">国家政务服务平台</a>
+            <button class="delete-btn" aria-label="删除 国家政务服务平台" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="国家税务总局" data-url="https://www.chinatax.gov.cn" data-category="政务工具">
+            <a href="https://www.chinatax.gov.cn" target="_blank" rel="noopener">国家税务总局</a>
+            <button class="delete-btn" aria-label="删除 国家税务总局" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="个人所得税" data-url="https://etax.chinatax.gov.cn" data-category="政务工具">
+            <a href="https://etax.chinatax.gov.cn" target="_blank" rel="noopener">个人所得税</a>
+            <button class="delete-btn" aria-label="删除 个人所得税" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="国家移民管理局" data-url="https://s.nia.gov.cn" data-category="政务工具">
+            <a href="https://s.nia.gov.cn" target="_blank" rel="noopener">国家移民管理局</a>
+            <button class="delete-btn" aria-label="删除 国家移民管理局" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="中国签证申请服务中心" data-url="https://www.visaforchina.cn" data-category="政务工具">
+            <a href="https://www.visaforchina.cn" target="_blank" rel="noopener">中国签证申请服务中心</a>
+            <button class="delete-btn" aria-label="删除 中国签证申请服务中心" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="交通运输部" data-url="https://www.mot.gov.cn" data-category="政务工具">
+            <a href="https://www.mot.gov.cn" target="_blank" rel="noopener">交通运输部</a>
+            <button class="delete-btn" aria-label="删除 交通运输部" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="民政部" data-url="https://www.mca.gov.cn" data-category="政务工具">
+            <a href="https://www.mca.gov.cn" target="_blank" rel="noopener">民政部</a>
+            <button class="delete-btn" aria-label="删除 民政部" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="国家医保局" data-url="https://www.nhsa.gov.cn" data-category="政务工具">
+            <a href="https://www.nhsa.gov.cn" target="_blank" rel="noopener">国家医保局</a>
+            <button class="delete-btn" aria-label="删除 国家医保局" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="国家卫生健康委员会" data-url="https://www.nhc.gov.cn" data-category="政务工具">
+            <a href="https://www.nhc.gov.cn" target="_blank" rel="noopener">国家卫生健康委员会</a>
+            <button class="delete-btn" aria-label="删除 国家卫生健康委员会" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="国务院客户端" data-url="https://www.gov.cn/guowuyuan/zfwj.htm" data-category="政务工具">
+            <a href="https://www.gov.cn/guowuyuan/zfwj.htm" target="_blank" rel="noopener">国务院客户端</a>
+            <button class="delete-btn" aria-label="删除 国务院客户端" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="中国天气网" data-url="https://www.weather.com.cn" data-category="政务工具">
+            <a href="https://www.weather.com.cn" target="_blank" rel="noopener">中国天气网</a>
+            <button class="delete-btn" aria-label="删除 中国天气网" title="删除">&times;</button>
+          </li>
+          <li draggable="true" data-name="天地图" data-url="https://www.tianditu.gov.cn" data-category="政务工具">
+            <a href="https://www.tianditu.gov.cn" target="_blank" rel="noopener">天地图</a>
+            <button class="delete-btn" aria-label="删除 天地图" title="删除">&times;</button>
+          </li>
+        </ul>
+      </article>
+
+      <!-- 新建分类入口：对应 AddCategoryCard.js，与改动无关，保持原样 -->
+      <article class="card add-category-card" role="button" tabindex="0" aria-label="添加新类别"><span class="add-category-icon">+</span><span>添加类别</span></article>
+    </main>
+
+    <div class="empty-state" id="emptyState">
+      未找到与“<strong id="emptyQuery"></strong>”匹配的机构或工具。
+    </div>
+  </div>
+
+  <footer>
+    本页面仅作导航索引，所有链接指向各机构官方网站，请以官方信息为准。
+  </footer>
+
+  <script>
+    // 静态对比稿专用：仅负责主题切换与 Lucide 图标渲染，不加载 /js/app.js、不请求后端。
+    (function () {
+      var MAP = { "tiktok-dark": ["tiktok", true], "claude-light": ["claude-light", false], "claude-dark": ["claude-dark", true], "apple-light": ["apple-light", false], "apple-dark": ["apple-dark", true] };
+      var root = document.documentElement;
+      var buttons = document.querySelectorAll(".theme-switcher button[data-theme]");
+      function apply(id) {
+        var theme = MAP[id] ? id : "tiktok-dark";
+        var t = MAP[theme];
+        root.setAttribute("data-theme", t[0]);
+        root.classList.toggle("dark", t[1]);
+        root.style.colorScheme = t[1] ? "dark" : "light";
+        Array.prototype.forEach.call(buttons, function (btn) {
+          var active = btn.dataset.theme === theme;
+          btn.classList.toggle("is-active", active);
+          btn.setAttribute("aria-pressed", String(active));
+        });
+      }
+      Array.prototype.forEach.call(buttons, function (btn) {
+        btn.addEventListener("click", function () { apply(btn.dataset.theme); });
+      });
+      var stored = "tiktok-dark";
+      try { stored = JSON.parse(localStorage.getItem("nav-theme")) || stored; } catch (e) {}
+      apply(stored);
+      if (window.lucide && window.lucide.createIcons) window.lucide.createIcons();
+    })();
+  </script>
+</body>
+</html>

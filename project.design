@@ -25,6 +25,22 @@
       }
     },
     {
+      "id": "page-index-quick-access",
+      "title": "权威导航首页 - 快捷入口对比稿",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1789553100000,
+      "devMetadata": {
+        "htmlSrc": "pages/index-quick-access.html",
+        "interactions": []
+      },
+      "canvasData": {
+        "x": 0,
+        "y": 0,
+        "group": 0
+      }
+    },
+    {
       "id": "image-001",
       "title": "抖音暗色主题预览",
       "type": "image",
@@ -109,6 +125,7 @@
       "id": "dl_builtin_claude",
       "version": 0,
       "scope": "builtin",
+      "path": null,
       "versionSource": "builtin"
     }
   }
