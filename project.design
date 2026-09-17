@@ -15,8 +15,8 @@
           "version": 1,
           "contentHeight": 900,
           "viewportWidth": 1440,
-          "sourceHash": "fnv1a-150c003b",
-          "measuredAt": 1789547944110
+          "sourceHash": "fnv1a-be4f4410",
+          "measuredAt": 1789556098682
         }
       },
       "devMetadata": {
@@ -30,14 +30,21 @@
       "type": "page",
       "version": 1,
       "createdAt": 1789553100000,
+      "canvasData": {
+        "x": 480,
+        "y": 0,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 1114,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-bcfe157a",
+          "measuredAt": 1789556098682
+        }
+      },
       "devMetadata": {
         "htmlSrc": "pages/index-quick-access.html",
         "interactions": []
-      },
-      "canvasData": {
-        "x": 0,
-        "y": 0,
-        "group": 0
       }
     },
     {
