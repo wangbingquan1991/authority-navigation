@@ -78,9 +78,13 @@ export class QuickAccess {
       li.classList.add("dragging");
       e.dataTransfer.effectAllowed = "move";
       e.dataTransfer.setData(LINK_DRAG_TYPE, JSON.stringify({
-        sourceCategory: this.dataCategory,
-        sourceIsDefault: false,
-        isCustom: link.custom === true,
+        // 快捷入口是派生视图，胶囊可能只是某个分类里链接的投影；
+        // 真正用于「改分类」的来源是它所属的分类，而不是快捷入口本身。
+        // sourceCategory 为 null 表示该链接只存在于快捷入口（用户直接加的）。
+        sourceCategory: link.sourceCategory || this.dataCategory,
+        sourceIsStock: link.sourceIsStock === true,
+        // 标记拖拽来自这条横条：拖到分类时 app.js 会顺手解除「固定」
+        fromQuickAccess: true,
         name: link.name,
         url: link.url
       }));
@@ -93,8 +97,8 @@ export class QuickAccess {
     li.querySelector(".quick-chip").addEventListener("click", () => recordClick(link.url));
     li.querySelector(".quick-chip-remove").addEventListener("click", (e) => {
       e.stopPropagation();
-      // 来自默认配置的链接记入移除列表；用户自建的直接移除
-      this.onDeleteLink(this.dataCategory, link.url, link.custom !== true);
+      // 第三参数（是否默认链接）由 app.js 的快捷入口分支自行判定，这里不传
+      this.onDeleteLink(this.dataCategory, link.url);
     });
 
     return li;
@@ -120,7 +124,8 @@ export class QuickAccess {
       if (!data) return;
       try {
         const link = JSON.parse(data);
-        if (link.sourceCategory === this.dataCategory) return;
+        // 自身内部的拖动无意义：横条是派生视图，放到自己身上不该改变任何固定状态
+        if (link.fromQuickAccess || link.sourceCategory === this.dataCategory) return;
         await this.onMoveLink(link.sourceCategory, this.dataCategory, link);
       } catch (err) {
         console.error("Invalid link drop data", err);

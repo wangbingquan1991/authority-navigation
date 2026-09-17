@@ -18,14 +18,15 @@ import {
 } from "./services/api.js";
 import { checkSession, login, logout } from "./services/adminAuth.js";
 import { normalizeUrl, normalize, isValidUrl, isValidName } from "./utils/validators.js";
-import { sortLinksByFrequency } from "./utils/clickTracker.js";
+import { getAllClickStats } from "./utils/clickTracker.js";
+import { buildQuickAccessPool, rankQuickAccess, QUICK_ACCESS_LIMIT } from "./utils/quickAccess.js?v=1";
 import { mergeImportData } from "./utils/exportImport.js?v=2";
 import { NavHeader } from "./components/NavHeader.js?v=2";
 import { ThemeSwitcher } from "./components/ThemeSwitcher.js?v=3";
 import { AuthControl } from "./components/AuthControl.js?v=1";
 import { SearchBar } from "./components/SearchBar.js?v=2";
 import { CategoryGrid } from "./components/CategoryGrid.js?v=5";
-import { QuickAccess } from "./components/QuickAccess.js?v=1";
+import { QuickAccess } from "./components/QuickAccess.js?v=3";
 import { Modal } from "./components/Modal.js?v=2";
 import { ImportExport } from "./components/ImportExport.js?v=4";
 
@@ -115,10 +116,12 @@ async function mergeCategories() {
 }
 
 /**
- * 常用链接 = 默认配置(config.commonLinks) 去掉用户已删除的 + 用户自建的。
- * 删除记录单独存放在 removedCommonLinks，避免误删同名分类中的链接。
+ * 快捷入口的「配置来源」：默认精选(config.commonLinks) 去掉用户已移出的，
+ * 加上用户显式加入的。仅供导出使用——导出需要的是可复现的输入，
+ * 而不是随点击变化的排序结果。
+ * 移出记录单独存放在 removedCommonLinks，避免误删同名分类中的链接。
  */
-async function getQuickLinks() {
+async function getQuickAccessSources() {
   const data = await loadAllData();
   const configLinks = defaultConfig.commonLinks || [];
   const removed = await loadRemovedCommonLinks();
@@ -134,6 +137,23 @@ async function getQuickLinks() {
     }
   }
   return result;
+}
+
+/**
+ * 快捷入口的候选池 = 全站所有可见链接：各分类（含自建分类）里的链接，
+ * 加上用户显式加入快捷入口的链接，按 URL 去重、剔除已移出快捷入口的。
+ *
+ * 它不再局限于某个固定清单，因此任何网址——包括自定义添加的、以及
+ * 自建分类里的——只要用得多就会自动浮上来。
+ */
+async function getQuickAccessPool(categories) {
+  const data = await loadAllData();
+  return buildQuickAccessPool({
+    categories,
+    customQuickLinks: data.customLinks?.[QUICK_LINKS_CATEGORY] || [],
+    removedCommonLinks: await loadRemovedCommonLinks(),
+    seedLinks: defaultConfig.commonLinks || []
+  });
 }
 
 async function init() {
@@ -220,12 +240,12 @@ async function init() {
     onDeleteLink: async (category, url, isDefault) => {
       // 用户自建的链接一律先移除；默认链接另记入「已删除」列表
       await removeCustomLink(category, url);
-      if (isDefault) {
-        if (category === QUICK_LINKS_CATEGORY) {
-          await addRemovedCommonLink(url);
-        } else {
-          await addDefaultRemoved(url);
-        }
+      if (category === QUICK_LINKS_CATEGORY) {
+        // 快捷入口的候选池是全站链接，因此「移出」必须一律记入移出列表：
+        // 只删自建记录的话，该链接会立刻从所属分类重新进入候选池。
+        await addRemovedCommonLink(url);
+      } else if (isDefault) {
+        await addDefaultRemoved(url);
       } else {
         const cats = await loadCustomCategories();
         const cat = cats.find(c => c.name === category);
@@ -240,7 +260,14 @@ async function init() {
       if (sourceCategory === targetCategory) return;
 
       // 1. 添加到目标分类
-      if (targetCategory === QUICK_LINKS_CATEGORY || isDefaultCategory(targetCategory)) {
+      if (targetCategory === QUICK_LINKS_CATEGORY) {
+        // 拖到快捷入口 = 固定（pin）。快捷入口是派生视图而不是容器，
+        // 因此固定不会把链接从它所属的分类里移走。
+        await addCustomLink(QUICK_LINKS_CATEGORY, { name: link.name, url: link.url });
+        await refresh();
+        return;
+      }
+      if (isDefaultCategory(targetCategory)) {
         await addCustomLink(targetCategory, { name: link.name, url: link.url });
       } else {
         const cats = await loadCustomCategories();
@@ -251,18 +278,29 @@ async function init() {
         }
       }
 
-      // 2. 从源分类移除
+      // 2. 从来源分类移除
       // 两种来源机制都要清干净：默认链接可能因之前「移入」过而在 customLinks
       // 下留有一条自建记录，只写移除列表会让它作为自建项重新出现。
       // 这里的清理方式与 onDeleteLink 保持一致。
-      if (sourceCategory === QUICK_LINKS_CATEGORY) {
+      //
+      // 拖拽载荷有两种来源：分类卡片发 isCustom，快捷入口胶囊发 sourceIsStock。
+      // 两者说的是同一件事——「它是不是默认分类里的原有条目」，
+      // 决定移出该分类时要不要记入已删除列表：自建链接删掉自建记录即可，
+      // 原有条目必须拉黑，否则它会立刻回到原分类。
+      const sourceIsStock = link.sourceIsStock ?? (link.isCustom !== true);
+
+      // 从横条上拖走的胶囊 = 用户把这条链接拿走：顺手解除「固定」。
+      // 否则它仍会凭固定占着排序最前面，与用户的动作相矛盾。
+      if (link.fromQuickAccess) {
         await removeCustomLink(QUICK_LINKS_CATEGORY, link.url);
-        if (!link.isCustom) {
-          await addRemovedCommonLink(link.url);
-        }
+      }
+
+      if (sourceCategory === QUICK_LINKS_CATEGORY) {
+        // 只解除「固定」，不写移出记录：该链接仍可凭使用频率回到快捷入口
+        await removeCustomLink(QUICK_LINKS_CATEGORY, link.url);
       } else if (isDefaultCategory(sourceCategory)) {
         await removeCustomLink(sourceCategory, link.url);
-        if (!link.isCustom) {
+        if (sourceIsStock) {
           await addDefaultRemoved(link.url);
         }
       } else {
@@ -343,7 +381,7 @@ async function init() {
     onExport: async () => {
       const custom = await loadAllData();
       const merged = await mergeCategories();
-      const quickLinks = await getQuickLinks();
+      const quickLinks = await getQuickAccessSources();
       return {
         version: 2,
         exportedAt: new Date().toISOString(),
@@ -411,8 +449,9 @@ async function init() {
 
   async function refresh() {
     const categories = await mergeCategories();
-    const rawQuickLinks = await getQuickLinks();
-    quickAccess.links = sortLinksByFrequency(rawQuickLinks, 125);
+    const pool = await getQuickAccessPool(categories);
+    // 排序完全由点击行为驱动；仅在冷启动（尚无点击记录）时回落到默认精选顺序
+    quickAccess.links = rankQuickAccess(pool, getAllClickStats(), QUICK_ACCESS_LIMIT);
     quickAccess.render();
     grid.render(categories);
     grid.filter(searchBar.value);

@@ -49,7 +49,11 @@ export function recordClick(url) {
 
 /**
  * 计算小时频率（总点击数 / 距离首次点击的小时数）
- * 对新链接使用平滑处理，避免少量点击产生极高频率
+ *
+ * 分母取「距首次点击的小时数」，下限 0.1 小时（约 6 分钟）。因此刚建立
+ * 记录的链接会被短期放大：最初几分钟内频率约为 点击数 × 10，之后随观察
+ * 窗口增长而衰减。也就是说这是一个偏「近期使用」的加权频率，而不是长期
+ * 平均频率——新近用过的链接会更快浮到快捷入口前部。
  * @param {object} entry - 统计条目
  * @returns {number} 每小时点击频率
  */
@@ -95,31 +99,6 @@ export function getAllClickStats() {
     };
   }
   return result;
-}
-
-/**
- * 按点击频率排序链接数组
- * @param {Array} links - 链接数组，每项需包含 url 字段
- * @param {number} limit - 最多返回数量
- * @returns {Array} 排序后的链接数组
- */
-export function sortLinksByFrequency(links, limit = 125) {
-  const stats = loadStats();
-  const scored = links.map(link => ({
-    ...link,
-    _freq: stats[link.url] ? getHourlyFrequency(stats[link.url]) : 0
-  }));
-
-  scored.sort((a, b) => {
-    // 先按频率降序
-    if (b._freq !== a._freq) return b._freq - a._freq;
-    // 频率相同则按最后点击时间降序（最近点击的排前面）
-    const aLast = stats[a.url]?.lastClick || 0;
-    const bLast = stats[b.url]?.lastClick || 0;
-    return bLast - aLast;
-  });
-
-  return scored.slice(0, limit);
 }
 
 /**
